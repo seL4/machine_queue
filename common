@@ -1,0 +1,15 @@
+#!/bin/bash
+
+BASE=/home/adanis/machine_queue
+LOCKTIMEOUT=60
+
+QUEUE="$BASE/runqueue"
+RUNQUEUELOCK="$QUEUE"".lock"
+
+Lock () {
+    lockfile -l "$LOCKTIMEOUT" "$RUNQUEUELOCK"
+}
+Unlock () {
+    rm -f "$RUNQUEUELOCK"
+}
+
