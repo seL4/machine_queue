@@ -42,6 +42,7 @@ CleanupJob () {
             kill -- -$outpid
             exit 0
         else
+            echo "Cleaning up job, please wait a few seconds"
             echo "Close" > $inpipe
         fi
     else
