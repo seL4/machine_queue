@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE=/home/adanis/machine_queue
+BASE=/scratch/bamboo/machine_queue
 LOCKTIMEOUT=60
 
 QUEUE="$BASE/runqueue"

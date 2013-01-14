@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /home/adanis/machine_queue/common
+. /scratch/bamboo/machine_queue/common
 
 if [ "$1" = "-n" ]; then
     echo "1"

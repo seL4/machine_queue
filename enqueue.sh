@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /home/adanis/machine_queue/common
+. /scratch/bamboo/machine_queue/common
 
 Usage () {
     echo "Usage: $0 -i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
