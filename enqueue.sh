@@ -170,6 +170,11 @@ mkfifo "$inpipe"
 # Create the completion semaphore
 lockfile "$jobdir/complete.lock"
 
+# Make sure permissions are sane
+chown :ertos_src -R "$jobdir"
+chmod g+rw -R "$jobdir"
+chmod g+x "$jobdir"
+
 # Setup is done, release the lock
 Unlock
 
