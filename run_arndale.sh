@@ -20,7 +20,11 @@ else
     INPUT="$BASE/$jobid/input.pipe"
 fi
 
-$REBOOT_CMD $INTERACT $ci "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" < $INPUT | tee "$BASE/$jobid/output.pipe"
+if [ "$ci" = "-r" ]; then
+    ssh consoles "console -f arndale" < $INPUT | tee "$BASE/$jobid/output.pipe"
+else
+    $REBOOT_CMD $INTERACT $ci "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" < $INPUT | tee "$BASE/$jobid/output.pipe"
+fi
 
 echo "Success" > "$BASE/$jobid/output.pipe"
 

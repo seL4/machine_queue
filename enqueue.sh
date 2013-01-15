@@ -3,7 +3,7 @@
 . /scratch/bamboo/machine_queue/common
 
 Usage () {
-    echo "Usage: $0 -i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
+    echo "Usage: $0 -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
 }
 
 # Removes the current job from the runqueue
@@ -75,6 +75,9 @@ while [ "$#" -ne 0 ]; do
                 exit -1
             fi
         ;;
+        -r)
+            interact="-r"
+        ;;
         -f)
             shift
             if [ "$files" != "" ]; then
@@ -122,10 +125,12 @@ if ! [  -x "$system_runner" ]; then
     exit -1
 fi
 # Check we got enough files
-system_file_count=`"$system_runner" -n`
-if [ "$file_count" -ne "$system_file_count" ]; then
-    echo "Expected $system_file_count files, only $file_count provided"
-    exit -1
+if [ "$interact" != "-r" ]; then
+    system_file_count=`"$system_runner" -n`
+    if [ "$file_count" -ne "$system_file_count" ]; then
+        echo "Expected $system_file_count files, only $file_count provided"
+        exit -1
+    fi
 fi
 
 # Grab the main lock
@@ -149,15 +154,17 @@ echo "$jobid QUEUED $system $USER `date +"%D %T"` $interact" >> $QUEUE
 # Make the directory for the job
 jobdir="$BASE/$jobid"
 mkdir "$jobdir"
-# Copy all the files
-i=0
-echo -e "$files" | while read file; do
-    echo "Copying input file ($i) \"$file\""
-    cp "$file" "$jobdir/file$i"
-    i=`expr "$i" + 1`
-done
-if [ "$interact" = "-c" ]; then
-    echo -e "$completion" > "$jobdir/completion"
+# Copy all the files, unless the job is just a reservation
+if [ "$interact" != "-r" ]; then
+    i=0
+    echo -e "$files" | while read file; do
+        echo "Copying input file ($i) \"$file\""
+        cp "$file" "$jobdir/file$i"
+        i=`expr "$i" + 1`
+    done
+    if [ "$interact" = "-c" ]; then
+        echo -e "$completion" > "$jobdir/completion"
+    fi
 fi
 
 # Construct the output pipe
@@ -187,7 +194,7 @@ setsid bash -c "trap 'exit 0' SIGINT SIGTERM; while true; do cat \"$outpipe\"; d
 outpid=$!
 
 # Hook up pipe and wait
-if [ "$interact" = "-i" ]; then
+if [ "$interact" != "-c" ]; then
     cat > $inpipe
     # Wait on the completion semaphore
     lockfile "$jobdir/complete.lock"
