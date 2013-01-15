@@ -20,7 +20,7 @@ else
     INPUT="$BASE/$jobid/input.pipe"
 fi
 
-$REBOOT_CMD $INTERACT $ci "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" < $INPUT > "$BASE/$jobid/output.pipe"
+$REBOOT_CMD $INTERACT $ci "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" < $INPUT | tee "$BASE/$jobid/output.pipe"
 
 echo "Success" > "$BASE/$jobid/output.pipe"
 

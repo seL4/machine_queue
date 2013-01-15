@@ -11,7 +11,7 @@ ci=$1
 jobid=$2
 
 LOG_FILE="$BASE/$jobid/output"
-REBOOT_CMD="/tftpboot/kzm11/reboot"
+REBOOT_CMD="/tftpboot/arndale/reboot"
 if [ "$ci" = "-c" ]; then
     COMPLETION_TXT=`cat "$BASE/$jobid/completion"`
     INPUT="/dev/null"
