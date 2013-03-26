@@ -12,6 +12,8 @@ RemoveJob () {
 rm -rf "$jobdir"
 rm -rf "$jobdir"
 perl -i -p -e "s/^($jobid .*\n)//m" "$QUEUE"
+chown :ertos_src "$QUEUE" 2>&1 > /dev/null
+chmod g+rw "$QUEUE" 2>&1 > /dev/null
 }
 
 # If the job we enqued is still queued (and not running or completed) then removeit it
@@ -185,7 +187,23 @@ chmod g+x "$jobdir"
 # Setup is done, release the lock
 Unlock
 
-echo "Job is queued, waiting..."
+echo "Job is queued, notifying bamboo"
+
+# Notify bamboo. This is pretty hard coded and could probably be better abstracted, perhaps
+# into the run_<system>.sh scripts?
+if [ "$system" = "kzm" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDKZMJOBS'
+elif [ "$system" = "beagle" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDBEAGLEJOBS'
+elif [ "$system" = "panda" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDPANDAJOBS'
+elif [ "$system" = "arndale" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDARNDALEJOBS'
+elif [ "$system" = "odroid" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDODROIDJOBS'
+elif [ "$system" = "vtd2" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDVTD2JOBS'
+fi
 
 # Setup a trap handler that will remove this job and notify the server if we try and quit
 trap 'CleanupJob' SIGINT SIGTERM

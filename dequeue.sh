@@ -12,66 +12,75 @@ if [ "$#" -eq 0 ]; then
 fi
 system=$1
 
-Lock
+RunJob () {
 
-job=`grep "^[0-9]* RUNNING $system" $QUEUE`
-if [ "$job" != "" ]; then
-    echo "Already have running jobs on $system!"
-    Unlock
-    exit 1
-fi
+    Lock
 
-job=`grep "^[0-9]* QUEUED $system" $QUEUE | head -1`
-if [ "$job" = "" ]; then
-    echo "No jobs to run on $system"
-    Unlock
-    exit 0
-fi
-
-temp=( $job )
-jobid=${temp[0]}
-user=${temp[3]}
-ci=${temp[6]}
-
-# Set job to running
-datetime=`date +"%D %T"`
-perl -i -p -e "s/^($jobid .*\n)//m" $QUEUE
-echo "$jobid RUNNING $system $user `date +"%D %T"` $ci" >> $QUEUE
-
-# Finished modifying state, can unlock while we actually run the job
-Unlock
-
-echo "Starting your job" > "$BASE/$jobid/output.pipe"
-
-if [ "$ci" == "-r" ]; then
-    echo "You now own the machine, input/output has been connected to console" > "$BASE/$jobid/output.pipe"
-    echo "close console and ctrl+d when done" > "$BASE/$jobid/output.pipe" > "$BASE/$jobid/output.pipe"
-    $BASE/run_$system.sh $ci $jobid
-elif [ "$ci" == "-i" ]; then
-    echo "Your job is now running interractively. ctrl+d to complete" > "$BASE/$jobid/output.pipe"
-    $BASE/run_$system.sh $ci $jobid
-else
-    echo "Your job is running till completion text. ctrl+c to indicate job failure" > "$BASE/$jobid/output.pipe"
-    trap 'KillChild' SIGINT SIGTERM
-    setsid $BASE/run_$system.sh $ci $jobid &
-    pid=$!
-    read result < $BASE/$jobid/input.pipe
-    if [ "$result" = "Close" ]; then
-        echo "Killing job at user request"
-        kill -- -$pid
-    else
-        wait $pid
+    job=`grep "^[0-9]* RUNNING $system" $QUEUE`
+    if [ "$job" != "" ]; then
+        echo "Already have running jobs on $system!"
+        Unlock
+        exit 1
     fi
-    trap '' SIGINT SIGTERM
-fi
 
-# Complete the job
-echo "Job $jobid complete"
+    job=`grep "^[0-9]* QUEUED $system" $QUEUE | head -1`
+    if [ "$job" = "" ]; then
+        echo "No jobs to run on $system"
+        Unlock
+        exit 0
+    fi
 
-Lock
-perl -i -p -e "s/^($jobid .*\n)//m" $QUEUE
-echo "$jobid COMPLETE $system $user `date +"%D %T"` $ci" >> $QUEUE
-Unlock
+    temp=( $job )
+    jobid=${temp[0]}
+    user=${temp[3]}
+    ci=${temp[6]}
 
-# Delete the completion semaphore to signal job is done
-rm -f "$BASE/$jobid/complete.lock"
+    # Set job to running
+    datetime=`date +"%D %T"`
+    perl -i -p -e "s/^($jobid .*\n)//m" $QUEUE
+    echo "$jobid RUNNING $system $user `date +"%D %T"` $ci" >> $QUEUE
+
+    # Finished modifying state, can unlock while we actually run the job
+    Unlock
+
+    echo "Starting your job" > "$BASE/$jobid/output.pipe"
+
+    if [ "$ci" == "-r" ]; then
+        echo "You now own the machine, input/output has been connected to console" > "$BASE/$jobid/output.pipe"
+        echo "close console and ctrl+d when done" > "$BASE/$jobid/output.pipe" > "$BASE/$jobid/output.pipe"
+        $BASE/run_$system.sh $ci $jobid
+    elif [ "$ci" == "-i" ]; then
+        echo "Your job is now running interractively. ctrl+d to complete" > "$BASE/$jobid/output.pipe"
+        $BASE/run_$system.sh $ci $jobid
+    else
+        echo "Your job is running till completion text. ctrl+c to indicate job failure" > "$BASE/$jobid/output.pipe"
+        trap 'KillChild' SIGINT SIGTERM
+        setsid $BASE/run_$system.sh $ci $jobid &
+        pid=$!
+        read result < $BASE/$jobid/input.pipe
+        if [ "$result" = "Close" ]; then
+            echo "Killing job at user request"
+            kill -- -$pid
+        else
+            wait $pid
+        fi
+        trap '' SIGINT SIGTERM
+    fi
+
+    # Complete the job
+    echo "Job $jobid complete"
+
+    Lock
+    perl -i -p -e "s/^($jobid .*\n)//m" $QUEUE
+    echo "$jobid COMPLETE $system $user `date +"%D %T"` $ci" >> $QUEUE
+    Unlock
+
+    # Delete the completion semaphore to signal job is done
+    rm -f "$BASE/$jobid/complete.lock"
+}
+
+# Just keep running jobs until the thing exits
+
+while true; do
+    RunJob
+done
