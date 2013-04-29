@@ -203,6 +203,8 @@ elif [ "$system" = "odroid" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDODROIDJOBS'
 elif [ "$system" = "vtd2" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDVTD2JOBS'
+elif [ "$system" = "sabre" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDSABREJOBS'
 fi
 
 # Setup a trap handler that will remove this job and notify the server if we try and quit
