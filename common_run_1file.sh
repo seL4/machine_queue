@@ -26,8 +26,11 @@ fi
 
 if [ "$ci" = "-r" ]; then
     ssh consoles "console -f $console" < $INPUT | tee "$BASE/$jobid/output.pipe"
+elif [ "$ci" = "-c" ] ; then
+    $REBOOT_CMD -c "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" < $INPUT | tee "$BASE/$jobid/output.pipe"
 else
-    $REBOOT_CMD $INTERACT $ci "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" < $INPUT | tee "$BASE/$jobid/output.pipe"
+    # Need to special case -c and -i because you cannot specify a blank command line option after -i
+    $REBOOT_CMD -i -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" < $INPUT | tee "$BASE/$jobid/output.pipe"
 fi
 
 echo "Success" > "$BASE/$jobid/output.pipe"

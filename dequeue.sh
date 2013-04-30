@@ -38,6 +38,8 @@ RunJob () {
     # Set job to running
     datetime=`date +"%D %T"`
     perl -i -p -e "s/^($jobid .*\n)//m" $QUEUE
+    chown :ertos_src "$QUEUE" 2>&1 > /dev/null
+    chmod g+rw "$QUEUE" 2>&1 > /dev/null
     echo "$jobid RUNNING $system $user `date +"%D %T"` $ci" >> $QUEUE
 
     # Finished modifying state, can unlock while we actually run the job
@@ -72,6 +74,8 @@ RunJob () {
 
     Lock
     perl -i -p -e "s/^($jobid .*\n)//m" $QUEUE
+    chown :ertos_src "$QUEUE" 2>&1 > /dev/null
+    chmod g+rw "$QUEUE" 2>&1 > /dev/null
     echo "$jobid COMPLETE $system $user `date +"%D %T"` $ci" >> $QUEUE
     Unlock
 
