@@ -15,7 +15,6 @@ system=$1
 RunJob () {
 
     Lock
-
     job=`grep "^[0-9]* RUNNING $system" $QUEUE`
     if [ "$job" != "" ]; then
         echo "Already have running jobs on $system!"
@@ -38,9 +37,9 @@ RunJob () {
     # Set job to running
     datetime=`date +"%D %T"`
     perl -i -p -e "s/^($jobid .*\n)//m" $QUEUE
+    echo "$jobid RUNNING $system $user `date +"%D %T"` $ci" >> $QUEUE
     chown :ertos_src "$QUEUE" 2>&1 > /dev/null
     chmod g+rw "$QUEUE" 2>&1 > /dev/null
-    echo "$jobid RUNNING $system $user `date +"%D %T"` $ci" >> $QUEUE
 
     # Finished modifying state, can unlock while we actually run the job
     Unlock

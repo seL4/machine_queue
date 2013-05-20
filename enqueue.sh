@@ -152,6 +152,9 @@ echo "There are already `wc -l "$QUEUE" | cut -f 1 -d' '` jobs in queue"
 
 # Add job entry to the run queue
 echo "$jobid QUEUED $system $USER `date +"%D %T"` $interact" >> $QUEUE
+# Fix permissions
+chown :ertos_src "$QUEUE" 2>&1 > /dev/null
+chmod g+rw "$QUEUE" 2>&1 > /dev/null
 
 # Make the directory for the job
 jobdir="$BASE/$jobid"
