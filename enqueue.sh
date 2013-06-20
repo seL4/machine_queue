@@ -72,6 +72,8 @@ while [ "$#" -ne 0 ]; do
         ;;
         -i)
             interact="-i"
+            echo "Interactive mode not currently supported. Please use -c and connect on consoles manually"
+            exit -1
             if [ "$completion" != "" ]; then
                 Usage
                 exit -1
@@ -79,6 +81,8 @@ while [ "$#" -ne 0 ]; do
         ;;
         -r)
             interact="-r"
+            echo "Reservation mode not currently supported. Please use -c and connect on consoles manually"
+            exit -1
         ;;
         -f)
             shift
@@ -211,7 +215,7 @@ elif [ "$system" = "sabre" ]; then
 fi
 
 # Setup a trap handler that will remove this job and notify the server if we try and quit
-trap 'CleanupJob' SIGINT SIGTERM
+trap 'CleanupJob' SIGINT SIGTERM SIGHUP
 # Hookup the output pipe
 setsid bash -c "trap 'exit 0' SIGINT SIGTERM; while true; do cat \"$outpipe\"; done" &
 outpid=$!
