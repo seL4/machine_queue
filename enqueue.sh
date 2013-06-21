@@ -239,7 +239,7 @@ kill -- -$outpid
 outpid=0
 
 # Everything is cleaned up, no longer need the trap handler
-trap '' SIGINT SIGTERM
+trap '' SIGINT SIGTERM SIGHUP
 
 
 # Should be complete
