@@ -143,7 +143,7 @@ fi
 Lock
 
 # Increment job ID
-last_jobid=`cat "$QUEUE" | cut -f 1 -d' ' | sort | tail -1`
+last_jobid=`cat "$QUEUE" | cut -f 1 -d' ' | sort -n | tail -1`
 if [ "$last_jobid" == "" ]
 then
     jobid="0"
