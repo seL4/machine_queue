@@ -23,7 +23,7 @@ fi
 if [ "$ci" = "-r" ]; then
     ssh consoles "console -f vtd2" < $INPUT | tee "$BASE/$jobid/output.pipe"
 else
-    $REBOOT_CMD $INTERACT $ci "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" "$BASE/$jobid/file0" "$BASE/$jobid/file1" < $INPUT | tee "$BASE/$jobid/output.pipe"
+    $REBOOT_CMD $INTERACT $ci "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" -k "$BASE/$jobid/file0" -u "$BASE/$jobid/file1" < $INPUT | tee "$BASE/$jobid/output.pipe"
 fi
 
 echo "Success" > "$BASE/$jobid/output.pipe"
