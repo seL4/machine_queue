@@ -1,6 +1,17 @@
 #!/bin/bash
 
-. /scratch/bamboo/machine_queue/common
+# Determine root directory of script. This is some black magic found on stackoverflow
+pushd . > /dev/null
+SCRIPT_PATH="${BASH_SOURCE[0]}";
+if ([ -h "${SCRIPT_PATH}" ]) then
+  while([ -h "${SCRIPT_PATH}" ]) do cd `dirname "$SCRIPT_PATH"`; SCRIPT_PATH=`readlink "${SCRIPT_PATH}"`; done
+fi
+cd `dirname ${SCRIPT_PATH}` > /dev/null
+SCRIPT_PATH=`pwd`;
+popd  > /dev/null
+
+# Include common elements
+. "${SCRIPT_PATH}/common"
 
 Usage () {
     echo "Usage: $0 -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
