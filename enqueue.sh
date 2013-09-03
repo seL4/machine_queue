@@ -86,6 +86,10 @@ while [ "$#" -ne 0 ]; do
         ;;
         -f)
             shift
+            if ! [ -f "$1" ]; then
+                echo "File \"$1\" either does not exist, or is not considered a valid file"
+                exit -1
+            fi
             if [ "$files" != "" ]; then
                 files="$files\n"
             fi
