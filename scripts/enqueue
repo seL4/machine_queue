@@ -232,8 +232,6 @@ function Enqueue() {
             ;;
             -r)
                 interact="-r"
-                echo "Reservation mode not currently supported. Please use -c and connect on consoles manually"
-                exit -1
             ;;
             -f)
                 shift

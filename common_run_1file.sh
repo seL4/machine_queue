@@ -25,7 +25,24 @@ else
 fi
 
 if [ "$ci" = "-r" ]; then
-    ssh consoles "console -f $console" < $INPUT | tee "$BASE/$jobid/output.pipe"
+    echo "Reservations not allowed!" | tee "$BASE/$jobid/output.pipe"
+    # spawn console session
+#    echo "Spawning console session"
+#    mkfifo "$BASE/$jobid/console.pipe"
+    # This here almost works, except when I try and kill the pid later I have an invalid pid.
+    # why? I have no idea, but if this is executed it will leave console sessions open
+    # all over the place
+#    setsid bash -c "console -f $console" | tee "$BASE/$jobid/output.pipe" &
+#    pid=$!
+#    echo "Console session spawned"
+#    while read input
+#    do
+#        echo "Read input line $input"
+#        echo $input >> "$BASE/$jobid/console.pipe"
+#    done < $INPUT
+#    echo "Input terminated, trying to close now"
+#    kill -- -$pid
+#    ssh consoles "console -f $console" < $INPUT | tee "$BASE/$jobid/output.pipe"
 elif [ "$ci" = "-c" ] ; then
     $REBOOT_CMD -c "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" -k "$BASE/$jobid/file0" < $INPUT | tee "$BASE/$jobid/output.pipe"
 else

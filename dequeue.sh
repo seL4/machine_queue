@@ -48,7 +48,7 @@ RunJob () {
 
     if [ "$ci" == "-r" ]; then
         echo "You now own the machine, input/output has been connected to console" > "$BASE/$jobid/output.pipe"
-        echo "close console and ctrl+d when done" > "$BASE/$jobid/output.pipe" > "$BASE/$jobid/output.pipe"
+        echo "close console and ctrl+d when done" > "$BASE/$jobid/output.pipe"
         $BASE/run_$system.sh $ci $jobid
     elif [ "$ci" == "-i" ]; then
         echo "Your job is now running interractively. ctrl+d to complete" > "$BASE/$jobid/output.pipe"
