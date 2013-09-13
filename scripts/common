@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+# Define some global configuration variables and routines
+BASE=/scratch/bamboo/machine_queue
+LOCKTIMEOUT=60
+
+QUEUE="$BASE/runqueue"
+RUNQUEUELOCK="$QUEUE"".lock"
+
+function Lock() {
+    lockfile -l "$LOCKTIMEOUT" "$RUNQUEUELOCK"
+}
+function Unlock() {
+    rm -f "$RUNQUEUELOCK"
+}
+
+# Add all the other bits and pieces
+
+. "${SCRIPT_PATH}/scripts/system"
+. "${SCRIPT_PATH}/scripts/enqueue"

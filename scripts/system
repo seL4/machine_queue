@@ -1,0 +1,38 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+
+
+for system in "${SCRIPT_PATH}/scripts/systems/*"
+do
+    . ${system}
+done
+
+function IsSystemValid() {
+    local system=$1
+    if [ -e "${SCRIPT_PATH}/scripts/systems/${system}" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function SystemCorrectNumberOfFiles() {
+    local system=$1
+    local num=$2
+    local system_num=$(SystemNumFiles_${system})
+    if [ "${num}" -eq "${system_num}" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function SystemNotifyBamboo() {
+    local system=$1
+    SystemNotifyBamboo_${system}
+}

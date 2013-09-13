@@ -1,0 +1,395 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+# List of a bunch of signals that we will try and trap on. This is basically a
+# 'if anything at all happens try and shut down our job cleanly' approach
+SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP"
+
+function EnqueueUsage() {
+    echo "Usage: $0 enqueue -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
+}
+
+function NewJobID() {
+    # Increment job ID
+    local last_jobid=`cat "$QUEUE" | cut -f 1 -d' ' | sort -n | tail -1`
+    local jobid="0"
+    if [ "$last_jobid" != "" ]; then
+        (( jobid = last_jobid + 1 ))
+    fi
+    echo "${jobid}"
+}
+
+function CountJobs() {
+    local jobtype="$1"
+    local system="$2"
+    local user="$3"
+    cat "${QUEUE}" | cut -d' ' -f 2,3,4 | grep "${jobtype} ${system} ${user}" | wc -l | cut -f 1 -d' '
+}
+
+function FixQueuePermissions() {
+    # Some methods of modifying the runqueue will recreate the file with the
+    # users default permissions. we need to reset them if this happens
+    # use -f to force chown/chmod to supress error output in the case where
+    # the permissions are already sensible / the file is owned by someone else
+    chown -f :ertos_src "${QUEUE}" 2>&1 > /dev/null
+    chmod -f g+rw "${QUEUE}" 2>&1 > /dev/null
+}
+
+function AddJob() {
+    local system=$1
+    local interact=$2
+    local date=$(date +"%D %T")
+    local jobid=$(NewJobID)
+    local user=$USER
+    local jobline="${jobid} QUEUED ${system} ${user} ${date} ${interact}"
+    # Verify there aren't extra spaces/lines in our jobline that will confuse us later
+    # Note that the date has two parts
+    if [ $(echo ${jobline} | wc -l) -ne 1 ] || [ $(echo ${jobline} | wc -w) -ne 7 ] ; then
+        echo "Space or newline found unexpectedly in parameters"
+        return 1
+    fi
+    # Add the line to the queue
+    echo ${jobline} >> ${QUEUE}
+    FixQueuePermissions
+    echo ${jobid}
+    return 0
+}
+
+function JobDir() {
+    local jobid=$1
+    echo "${BASE}/${jobid}"
+}
+
+function InPipe() {
+    local jobid=$1
+    echo "$(JobDir ${jobid})/input.pipe"
+}
+
+function OutPipe() {
+    local jobid=$1
+    echo "$(JobDir ${jobid})/output.pipe"
+}
+
+function JobLock() {
+    local jobid=$1
+    echo "$(JobDir ${jobid})/complete.lock"
+}
+
+function JobOutput() {
+    local jobid=$1
+    echo "$(JobDir ${jobid})/output"
+}
+
+# Removes a job from the runqueue
+# Assumes lock is already held
+function RemoveJob() {
+    local jobid=$1
+    local jobdir=$(JobDir ${jobid})
+    rm -rf "${jobdir}"
+    perl -i -p -e "s/^($jobid .*\n)//m" "$QUEUE"
+    FixQueuePermissions
+}
+
+function MakeJob() {
+    # Make the directory for the job
+    local jobid=$1
+    local jobdir=$(JobDir ${jobid})
+    mkdir "$jobdir"
+    if [ $? -ne 0 ]; then
+        echo "Failed to make job directory"
+        return 1
+    fi
+    # Copy all the files, unless the job is just a reservation
+    if [ "$interact" != "-r" ]; then
+        i=0
+        echo -e "$files" | while read file; do
+            echo "Copying input file ($i) \"$file\""
+            cp "$file" "$jobdir/file$i"
+            if [ $? -ne 0 ]; then
+                echo "Error copying file"
+                return 1
+            fi
+            i=`expr "$i" + 1`
+        done
+        if [ "$interact" = "-c" ]; then
+            echo -e "$completion" > "$jobdir/completion"
+        fi
+    fi
+
+    # Construct the output pipe
+    mkfifo "$(OutPipe ${jobid})"
+    if [ $? -ne 0 ]; then
+        echo "Error making output pipe"
+        return 1
+    fi
+
+    mkfifo "$(InPipe ${jobid})"
+    if [ $? -ne 0 ]; then
+        echo "Error making input pipe"
+        return 1
+    fi
+
+    # Create the completion semaphore
+    lockfile "$(JobLock ${jobid})"
+    if [ $? -ne 0 ]; then
+        echo "Error creating lockfile"
+        return 1
+    fi
+
+    # Make sure permissions are sane
+    chown :ertos_src -R "$jobdir"
+    chmod g+rw -R "$jobdir"
+    chmod g+x "$jobdir"
+}
+
+function JobStatus() {
+    local jobid=$1
+    grep "^${jobid}" "${QUEUE}" | cut -d' ' -f 2
+}
+
+# If the job we enqued is still queued (and not running or completed) then removeit it
+# sets a return value for whether the job was running or not
+function RemoveIfQueued() {
+    local jobid=$1
+    local result
+    Lock
+    if [ $(JobStatus ${jobid}) == QUEUED ]; then
+        RemoveJob ${jobid}
+        result=1
+    else
+        result=0
+    fi
+    Unlock
+    return $result
+}
+
+function CleanupJob() {
+    local jobid=$1
+    # pid of the process echoing the output pipe
+    local outpid=$2
+    local closeremote=$3
+    RemoveIfQueued ${jobid}
+    result=$?
+    if [ "$closeremote" -ne 0 ]; then
+        # We need to notify the server. But only if we were running
+        # If we weren't running then the server will not be listening
+        # so we are done
+        # If we were running then don't exit yet so we can try
+        # and keep running and get any partial output
+        # Reset the signal handler to not close the remote incase someone
+        # is spammy with the signals
+        trap 'CleanupJob ${jobid} ${outpid} 0' $SIGNALS
+        closeremote=""
+        if [ ${result} -ne 0 ]; then
+            # Pack up and go home
+            kill -- -$outpid
+            exit 0
+        else
+            echo "Cleaning up job, please wait a few seconds"
+            echo "Close" > $(InPipe ${jobid})
+        fi
+    else
+        kill -- -$outpid
+        exit 0
+    fi
+}
+
+function Enqueue() {
+    # Parse the command line
+    local file_count=0
+    local logfile=""
+    local interact=""
+    local completion=""
+    local files=""
+    local system=""
+    while [ "$#" -ne 0 ]; do
+        case "$1" in
+            -l)
+                shift
+                logfile="$1"
+            ;;
+            -c)
+                shift
+                completion="$1"
+                if [ "$interact" != "" ]; then
+                EnqueueUsage
+                    exit -1
+                fi
+                interact="-c"
+            ;;
+            -i)
+                interact="-i"
+                echo "Interactive mode not currently supported. Please use -c and connect on consoles manually"
+                exit -1
+                if [ "$completion" != "" ]; then
+                    EnqueueUsage
+                    exit -1
+                fi
+            ;;
+            -r)
+                interact="-r"
+                echo "Reservation mode not currently supported. Please use -c and connect on consoles manually"
+                exit -1
+            ;;
+            -f)
+                shift
+                if ! [ -f "$1" ]; then
+                    echo "File \"$1\" either does not exist, or is not considered a valid file"
+                    exit -1
+                fi
+                if [ "$files" != "" ]; then
+                    files="$files\n"
+                fi
+                files="$files$1"
+                (( file_count++ ))
+            ;;
+            -s)
+                shift
+                system="$1"
+            ;;
+            --)
+                break
+            ;;
+            -[A-Za-z]*)
+                echo "Unknown option $1"
+                EnqueueUsage
+                exit -1
+            ;;
+            *)
+                break
+            ;;
+        esac
+        shift
+    done
+
+    # Check that we got enough parameters
+    if [ "$logfile" = "" ]; then
+        EnqueueUsage
+        exit -1
+    fi
+    if [ "$system" = "" ]; then
+        EnqueueUsage
+        exit -1
+    fi
+    if [ "$interact" = "" ]; then
+        EnqueueUsage
+        exit -1
+    fi
+
+    # Verify the requested system exists
+    IsSystemValid "${system}"
+    if [ $? -ne 0 ] ; then
+        echo "System $system does not exist"
+        exit -1
+    fi
+
+    # Check that the number of files specified is correct
+    if [ "$interact" != "-r" ] ; then
+        SystemCorrectNumberOfFiles "${system}" "${file_count}"
+        if [ $? -ne 0 ]; then
+            echo "Wrong number of files specified for system ${system}"
+            exit -1
+        fi
+    fi
+
+    # See what this user already has
+    local completed=$(CountJobs COMPLETE '.*' ${USER})
+    if [ ${completed} -ne 0 ]; then
+        echo "You already have ${completed} completed jobs that you have not cleaned up"
+        echo "Please collect these jobs"
+        exit -1
+    fi
+
+    # Grab the main lock
+    Lock
+
+    # Add the job
+    local jobid=$(AddJob "${system}" "${interact}")
+    if [ $? -ne 0 ] ; then
+        Unlock
+        # Error message in the job id
+        echo ${jobid}
+        exit -1
+    fi
+
+    echo "Created Job with ID ${jobid}"
+    echo "There are already $(( $(CountJobs QUEUED ${system} '.*') - 1 )) jobs in queue for ${system}"
+
+    # Attempt to construct the job, will fail if anything went wrong
+    MakeJob ${jobid}
+    if [ $? -ne 0 ]; then
+        RemoveJob ${jobid}
+        Unlock
+        exit -1
+    fi
+
+    # Setup is done, release the lock
+    Unlock
+
+    echo "Job is queued, notifying bamboo"
+    SystemNotifyBamboo ${system}
+
+    # Setup the output pipe that will feed data from the console
+    # to the user terminal
+    local outpipe=$(OutPipe ${jobid})
+    setsid bash -c "trap 'exit 0' $SIGNALS; while true; do cat \"$outpipe\"; done" &
+    local outpid=$!
+
+    # Setup a trap handler that will remove this job and notify the server if we try and quit
+    # we will fiddle with this trap a bit for when it needs to attempt to tell the remote
+    # server to shut down
+    trap 'CleanupJob ${jobid} ${outpid} 0' $SIGNALS
+
+    # Hook up the pipe to feed input from user to console if required
+    if [ "$interact" != "-c" ]; then
+        cat > $(InPipe ${jobid})
+        # Wait on the completion semaphore
+        lockfile -1 "$(JobLock {jobid})"
+    else
+        # From here on we need to signal the remote if we want to suddenly clean up and go home
+        trap 'CleanupJob ${jobid} ${outpid} 1' $SIGNALS
+        # Wait on the completion semaphore.
+        if ! lockfile -1 "$(JobLock ${jobid})"; then
+            lockfile -1 "$(JobLock ${jobid})"
+        fi
+        # Our job is done so do not try and signal the remote
+        trap 'CleanupJob ${jobid} ${outpid} 0' $SIGNALS
+    fi
+
+    # Kill the output pipe
+    kill -- -$outpid
+
+    # Everything is cleaned up, no longer need the trap handler
+    trap '' $SIGNALS
+
+    # Should be complete
+    echo "Job complete"
+
+    # Grab the main lock
+    Lock
+
+    # Verify our job is complete
+    if [ "$(JobStatus ${jobid})" != 'COMPLETE' ]; then
+        echo "Job failed to complete or missing!"
+        Unlock
+        exit 1
+    fi
+
+    # Copy the output
+    echo "Copying output to \"$logfile\""
+    cp "$(JobOutput ${jobid})" "$logfile"
+
+    # Cleanup the job
+    echo "Cleaning up job"
+    RemoveJob ${jobid}
+
+    # Release the lock and go home
+    Unlock
+    echo "Done"
+
+    exit 0
+}
