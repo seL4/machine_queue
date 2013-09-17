@@ -229,6 +229,8 @@ elif [ "$system" = "sabre" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDSABREJOBS'
 elif [ "$system" = "sabre3" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDSABRE3JOBS'
+elif [ "$system" = "beaglebone" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDBEAGLEBONEJOBS'
 fi
 
 # Setup a trap handler that will remove this job and notify the server if we try and quit
