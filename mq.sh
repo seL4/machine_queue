@@ -26,10 +26,6 @@ fi
 command=$1
 shift
 case "$command" in
-    help)
-        Usage
-        exit 0
-    ;;
     enqueue)
         Enqueue "$@"
         # Should not get here
@@ -39,5 +35,9 @@ case "$command" in
         Dequeue "$@"
         # Should not get here
         exit -1
+    ;;
+    help|*)
+        Usage
+        exit 0
     ;;
 esac
