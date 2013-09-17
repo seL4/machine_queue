@@ -172,6 +172,7 @@ function CleanupJob() {
     # pid of the process echoing the output pipe
     local outpid=$2
     local closeremote=$3
+    local interact=$4
     RemoveIfQueued ${jobid}
     result=$?
     if [ "$closeremote" -ne 0 ]; then
@@ -190,7 +191,11 @@ function CleanupJob() {
             exit 0
         else
             echo "Cleaning up job, please wait a few seconds"
-            echo "Close" > $(InPipe ${jobid})
+            # If we are waiting till completion text then we need to explicitly tell the
+            # remote server that we are finished
+            if [ "${interact}" = "-c" ]; then
+                echo "Close" > $(InPipe ${jobid})
+            fi
         fi
     else
         kill -- -$outpid
@@ -340,12 +345,15 @@ function Enqueue() {
     # Setup a trap handler that will remove this job and notify the server if we try and quit
     # we will fiddle with this trap a bit for when it needs to attempt to tell the remote
     # server to shut down
-    trap 'CleanupJob ${jobid} ${outpid} 1' $SIGNALS
+    trap 'CleanupJob ${jobid} ${outpid} 1 ${interact}' $SIGNALS
 
     # Hook up the pipe to feed input from user to console if required
     if [ "$interact" != "-c" ]; then
-        # Currently no way for this cat to finish :(
-        echo "Non completion broken as cat to input pipe will never terminate"
+        # This cat will terminate at the same time as when the user does the ctrl+c to
+        # terminate the script. so the ctrl+c is both terminating the cat and being caught
+        # by our signal handler
+        # Killing the cat session also causes an EOF to appear on the pipe
+        # which will cause the remote server to realize the job is done and finish
         cat > $(InPipe ${jobid})
         # Wait on the completion semaphore
         lockfile -1 "$(JobLock ${jobid})"
@@ -357,7 +365,7 @@ function Enqueue() {
     fi
 
     # Our job is done so do not try and signal the remote
-    trap 'CleanupJob ${jobid} ${outpid} 0' $SIGNALS
+    trap 'CleanupJob ${jobid} ${outpid} 0 ${interact}' $SIGNALS
 
     # Kill the output pipe
     kill -- -$outpid

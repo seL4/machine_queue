@@ -29,8 +29,9 @@ if [ "$ci" = "-r" ]; then
     mkfifo "$BASE/$jobid/console.pipe"
     # This here almost works, except when I try and kill the pid later I have an invalid pid.
     # why? I have no idea, but if this is executed it will leave console sessions open
-    # all over the place
-    setsid bash -c "console -f $console | tee \"$BASE/$jobid/output.pipe\"" &
+    # all over the place. We also redirect the output to 3 different places, which
+    # is possibly a little insane
+    setsid bash -c "console -f $console | { while read line; do echo \$line; echo \$line >> \"$BASE/$jobid/output.pipe\"; echo \$line >> $LOG_FILE; done; }" &
     pid=$!
     while read input
     do

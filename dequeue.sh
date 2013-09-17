@@ -58,11 +58,15 @@ RunJob () {
         trap 'KillChild' SIGINT SIGTERM
         setsid $BASE/run_$system.sh $ci $jobid &
         pid=$!
-        read result < $BASE/$jobid/input.pipe
-        if [ "$result" = "Close" ]; then
-            echo "Killing job at user request"
-            kill -- -$pid
-        else
+        result=""
+        while read result; do
+            if [ "$result" = "Close" ]; then
+                echo "Killing job at user request"
+                kill -- -$pid
+                break
+            fi
+        done < $BASE/$jobid/input.pipe
+        if [ "$result" != "Close" ]; then
             wait $pid
         fi
         trap '' SIGINT SIGTERM
