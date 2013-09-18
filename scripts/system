@@ -7,7 +7,7 @@ fi
 
 
 
-for system in "${SCRIPT_PATH}/scripts/systems/*"
+for system in ${SCRIPT_PATH}/scripts/systems/*
 do
     . ${system}
 done
