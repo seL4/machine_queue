@@ -84,6 +84,18 @@ function JobOutput() {
     echo "$(JobDir ${jobid})/output"
 }
 
+function JobError() {
+    local jobid=$1
+    local error_path="$(JobDir ${jobid})/return"
+    if [ -e "${error_path}" ]; then
+        cat "${error_path}"
+        return 0
+    else
+        echo "-1"
+        return -1
+    fi
+}
+
 # Removes a job from the runqueue
 # Assumes lock is already held
 function RemoveJob() {
@@ -387,16 +399,25 @@ function Enqueue() {
     fi
 
     # Copy the output
-    echo "Copying output to \"$logfile\""
-    cp "$(JobOutput ${jobid})" "$logfile"
-
+    local source_log=$(JobOutput ${jobid})
+    if ! [ -e "${source_log}" ]; then
+        echo "No output found! Not outputting to ${logfile}"
+    else
+        echo "Copying output to \"$logfile\""
+        cp "$(JobOutput ${jobid})" "$logfile"
+    fi
+    # See if we can get an error code
+    local result=$(JobError ${jobid})
+    if [ $? -ne 0 ]; then
+        result="0"
+    fi
     # Cleanup the job
     echo "Cleaning up job"
     RemoveJob ${jobid}
 
     # Release the lock and go home
     Unlock
-    echo "Done"
+    echo "Done (${result})"
 
-    exit 0
+    exit $result
 }
