@@ -27,7 +27,7 @@ function Enqueue() {
                 shift
                 completion="$1"
                 if [ "$interact" != "" ]; then
-                EnqueueUsage
+                    EnqueueUsage
                     exit -1
                 fi
                 interact="-c"

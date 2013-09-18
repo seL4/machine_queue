@@ -5,6 +5,8 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
+QUEUE="${BASE}/runqueue"
+
 function ReadQueue() {
     cat "${QUEUE}"
 }
