@@ -11,7 +11,8 @@ SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP"
 
 function NewJobID() {
     # Increment job ID
-    local last_jobid=`cat "$QUEUE" | cut -f 1 -d' ' | sort -n | tail -1`
+    EnsureLock
+    local last_jobid=`ReadQueue | cut -f 1 -d' ' | sort -n | tail -1`
     local jobid="0"
     if [ "$last_jobid" != "" ]; then
         (( jobid = last_jobid + 1 ))
@@ -23,16 +24,14 @@ function CountJobs() {
     local jobtype="$1"
     local system="$2"
     local user="$3"
-    cat "${QUEUE}" | cut -d' ' -f 2,3,4 | grep "${jobtype} ${system} ${user}" | wc -l | cut -f 1 -d' '
+    ReadQueue | cut -d' ' -f 2,3,4 | grep "${jobtype} ${system} ${user}" | wc -l | cut -f 1 -d' '
 }
 
-function FixQueuePermissions() {
-    # Some methods of modifying the runqueue will recreate the file with the
-    # users default permissions. we need to reset them if this happens
-    # use -f to force chown/chmod to supress error output in the case where
-    # the permissions are already sensible / the file is owned by someone else
-    chown -f :ertos_src "${QUEUE}" 2>&1 > /dev/null
-    chmod -f g+rw "${QUEUE}" 2>&1 > /dev/null
+function RemoveJob() {
+    local jobid=$1
+    local jobdir=$(JobDir ${jobid})
+    rm -rf "${jobdir}"
+    RemoveFromQueue "${jobid}"
 }
 
 function AddJob() {
@@ -49,8 +48,7 @@ function AddJob() {
         return 1
     fi
     # Add the line to the queue
-    echo ${jobline} >> ${QUEUE}
-    FixQueuePermissions
+    AddToQueue "${jobline}"
     echo ${jobid}
     return 0
 }
@@ -90,16 +88,6 @@ function JobError() {
         echo "-1"
         return -1
     fi
-}
-
-# Removes a job from the runqueue
-# Assumes lock is already held
-function RemoveJob() {
-    local jobid=$1
-    local jobdir=$(JobDir ${jobid})
-    rm -rf "${jobdir}"
-    perl -i -p -e "s/^($jobid .*\n)//m" "$QUEUE"
-    FixQueuePermissions
 }
 
 function MakeJob() {
@@ -156,7 +144,7 @@ function MakeJob() {
 
 function JobStatus() {
     local jobid=$1
-    grep "^${jobid}" "${QUEUE}" | cut -d' ' -f 2
+    ReadQueue | grep "^${jobid}" | cut -d' ' -f 2
 }
 
 # If the job we enqued is still queued (and not running or completed) then removeit it

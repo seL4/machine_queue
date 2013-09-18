@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function ReadQueue() {
+    cat "${QUEUE}"
+}
+
+function FixQueuePermissions() {
+    # Some methods of modifying the runqueue will recreate the file with the
+    # users default permissions. we need to reset them if this happens
+    # use -f to force chown/chmod to supress error output in the case where
+    # the permissions are already sensible / the file is owned by someone else
+    chown -f :ertos_src "${QUEUE}" 2>&1 > /dev/null
+    chmod -f g+rw "${QUEUE}" 2>&1 > /dev/null
+}
+
+function AddToQueue() {
+    local jobline=$1
+    EnsureLock
+    echo ${jobline} >> ${QUEUE}
+    FixQueuePermissions
+}
+
+# Removes a job from the runqueue
+# Assumes lock is already held
+function RemoveFromQueue() {
+    EnsureLock
+    perl -i -p -e "s/^($jobid .*\n)//m" "$QUEUE"
+    FixQueuePermissions
+}

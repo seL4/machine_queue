@@ -12,15 +12,41 @@ LOCKTIMEOUT=60
 QUEUE="$BASE/runqueue"
 RUNQUEUELOCK="$QUEUE"".lock"
 
+# Remember in shell land that true and false are inverted, with 0 being true
+have_queue_lock=1
+
+function HaveLock() {
+    return $have_queue_lock
+}
 function Lock() {
+    if HaveLock; then
+        echo "Already have lock! Scripts are fucked"
+        exit -1
+    fi
     lockfile -l "$LOCKTIMEOUT" "$RUNQUEUELOCK"
+    if [ $? -eq 0 ]; then
+        have_queue_lock=0
+    fi
 }
 function Unlock() {
-    rm -f "$RUNQUEUELOCK"
+    if ! HaveLock; then
+        echo "Do not have lock! Why are we releasing it? Scripts are fucked"
+        exit -1
+    else
+        rm -f "$RUNQUEUELOCK"
+    fi
+    have_queue_lock=1
+}
+function EnsureLock() {
+    if ! HaveLock; then
+        echo "Cannot create job without lock!"
+        exit -1
+    fi
 }
 
 # Add all the other bits and pieces
 
 . "${SCRIPT_PATH}/scripts/system"
+. "${SCRIPT_PATH}/scripts/queue"
 . "${SCRIPT_PATH}/scripts/job"
 . "${SCRIPT_PATH}/scripts/enqueue"
