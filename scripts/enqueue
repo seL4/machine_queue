@@ -98,8 +98,7 @@ function Enqueue() {
 
     # Check that the number of files specified is correct
     if [ "$interact" != "-r" ] ; then
-        SystemCorrectNumberOfFiles "${system}" "${file_count}"
-        if [ $? -ne 0 ]; then
+        if ! SystemCorrectNumberOfFiles "${system}" "${file_count}"; then
             echo "Wrong number of files specified for system ${system}"
             exit -1
         fi
@@ -115,6 +114,7 @@ function Enqueue() {
 
     # Grab the main lock
     Lock
+    EnsureLock
 
     # Add the job
     local jobid=$(AddJob "${system}" "${interact}")
@@ -202,9 +202,6 @@ function Enqueue() {
     fi
     # See if we can get an error code
     local result=$(JobError ${jobid})
-    if [ $? -ne 0 ]; then
-        result="0"
-    fi
     # Cleanup the job
     echo "Cleaning up job"
     RemoveJob ${jobid}

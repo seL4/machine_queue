@@ -83,10 +83,8 @@ function JobError() {
     local error_path="$(JobDir ${jobid})/return"
     if [ -e "${error_path}" ]; then
         cat "${error_path}"
-        return 0
     else
-        echo "-1"
-        return -1
+        echo "0"
     fi
 }
 
@@ -180,11 +178,9 @@ function CleanupJob() {
         # Reset the signal handler to not close the remote incase someone
         # is spammy with the signals
         trap 'CleanupJob ${jobid} ${outpid} 0' $SIGNALS
-        closeremote=""
         if [ ${result} -ne 0 ]; then
             # Pack up and go home
             kill -- -$outpid
-            exit 0
         else
             echo "Cleaning up job, please wait a few seconds"
             # If we are waiting till completion text then we need to explicitly tell the
@@ -195,6 +191,5 @@ function CleanupJob() {
         fi
     else
         kill -- -$outpid
-        exit 0
     fi
 }
