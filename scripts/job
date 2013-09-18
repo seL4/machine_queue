@@ -140,8 +140,17 @@ function MakeJob() {
     chmod g+x "$jobdir"
 }
 
+function JobExists() {
+    local jobid=$1
+    ReadQueue | grep -q "^${jobid}"
+    return $?
+}
+
 function JobStatus() {
     local jobid=$1
+    if ! JobExists "${jobid}"; then
+        echo "Cannot query status of nonexistent job!"
+    fi
     ReadQueue | grep "^${jobid}" | cut -d' ' -f 2
 }
 
@@ -169,6 +178,9 @@ function CleanupJob() {
     local interact=$4
     RemoveIfQueued ${jobid}
     result=$?
+    if [ ${result} -ne 0 ]; then
+        signal_did_cleanup=1;
+    fi
     if [ "$closeremote" -ne 0 ]; then
         # We need to notify the server. But only if we were running
         # If we weren't running then the server will not be listening

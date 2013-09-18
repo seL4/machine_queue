@@ -151,7 +151,7 @@ function Enqueue() {
     # Setup a trap handler that will remove this job and notify the server if we try and quit
     # we will fiddle with this trap a bit for when it needs to attempt to tell the remote
     # server to shut down
-    trap 'CleanupJob ${jobid} ${outpid} 1 ${interact}' $SIGNALS
+    trap "CleanupJob ${jobid} ${outpid} 1 ${interact}" $SIGNALS
 
     # Hook up the pipe to feed input from user to console if required
     if [ "$interact" != "-c" ]; then
@@ -171,7 +171,14 @@ function Enqueue() {
     fi
 
     # Our job is done so do not try and signal the remote
-    trap 'CleanupJob ${jobid} ${outpid} 0 ${interact}' $SIGNALS
+    trap "CleanupJob ${jobid} ${outpid} 0 ${interact}" $SIGNALS
+
+    # Check if the signal handler cleaned up the job. This would only happen if it was queued
+    # and hence we have no output to grab or anything
+    if [ "${signal_did_cleanup}" -eq 1 ]; then
+        echo "Job canceled while queued. Done"
+        exit 0
+    fi
 
     # Kill the output pipe
     kill -- -$outpid
