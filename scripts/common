@@ -22,4 +22,5 @@ function Unlock() {
 # Add all the other bits and pieces
 
 . "${SCRIPT_PATH}/scripts/system"
+. "${SCRIPT_PATH}/scripts/job"
 . "${SCRIPT_PATH}/scripts/enqueue"
