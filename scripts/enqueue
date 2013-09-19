@@ -5,11 +5,36 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-function EnqueueUsage() {
-    echo "Usage: $0 enqueue -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
+function EnqueueSynchronousUsage() {
+    echo "$0 run -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
+    echo
+    echo "   Enqueues a new job and then waits for it to complete before returning."
+    echo "   Jobs can include reservations and interactive sessions due to"
+    echo "   synchronous nature."
+    echo
+    echo "   Output from the machine is generally collected and passed back to the"
+    echo "   user both on stdout and in the form of an option logfile."
+    echo
+    echo "   stdin will be redirected to the machine in the case of interactive and"
+    echo "   reservation modes."
+    echo
+    echo "   Jobs can be canceled at any time with ^C, which will notify the server"
+    echo "   if the job is running and remove the job from the queue."
+    echo
+    echo "   Returns 0 on success, nonzero if something went wrong"
+    echo
+    echo "Options:"
+    echo
+    echo " -r          Reserves the device. Will not reboot or run an image"
+    echo " -i          Once the image is loaded and running stdin is connected for interactive use"
+    echo " -c TEXT     Image is run until the specified regular completion text"
+    echo " -l FILE     Optional location to write all the console output to"
+    echo " -s TEXT     Specifies which machine this job is for"
+    echo " -f FILE [+] Files to use as the job image"
+    echo
 }
 
-function Enqueue() {
+function EnqueueSynchronous() {
     # Parse the command line
     local file_count=0
     local logfile=""
@@ -27,7 +52,7 @@ function Enqueue() {
                 shift
                 completion="$1"
                 if [ "$interact" != "" ]; then
-                    EnqueueUsage
+                    EnqueueSynchronousUsage
                     exit -1
                 fi
                 interact="-c"
@@ -37,7 +62,7 @@ function Enqueue() {
                 echo "Interactive mode not currently supported. Please use -c and connect on consoles manually"
                 exit -1
                 if [ "$completion" != "" ]; then
-                    EnqueueUsage
+                    EnqueueSynchronousUsage
                     exit -1
                 fi
             ;;
@@ -65,7 +90,7 @@ function Enqueue() {
             ;;
             -[A-Za-z]*)
                 echo "Unknown option $1"
-                EnqueueUsage
+                EnqueueSynchronousUsage
                 exit -1
             ;;
             *)
@@ -76,16 +101,12 @@ function Enqueue() {
     done
 
     # Check that we got enough parameters
-    if [ "$logfile" = "" ]; then
-        EnqueueUsage
-        exit -1
-    fi
     if [ "$system" = "" ]; then
-        EnqueueUsage
+        EnqueueSynchronousUsage
         exit -1
     fi
     if [ "$interact" = "" ]; then
-        EnqueueUsage
+        EnqueueSynchronousUsage
         exit -1
     fi
 
@@ -204,8 +225,12 @@ function Enqueue() {
     if ! [ -e "${source_log}" ]; then
         echo "No output found! Not outputting to ${logfile}"
     else
-        echo "Copying output to \"$logfile\""
-        cp "$(JobOutput ${jobid})" "$logfile"
+        if [ "${logfile}" = "" ]; then
+            echo "No logfile specified. Discarding output"
+        else
+            echo "Copying output to \"$logfile\""
+            cp "${source_log}" "$logfile"
+        fi
     fi
     # See if we can get an error code
     local result=$(JobError ${jobid})

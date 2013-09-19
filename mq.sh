@@ -14,7 +14,20 @@ popd  > /dev/null
 . "${SCRIPT_PATH}/scripts/common"
 
 Usage () {
-    echo "Usage: $0 -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
+    echo "Machine Queue"
+    echo
+    echo "General user commands:"
+    echo
+    echo "run      Run a new job on a machine"
+    echo "enqueue  Enqueue a job to be collected later"
+    echo "systems  Query information on available machines"
+    echo
+    echo "Management commands:"
+    echo
+    echo "Server commands:"
+    echo
+    echo "dequeue  Run a job in the queue"
+    echo
 }
 
 # Expect command to be run to be the first argument
@@ -26,8 +39,8 @@ fi
 command=$1
 shift
 case "$command" in
-    enqueue)
-        Enqueue "$@"
+    run)
+        EnqueueSynchronous "$@"
         # Should not get here
         exit -1
     ;;
