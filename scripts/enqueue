@@ -175,7 +175,7 @@ function Enqueue() {
 
     # Check if the signal handler cleaned up the job. This would only happen if it was queued
     # and hence we have no output to grab or anything
-    if [ "${signal_did_cleanup}" -eq 1 ]; then
+    if [ "${signal_did_cleanup}" = "1" ]; then
         echo "Job canceled while queued. Done"
         exit 0
     fi
