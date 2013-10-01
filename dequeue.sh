@@ -15,14 +15,14 @@ system=$1
 RunJob () {
 
     Lock
-    job=`grep "^[0-9]* RUNNING $system" $QUEUE`
+    job=`grep "^[0-9]* RUNNING $system " $QUEUE`
     if [ "$job" != "" ]; then
         echo "Already have running jobs on $system!"
         Unlock
         exit 1
     fi
 
-    job=`grep "^[0-9]* QUEUED $system" $QUEUE | head -1`
+    job=`grep "^[0-9]* QUEUED $system " $QUEUE | head -1`
     if [ "$job" = "" ]; then
         echo "No jobs to run on $system"
         Unlock
