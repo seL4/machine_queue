@@ -30,6 +30,20 @@ Usage () {
     echo
 }
 
+RunRemotely () {
+    # Determine the prefix we need
+    local prefix="${USER}@$(hostname):$(pwd)/"
+    ssh -t ${HOST} "${BASE}/mq.sh" "$@" -p "${prefix}"
+    exit $?
+}
+
+# Check if we are running on the correct host or not
+if [ $(hostname) != ${HOST} ]; then
+    RunRemotely "$@"
+    # Should not get here
+    exit -1
+fi
+
 # Expect command to be run to be the first argument
 if [ "$#" -lt 1 ]; then
     Usage

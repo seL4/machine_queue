@@ -42,6 +42,7 @@ function EnqueueSynchronous() {
     local completion=""
     local files=""
     local system=""
+    local file_prefix=""
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -l)
@@ -71,10 +72,10 @@ function EnqueueSynchronous() {
             ;;
             -f)
                 shift
-                if ! [ -f "$1" ]; then
-                    echo "File \"$1\" either does not exist, or is not considered a valid file"
-                    exit -1
-                fi
+#                if ! [ -f "$1" ]; then
+#                    echo "File \"$1\" either does not exist, or is not considered a valid file"
+#                    exit -1
+#                fi
                 if [ "$files" != "" ]; then
                     files="$files\n"
                 fi
@@ -84,6 +85,10 @@ function EnqueueSynchronous() {
             -s)
                 shift
                 system="$1"
+            ;;
+            -p)
+                shift
+                file_prefix="$1"
             ;;
             --)
                 break
@@ -150,7 +155,7 @@ function EnqueueSynchronous() {
     echo "There are already $(( $(CountJobs QUEUED ${system} '.*') - 1 )) jobs in queue for ${system}"
 
     # Attempt to construct the job, will fail if anything went wrong
-    MakeJob ${jobid}
+    MakeJob ${jobid} "${file_prefix}" "${files}"
     if [ $? -ne 0 ]; then
         RemoveJob ${jobid}
         Unlock
@@ -229,7 +234,7 @@ function EnqueueSynchronous() {
             echo "No logfile specified. Discarding output"
         else
             echo "Copying output to \"$logfile\""
-            cp "${source_log}" "$logfile"
+            scp "${source_log}" "${file_prefix}$logfile"
         fi
     fi
     # See if we can get an error code

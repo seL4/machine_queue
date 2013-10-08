@@ -14,7 +14,9 @@ system=$1
 
 RunJob () {
 
+    echo "Acquiring runqueue lock..."
     Lock
+    echo "Lock acquired"
     job=`grep "^[0-9]* RUNNING $system " $QUEUE`
     if [ "$job" != "" ]; then
         echo "Already have running jobs on $system!"

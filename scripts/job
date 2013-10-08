@@ -7,7 +7,7 @@ fi
 
 # List of a bunch of signals that we will try and trap on. This is basically a
 # 'if anything at all happens try and shut down our job cleanly' approach
-SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP"
+SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
 function NewJobID() {
     # Increment job ID
@@ -24,7 +24,7 @@ function CountJobs() {
     local jobtype="$1"
     local system="$2"
     local user="$3"
-    ReadQueue | cut -d' ' -f 2,3,4 | grep "${jobtype} ${system} ${user}" | wc -l | cut -f 1 -d' '
+    ReadQueue | cut -d' ' -f 2,3,4 | grep "${jobtype} ${system} ${user} " | wc -l | cut -f 1 -d' '
 }
 
 function RemoveJob() {
@@ -92,6 +92,8 @@ function MakeJob() {
     # Make the directory for the job
     local jobid=$1
     local jobdir=$(JobDir ${jobid})
+    local file_prefix=$2
+    local files=$3
     mkdir "$jobdir"
     if [ $? -ne 0 ]; then
         echo "Failed to make job directory"
@@ -102,7 +104,7 @@ function MakeJob() {
         i=0
         echo -e "$files" | while read file; do
             echo "Copying input file ($i) \"$file\""
-            cp "$file" "$jobdir/file$i"
+            scp "${file_prefix}$file" "$jobdir/file$i"
             if [ $? -ne 0 ]; then
                 echo "Error copying file"
                 return 1
