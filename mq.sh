@@ -33,7 +33,13 @@ Usage () {
 RunRemotely () {
     # Determine the prefix we need
     local prefix="${USER}@$(hostname):$(pwd)/"
-    ssh -t ${HOST} "${BASE}/mq.sh" "$@" -p "${prefix}"
+    # Need to fix up the args to pass through ssh
+    local argline=""
+    while [ "$#" -ne 0 ]; do
+        argline="${argline} \"$1\""
+        shift
+    done
+    ssh -t ${HOST} "${BASE}/mq.sh" "${argline}" -p "${prefix}"
     exit $?
 }
 
