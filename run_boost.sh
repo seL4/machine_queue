@@ -2,4 +2,4 @@
 
 . /scratch/bamboo/machine_queue/common
 
-$BASE/common_run_2file.sh $1 $2 vtd2 vtd2
+$BASE/common_run_2file.sh $1 $2 boost boost
