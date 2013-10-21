@@ -9,6 +9,6 @@ function SystemNumFiles_boost() {
     echo 2
 }
 
-function SystemNotifyBamboo_arndale() {
+function SystemNotifyBamboo_boost() {
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDBOOSTJOBS'
 }
