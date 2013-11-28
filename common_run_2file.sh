@@ -43,11 +43,11 @@ if [ "$ci" = "-r" ]; then
     # Reservations cannot fail as it doesn't make sense
     echo "0" > "$BASE/$jobid/return"
 elif [ "$ci" = "-c" ] ; then
-    $REBOOT_CMD -c "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" -k "$BASE/$jobid/file0" -u "$BASE/$jobid/file1" < $INPUT | tee "$BASE/$jobid/output.pipe"
+    $REBOOT_CMD -c "$COMPLETION_TXT" -t -1 -l "$LOG_FILE" -k "$BASE/$jobid/file0" -u "$BASE/$jobid/file1" < $INPUT 2>&1 | tee "$BASE/$jobid/output.pipe"
     echo ${PIPESTATUS[0]} > "$BASE/$jobid/return"
 else
     # Need to special case -c and -i because you cannot specify a blank command line option after -i
-    $REBOOT_CMD -i -t -1 -l "$LOG_FILE" -k "$BASE/$jobid/file0" -u "$BASE/$jobid/file1" < $INPUT | tee "$BASE/$jobid/output.pipe"
+    $REBOOT_CMD -i -t -1 -l "$LOG_FILE" -k "$BASE/$jobid/file0" -u "$BASE/$jobid/file1" < $INPUT 2>&1 | tee "$BASE/$jobid/output.pipe"
     echo ${PIPESTATUS[0]} > "$BASE/$jobid/return"
 fi
 
