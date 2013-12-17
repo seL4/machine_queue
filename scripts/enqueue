@@ -150,6 +150,9 @@ function EnqueueSynchronous() {
 
     echo "Created Job with ID ${jobid}"
     echo "There are already $(( $(CountJobs QUEUED ${system} '.*') - 1 )) jobs in queue for ${system}"
+    if [ $(CountJobs RUNNING ${system} '.*') -ne 0 ] ; then
+        echo "Another job is already running on ${system}, you may have to wait"
+    fi
 
     # Attempt to construct the job, will fail if anything went wrong
     MakeJob ${jobid} "${file_prefix}" "${files}"
