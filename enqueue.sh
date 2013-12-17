@@ -235,6 +235,8 @@ elif [ "$system" = "boost" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDBOOSTJOBS'
 fi
 
+echo "Bamboo has been notified. If you do not have a deep knowledge of Bamboo please ignore the above XML output and just be patient. You are using shared machines and your job will run eventually"
+
 # Setup a trap handler that will remove this job and notify the server if we try and quit
 trap 'CleanupJob' SIGINT SIGTERM SIGHUP
 # Hookup the output pipe
