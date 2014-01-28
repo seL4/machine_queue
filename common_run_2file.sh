@@ -26,7 +26,7 @@ fi
 
 if [ "$ci" = "-r" ]; then
     # spawn console session
-    mkfifo "$BASE/$jobid/console.pipe"
+#    mkfifo "$BASE/$jobid/console.pipe"
     # This here almost works, except when I try and kill the pid later I have an invalid pid.
     # why? I have no idea, but if this is executed it will leave console sessions open
     # all over the place. We also redirect the output to 3 different places, which
@@ -37,7 +37,7 @@ if [ "$ci" = "-r" ]; then
     pid=$!
     while read input
     do
-        echo $input >> "$BASE/$jobid/console.pipe"
+#        echo $input >> "$BASE/$jobid/console.pipe"
     done < $INPUT
     kill -- -$pid
     # Reservations cannot fail as it doesn't make sense

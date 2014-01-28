@@ -187,13 +187,10 @@ function EnqueueSynchronous() {
         # Killing the cat session also causes an EOF to appear on the pipe
         # which will cause the remote server to realize the job is done and finish
         cat > $(InPipe ${jobid})
-        # Wait on the completion semaphore
+    fi
+    # Wait on the completion semaphore.
+    if ! lockfile -1 "$(JobLock ${jobid})"; then
         lockfile -1 "$(JobLock ${jobid})"
-    else
-        # Wait on the completion semaphore.
-        if ! lockfile -1 "$(JobLock ${jobid})"; then
-            lockfile -1 "$(JobLock ${jobid})"
-        fi
     fi
 
     # Our job is done so do not try and signal the remote
@@ -205,9 +202,6 @@ function EnqueueSynchronous() {
         echo "Job canceled while queued. Done"
         exit 0
     fi
-
-    # Kill the output pipe
-    kill -- -$outpid
 
     # Everything is cleaned up, no longer need the trap handler
     trap '' $SIGNALS
@@ -221,9 +215,14 @@ function EnqueueSynchronous() {
     # Verify our job is complete
     if [ "$(JobStatus ${jobid})" != 'COMPLETE' ]; then
         echo "Job failed to complete or missing!"
+        # Kill the output pipe
+        kill -- -$outpid
         Unlock
         exit 1
     fi
+
+    # Kill the output pipe
+    kill -- -$outpid
 
     # Copy the output
     local source_log=$(JobOutput ${jobid})

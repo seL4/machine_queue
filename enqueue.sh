@@ -225,6 +225,8 @@ elif [ "$system" = "odroid" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDODROIDJOBS'
 elif [ "$system" = "vtd2" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDVTD2JOBS'
+elif [ "$system" = "vtd" ]; then
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDVTDJOBS'
 elif [ "$system" = "sabre" ]; then
     curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDSABREJOBS'
 elif [ "$system" = "sabre3" ]; then
