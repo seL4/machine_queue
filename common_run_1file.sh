@@ -37,6 +37,7 @@ if [ "$ci" = "-r" ]; then
     pid=$!
     while read input
     do
+        true
 #        echo $input >> "$BASE/$jobid/console.pipe"
     done < $INPUT
     kill -- -$pid
