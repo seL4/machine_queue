@@ -30,7 +30,10 @@ function AddToQueue() {
 # Removes a job from the runqueue
 # Assumes lock is already held
 function RemoveFromQueue() {
+    echo "Removing from queue. testing lock first"
     EnsureLock
+    echo "Removing jobid $jobid"
     perl -i -p -e "s/^($jobid .*\n)//m" "$QUEUE"
+    echo "Job should be removed"
     FixQueuePermissions
 }
