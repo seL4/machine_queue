@@ -10,6 +10,12 @@ cd `dirname ${SCRIPT_PATH}` > /dev/null
 SCRIPT_PATH=`pwd`;
 popd  > /dev/null
 
+echo "'enqueue.sh' is deprecated. Please use 'mq.sh run'"
+echo "to achieve similar funcionality. Attempting to redirect..."
+
+${SCRIPT_PATH}/mq.sh run "$@"
+exit $!
+
 # Include common elements
 . "${SCRIPT_PATH}/common"
 
