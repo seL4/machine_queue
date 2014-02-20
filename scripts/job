@@ -9,201 +9,96 @@ fi
 # 'if anything at all happens try and shut down our job cleanly' approach
 SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
-function NewJobID() {
-    # Increment job ID
-    EnsureLock
-    local last_jobid=`ReadQueue | cut -f 1 -d' ' | sort -n | tail -1`
-    local jobid="0"
-    if [ "$last_jobid" != "" ]; then
-        (( jobid = last_jobid + 1 ))
-    fi
-    echo "${jobid}"
+function JobWantLock() {
+    local system=$1
+    local user=$2
+    echo "${BASE}/${system}/job_want_${user}.lock"
 }
 
-function CountJobs() {
-    local jobtype="$1"
-    local system="$2"
-    local user="$3"
-    ReadQueue | cut -d' ' -f 2,3,4 | grep "${jobtype} ${system} ${user}" | wc -l | cut -f 1 -d' '
+function JobCompleteLock() {
+    local system=$1
+    local user=$2
+    echo "${BASE}/${system}/job_complete_${user}.lock"
+}
+
+# Makes a lock assuming that it doesn't exist
+function MakeLock() {
+    local lock=$1
+    RemoteCommand lockfile -1 -r 1 "${lock}"
+    if [ $? -eq 0 ]; then
+        RemoteCommand chown -f :ertos_src "${lock}" 2>&1 > /dev/null
+        return 0
+    fi
+    return -1
+}
+
+function RemoveLock() {
+    local lock=$1
+    RemoteCommand rm -f "${lock}"
 }
 
 function RemoveJob() {
-    local jobid=$1
-    local jobdir=$(JobDir ${jobid})
-    rm -rf "${jobdir}"
-    RemoveFromQueue "${jobid}"
+    local system=$1
+    local user=$2
+    # Remove the two locks
+    RemoveLock "$(JobWantLock ${system} ${user})"
+    RemoveLock "$(JobCompleteLock ${system} ${user})"
+    # Now remove from the queue
+    RemoveFromQueue ${system} ${user}
 }
 
 function AddJob() {
     local system=$1
-    local interact=$2
-    local date=$(date +"%D %T")
-    local jobid=$(NewJobID)
-    local user=$USER
-    local jobline="${jobid} QUEUED ${system} ${user} ${date} ${interact}"
-    # Verify there aren't extra spaces/lines in our jobline that will confuse us later
-    # Note that the date has two parts
-    if [ $(echo ${jobline} | wc -l) -ne 1 ] || [ $(echo ${jobline} | wc -w) -ne 7 ] ; then
-        echo "Space or newline found unexpectedly in parameters"
-        return 1
-    fi
-    # Add the line to the queue
-    AddToQueue "${jobline}"
-    echo ${jobid}
-    return 0
-}
-
-function JobDir() {
-    local jobid=$1
-    echo "${BASE}/${jobid}"
-}
-
-function InPipe() {
-    local jobid=$1
-    echo "$(JobDir ${jobid})/input.pipe"
-}
-
-function OutPipe() {
-    local jobid=$1
-    echo "$(JobDir ${jobid})/output.pipe"
-}
-
-function JobLock() {
-    local jobid=$1
-    echo "$(JobDir ${jobid})/complete.lock"
-}
-
-function JobOutput() {
-    local jobid=$1
-    echo "$(JobDir ${jobid})/output"
-}
-
-function JobError() {
-    local jobid=$1
-    local error_path="$(JobDir ${jobid})/return"
-    if [ -e "${error_path}" ]; then
-        cat "${error_path}"
-    else
-        echo "0"
-    fi
-}
-
-function MakeJob() {
-    # Make the directory for the job
-    local jobid=$1
-    local jobdir=$(JobDir ${jobid})
-    local file_prefix=$2
-    local files=$3
-    mkdir "$jobdir"
+    local user=$2
+    # Remove any existing lockfiles
+    RemoveLock "$(JobWantLock ${system} ${user})"
+    RemoveLock "$(JobCompleteLock ${system} ${user})"
+    # Create the two lockfiles
+    MakeLock "$(JobWantLock ${system} ${user})"
     if [ $? -ne 0 ]; then
-        echo "Failed to make job directory"
-        return 1
+        return -1
     fi
-    # Copy all the files, unless the job is just a reservation
-    if [ "$interact" != "-r" ]; then
-        i=0
-        echo -e "$files" | while read file; do
-            echo "Copying input file ($i) \"$file\""
-            scp "${file_prefix}$file" "$jobdir/file$i"
-            if [ $? -ne 0 ]; then
-                echo "Error copying file"
-                return 1
-            fi
-            i=`expr "$i" + 1`
-        done
-        if [ "$interact" = "-c" ]; then
-            echo -e "$completion" > "$jobdir/completion"
-        fi
-    fi
-
-    # Construct the output pipe
-    mkfifo "$(OutPipe ${jobid})"
+    MakeLock "$(JobCompleteLock ${system} ${user})"
     if [ $? -ne 0 ]; then
-        echo "Error making output pipe"
-        return 1
+        RemoveLock "$(JobWantLock ${system} ${user})"
+        return -1
     fi
-
-    mkfifo "$(InPipe ${jobid})"
-    if [ $? -ne 0 ]; then
-        echo "Error making input pipe"
-        return 1
-    fi
-
-    # Create the completion semaphore
-    lockfile "$(JobLock ${jobid})"
-    if [ $? -ne 0 ]; then
-        echo "Error creating lockfile"
-        return 1
-    fi
-
-    # Make sure permissions are sane
-    chown :ertos_src -R "$jobdir"
-    chmod g+rw -R "$jobdir"
-    chmod g+x "$jobdir"
+    AddToQueue ${system} ${user}
 }
 
-function JobExists() {
-    local jobid=$1
-    ReadQueue | grep -q "^${jobid}"
+function WaitJobComplete() {
+    local system=$1
+    local user=$2
+    # Wait until the lockfile appears
+    LockFileInteractive "$(JobCompleteLock ${system} ${user})"
+}
+
+function WaitJob() {
+    local system=$1
+    local user=$2
+    # Wait until the lockfile appears
+    LockFileInteractive "$(JobWantLock ${system} ${user})"
+}
+
+function LockExists() {
+    local lock=$1
+    RemoteCommand [ -e "${lock}" ]
     return $?
 }
 
-function JobStatus() {
-    local jobid=$1
-    if ! JobExists "${jobid}"; then
-        echo "Cannot query status of nonexistent job!"
-    fi
-    ReadQueue | grep "^${jobid}" | cut -d' ' -f 2
+function JobExists() {
+    local system=$1
+    local user=$2
+#    ReadQueue ${system} | grep -q "^${user}\$" || LockExists "$(JobWantLock ${system} ${user})" || LockExists "$(JobCompleteLock ${system} ${user})"
+    ReadQueue ${system} | grep -q "^${user}\$"
+    return $?
 }
 
-# If the job we enqued is still queued (and not running or completed) then removeit it
-# sets a return value for whether the job was running or not
-function RemoveIfQueued() {
-    local jobid=$1
-    local result
-    Lock
-    if [ $(JobStatus ${jobid}) == QUEUED ]; then
-        RemoveJob ${jobid}
-        result=1
-    else
-        result=0
-    fi
-    Unlock
-    return $result
-}
-
-function CleanupJob() {
-    local jobid=$1
-    # pid of the process echoing the output pipe
-    local outpid=$2
-    local closeremote=$3
-    local interact=$4
-    RemoveIfQueued ${jobid}
-    result=$?
-    if [ ${result} -ne 0 ]; then
-        signal_did_cleanup=1;
-    fi
-    if [ "$closeremote" -ne 0 ]; then
-        # We need to notify the server. But only if we were running
-        # If we weren't running then the server will not be listening
-        # so we are done
-        # If we were running then don't exit yet so we can try
-        # and keep running and get any partial output
-        # Reset the signal handler to not close the remote incase someone
-        # is spammy with the signals
-        trap 'CleanupJob ${jobid} ${outpid} 0' $SIGNALS
-        if [ ${result} -ne 0 ]; then
-            # Pack up and go home
-            kill -- -$outpid
-        else
-            echo "Cleaning up job, please wait a few seconds"
-            # If we are waiting till completion text then we need to explicitly tell the
-            # remote server that we are finished
-            if [ "${interact}" = "-c" ]; then
-                echo "Close" > $(InPipe ${jobid})
-            fi
-        fi
-    else
-        kill -- -$outpid
-    fi
+# This function operates WITHOUT holding the lock
+# Attempts to clean up the bare minimum of a job such that
+# it will not block other jobs from running
+function FastRemoveJob() {
+    local system=$1
+    local user=$2
+    RemoveLock "$(JobCompleteLock ${system} ${user})"
 }

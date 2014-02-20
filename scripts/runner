@@ -1,0 +1,100 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+DEFAULTREBOOT=bob
+
+function HaveRebootAndConsole() {
+    for host in duvel bob saison
+    do
+        if [ $(hostname) = $host ]; then
+            return 0
+        fi
+    done
+    return 1
+}
+
+function RebootConsoleRunTwoFiles() {
+    local completion=$1
+    local output=$2
+    local kernel=$3
+    local rootserver=$4
+    local machine=$5
+    if ! HaveRebootAndConsole; then
+        local logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        # need to copy remotely
+        local kernelfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        local rootserverfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        # Strip trailing \r
+        kernelfile=$(echo -n $kernelfile | tr -d '\r')
+        rootserverfile=$(echo -n $rootserverfile | tr -d '\r')
+        logfile=$(echo -n $logfile | tr -d '\r')
+        if ! scp "${kernel}" "${DEFAULTREBOOT}:${kernelfile}"; then
+            echo "Failed to copy kernel image"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${rootserverfile}"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
+            return 1
+        fi
+        if ! scp "${rootserver}" "${DEFAULTREBOOT}:${rootserverfile}"; then
+            echo "Failed to copy rootserver image"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${rootserverfile}"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
+            return 1
+        fi
+        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t -1 -k '${kernelfile}' -u '${rootserverfile}'"
+        local ret=$?
+        if [ "${outout}" != "" ]; then
+            scp "${DEFAULTREBOOT}:${logfile}" "${output}"
+        fi
+        RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
+        RemoteCommandOn ${DEFAULTREBOOT} rm "${rootserverfile}"
+        RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
+        return $ret
+    else
+        if [ "${output}" = "" ]; then
+            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -k "${kernel}" -u "${rootserver}"
+        else
+            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -l "${outout}" -k "${kernel}" -u "${rootserver}"
+        fi
+    fi
+}
+
+function RebootConsoleRunOneFile() {
+    local completion=$1
+    local output=$2
+    local kernel=$3
+    local machine=$5
+    if ! HaveRebootAndConsole; then
+        local logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        # need to copy remotely
+        local kernelfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        # Strip trailing \r
+        kernelfile=$(echo -n $kernelfile | tr -d '\r')
+        logfile=$(echo -n $logfile | tr -d '\r')
+        if ! scp "${kernel}" "${DEFAULTREBOOT}:${kernelfile}"; then
+            echo "Failed to copy kernel image"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
+            RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
+            return 1
+        fi
+        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t -1 -k '${kernelfile}'"
+        local ret=$?
+        if [ "${outout}" != "" ]; then
+            scp "${DEFAULTREBOOT}:${logfile}" "${output}"
+        fi
+        RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
+        RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
+        return $ret
+    else
+        if [ "${output}" = "" ]; then
+            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -k "${kernel}"
+        else
+            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -l "${outout}" -k "${kernel}"
+        fi
+    fi
+}

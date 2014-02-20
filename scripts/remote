@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function RemoteCommandOn() {
+    local host=$1
+    shift
+    local argline=""
+    while [ "$#" -ne 0 ]; do
+        argline="${argline} \"$1\""
+        shift
+    done
+    ssh -tt -oLogLevel=quiet ${host} "stty isig -echoctl -echo ; ${argline}"
+    return $?
+}
+
+function RemoteCommand() {
+    if [ $(hostname) = BLAH${HOST} ]; then
+        "$@"
+        return $?
+    else
+        RemoteCommandOn ${HOST} "$@"
+        return $?
+    fi
+}

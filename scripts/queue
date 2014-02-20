@@ -5,35 +5,45 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-QUEUE="${BASE}/runqueue"
+function QueueName() {
+    local system=$1
+    echo "${BASE}/${system}/queue"
+}
 
 function ReadQueue() {
-    cat "${QUEUE}"
+    local system=$1
+    RemoteCommand cat "$(QueueName ${system})"
+}
+
+function QueueHead() {
+    local system=$1
+    ReadQueue $system | head -1
 }
 
 function FixQueuePermissions() {
+    local system=$1
     # Some methods of modifying the runqueue will recreate the file with the
     # users default permissions. we need to reset them if this happens
     # use -f to force chown/chmod to supress error output in the case where
     # the permissions are already sensible / the file is owned by someone else
-    chown -f :ertos_src "${QUEUE}" 2>&1 > /dev/null
-    chmod -f g+rw "${QUEUE}" 2>&1 > /dev/null
+    RemoteCommand chown -f :ertos_src "$(QueueName ${system})" 2>&1 > /dev/null
+    RemoteCommand chmod -f g+rw "$(QueueName ${system})" 2>&1 > /dev/null
 }
 
 function AddToQueue() {
-    local jobline=$1
-    EnsureLock
-    echo ${jobline} >> ${QUEUE}
-    FixQueuePermissions
+    local system=$1
+    local user=$2
+    # Cannot put shell redirection into remote commands directly
+    # So quote everything and use eval to unpack it
+    RemoteCommand eval "echo '${user}' >> '$(QueueName ${system})'"
+    FixQueuePermissions "${system}"
 }
 
 # Removes a job from the runqueue
 # Assumes lock is already held
 function RemoveFromQueue() {
-    echo "Removing from queue. testing lock first"
-    EnsureLock
-    echo "Removing jobid $jobid"
-    perl -i -p -e "s/^($jobid .*\n)//m" "$QUEUE"
-    echo "Job should be removed"
-    FixQueuePermissions
+    local system=$1
+    local user=$2
+    RemoteCommand perl -i -p -e "s/^(${user}\n)//m" "$(QueueName ${system})"
+    FixQueuePermissions ${system}
 }

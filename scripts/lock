@@ -5,38 +5,37 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-LOCKTIMEOUT=60
-RUNQUEUELOCK="${BASE}/runqueue.lock"
+function LockName() {
+    local system=$1
+    echo "${BASE}/${system}/queue.lock"
+}
 
-# Remember in shell land that true and false are inverted, with 0 being true
-have_queue_lock=1
+function LockSystem() {
+    local system=$1
+    # Retry the lock every second, retrying 60 times for a total of 1 minute
+    # If we don't get it after that then the lock is bugged
+    RemoteCommand lockfile -1 -r 60 "$(LockName ${system})"
+    return $?
+}
 
-function HaveLock() {
-    return $have_queue_lock
+function FastLockSystem() {
+    local system=$1
+    # Retry the lock every second for 2 seconds
+    RemoteCommand lockfile -1 -r 2 "$(LockName ${system})"
+    return $?
 }
-function Lock() {
-    if HaveLock; then
-        echo "Already have lock! Scripts are fucked"
-        exit -1
-    fi
-    lockfile -l "$LOCKTIMEOUT" "$RUNQUEUELOCK"
-    if [ $? -eq 0 ]; then
-        have_queue_lock=0
-    fi
+
+# Performs lockfile, but does scaling delay to acquire the lock fast
+# under the assumption that it should be free. Then slows down to conserve resources
+function LockFileInteractive() {
+    local lock=$1
+    # Try every 2 seconds
+    RemoteCommand lockfile -2 "${lock}"
+    return $?
 }
-function Unlock() {
-    if ! HaveLock; then
-        echo "Do not have lock! Why are we releasing it? Scripts are fucked"
-        exit -1
-    else
-        rm -f "$RUNQUEUELOCK"
-    fi
-    have_queue_lock=1
-}
-function EnsureLock() {
-    if ! HaveLock; then
-        echo "Cannot create job without lock!"
-        exit -1
-    fi
+
+function UnlockSystem() {
+    local sytem=$1
+    RemoteCommand rm -f "$(LockName ${system})"
 }
 

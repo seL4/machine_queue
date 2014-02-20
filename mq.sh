@@ -19,10 +19,8 @@ Usage () {
     echo "General user commands:"
     echo
     echo "run      Run a new job on a machine"
-    echo "enqueue  Enqueue a job to be collected later"
     echo "systems  Query information on available machines"
     echo
-    echo "Management commands:"
     echo
     echo "Server commands:"
     echo
@@ -30,23 +28,9 @@ Usage () {
     echo
 }
 
-RunRemotely () {
-    # Determine the prefix we need
-    local prefix="${USER}@$(hostname):$(pwd)/"
-    # Need to fix up the args to pass through ssh
-    local argline=""
-    while [ "$#" -ne 0 ]; do
-        argline="${argline} \"$1\""
-        shift
-    done
-    ssh -t ${HOST} "${BASE}/mq.sh" "${argline}" -p "${prefix}"
-    exit $?
-}
-
-# Check if we are running on the correct host or not
-if [ $(hostname) != ${HOST} ]; then
-    RunRemotely "$@"
-    # Should not get here
+# Check the version of our scripts compared to the cannonical host
+if ! diff "${SCRIPT_PATH}/VERSION" <(RemoteCommand cat "${BASE}/VERSION" | tr -d '\r'); then
+    echo "Local version of mq.sh appears to differ to version on ${HOST} at ${BASE}"
     exit -1
 fi
 
@@ -60,7 +44,7 @@ command=$1
 shift
 case "$command" in
     run)
-        EnqueueSynchronous "$@"
+        Enqueue "$@"
         # Should not get here
         exit -1
     ;;

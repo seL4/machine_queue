@@ -6,13 +6,16 @@ if [ "${SCRIPT_PATH}" == "" ]; then
 fi
 
 # Define some global configuration variables and routines
-BASE=/scratch/bamboo/machine_queue
-HOST=saison
+BASE=/home/adanis/src/machine_queue
+HOST=kart
 
 # Add all the other bits and pieces
 
+. "${SCRIPT_PATH}/scripts/remote"
 . "${SCRIPT_PATH}/scripts/lock"
+. "${SCRIPT_PATH}/scripts/runner"
 . "${SCRIPT_PATH}/scripts/system"
 . "${SCRIPT_PATH}/scripts/queue"
 . "${SCRIPT_PATH}/scripts/job"
 . "${SCRIPT_PATH}/scripts/enqueue"
+. "${SCRIPT_PATH}/scripts/dequeue"

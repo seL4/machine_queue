@@ -5,18 +5,32 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-function EnqueueSynchronousUsage() {
+# List of a bunch of signals that we will try and trap on. This is basically a
+# 'if anything at all happens try and shut down our job cleanly' approach
+SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
+
+function SignalRemoveJob() {
+    local system=$1
+    local user=$2
+    # First do fast cleanup that doesn't require any locks
+    FastRemoveJob ${system} ${user}
+    echo "Received signal. Finishing clean up, please be patient"
+    # Now attempt to get the lock and do the rest of cleanup. But do so in a fast way
+    if FastLockSystem ${system}; then
+        RemoveJob ${system} ${user}
+        UnlockSystem ${system}
+    fi
+    exit -1
+}
+
+function EnqueueUsage() {
     echo "$0 run -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
     echo
     echo "   Enqueues a new job and then waits for it to complete before returning."
-    echo "   Jobs can include reservations and interactive sessions due to"
-    echo "   synchronous nature."
+    echo "   Jobs can include reservations due to synchronous nature."
     echo
     echo "   Output from the machine is generally collected and passed back to the"
     echo "   user both on stdout and in the form of an option logfile."
-    echo
-    echo "   stdin will be redirected to the machine in the case of interactive and"
-    echo "   reservation modes."
     echo
     echo "   Jobs can be canceled at any time with ^C, which will notify the server"
     echo "   if the job is running and remove the job from the queue."
@@ -26,7 +40,6 @@ function EnqueueSynchronousUsage() {
     echo "Options:"
     echo
     echo " -r          Reserves the device. Will not reboot or run an image"
-    echo " -i          Once the image is loaded and running stdin is connected for interactive use"
     echo " -c TEXT     Image is run until the specified regular completion text"
     echo " -l FILE     Optional location to write all the console output to"
     echo " -s TEXT     Specifies which machine this job is for"
@@ -34,7 +47,7 @@ function EnqueueSynchronousUsage() {
     echo
 }
 
-function EnqueueSynchronous() {
+function Enqueue() {
     # Parse the command line
     local file_count=0
     local logfile=""
@@ -43,6 +56,12 @@ function EnqueueSynchronous() {
     local files=""
     local system=""
     local file_prefix=""
+    local user=$USER
+    if [ "${user}" == "" ]; then
+        echo "Attempted to user USER environment variable to construct a user name"
+        echo "but received an empty string. Please set to your user name"
+        exit -1
+    fi
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -l)
@@ -53,19 +72,10 @@ function EnqueueSynchronous() {
                 shift
                 completion="$1"
                 if [ "$interact" != "" ]; then
-                    EnqueueSynchronousUsage
+                    EnqueueUsage
                     exit -1
                 fi
                 interact="-c"
-            ;;
-            -i)
-                interact="-i"
-                echo "Interactive mode not currently supported. Please use -c and connect on consoles manually"
-                exit -1
-                if [ "$completion" != "" ]; then
-                    EnqueueSynchronousUsage
-                    exit -1
-                fi
             ;;
             -r)
                 interact="-r"
@@ -77,7 +87,7 @@ function EnqueueSynchronous() {
 #                    exit -1
 #                fi
                 if [ "$files" != "" ]; then
-                    files="$files\n"
+                    files="$files "
                 fi
                 files="$files$1"
                 (( file_count++ ))
@@ -95,7 +105,7 @@ function EnqueueSynchronous() {
             ;;
             *)
                 echo "Unknown option $1"
-                EnqueueSynchronousUsage
+                EnqueueUsage
                 exit -1
             ;;
         esac
@@ -104,11 +114,11 @@ function EnqueueSynchronous() {
 
     # Check that we got enough parameters
     if [ "$system" = "" ]; then
-        EnqueueSynchronousUsage
+        EnqueueUsage
         exit -1
     fi
     if [ "$interact" = "" ]; then
-        EnqueueSynchronousUsage
+        EnqueueUsage
         exit -1
     fi
 
@@ -127,46 +137,81 @@ function EnqueueSynchronous() {
         fi
     fi
 
-    # See what this user already has
-    local completed=$(CountJobs COMPLETE '.*' ${USER})
-    if [ ${completed} -ne 0 ]; then
-        echo "You already have ${completed} completed jobs that you have not cleaned up"
-        echo "Please collect these jobs"
+    echo "Acquring lock to enqueue for ${system}"
+
+    # Grab the main lock for the system
+    if ! LockSystem "${system}"; then
+        echo "Failed to acquire system (${system}) lock. Assuming kill occured, nothing to clean up"
         exit -1
     fi
 
-    # Grab the main lock
-    Lock
-    EnsureLock
+    echo "Seeing if ${user} already has a job for ${system}"
 
-    # Add the job
-    local jobid=$(AddJob "${system}" "${interact}")
-    if [ $? -ne 0 ] ; then
-        Unlock
-        # Error message in the job id
-        echo ${jobid}
+    # See if we have an outstanding lock or lock request for this system
+    if JobExists "${system}" "${user}"; then
+        echo "You already have a job queued or in progress for this system (${system})"
+        UnlockSystem "${system}"
         exit -1
     fi
 
-    echo "Created Job with ID ${jobid}"
-    echo "There are already $(( $(CountJobs QUEUED ${system} '.*') - 1 )) jobs in queue for ${system}"
-    if [ $(CountJobs RUNNING ${system} '.*') -ne 0 ] ; then
-        echo "Another job is already running on ${system}, you may have to wait"
-    fi
-
-    # Attempt to construct the job, will fail if anything went wrong
-    MakeJob ${jobid} "${file_prefix}" "${files}"
-    if [ $? -ne 0 ]; then
-        RemoveJob ${jobid}
-        Unlock
+    # Add a job. But first setup a signal handler that will try and remove a running job
+    echo "Attempting to add job for ${user} to ${system}"
+    trap "SignalRemoveJob ${system} ${user}" ${SIGNALS}
+    if ! AddJob "${system}" "${user}"; then
+        echo "Failed to add job somehow. Removing locks and exiting"
+        UnlockSystem "${system}"
         exit -1
     fi
 
     # Setup is done, release the lock
-    Unlock
+    UnlockSystem "${system}"
+    echo "Released queue lock for ${system}"
 
-    echo "Job is queued, notifying bamboo"
+    echo "Notifying bamboo to run ${system}"
     SystemNotifyBamboo ${system}
+
+    echo "Waiting for permission to run..."
+    # Now wait for the job
+    if ! WaitJob "${system}" "${user}"; then
+        # Assume ctrl+c, clean up ASAP. This does not require any locks
+        FastRemoveJob "${system}" "${user}"
+        # Now do the rest
+        if ! LockSystem "${system}"; then
+            echo "Failed to acquire system lock. Job may not have been cleaned up correctly"
+            exit -1
+        fi
+        RemoveJob "${system}" "${user}"
+        UnlockSystem "${system}"
+        echo "Failed to wait for the chance to run job. Cleaned up and now exiting"
+        exit -1
+    fi
+
+    echo "We are allowed to run"
+    local ret=0
+
+    if [ "${interact}" = "-r" ]; then
+        echo "This is a reservation. You now own ${system} and"
+        echo "can do what you want. Press ctrl+d or enter here when done"
+        read line
+    else
+        # Run the image. 'files' is deliberately no in quotes so the multiple
+        # files expands to multiple arguments
+        SystemRunImage ${system} "${completion}" "${logfile}" $files
+        ret=$?
+    fi
+
+
+    echo "All done. Cleaning up job for ${user} on ${system}"
+    if ! LockSystem ${system}; then
+        FastRemoveJob ${system} ${user}
+        echo "Failed to acquire lock to cleanup job. Cleaning up what we can without a lock"
+        exit -1
+    fi
+
+    RemoveJob ${system} ${user}
+    UnlockSystem ${system}
+
+    exit $ret
 
     # Setup the output pipe that will feed data from the console
     # to the user terminal

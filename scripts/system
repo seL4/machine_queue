@@ -36,3 +36,10 @@ function SystemNotifyBamboo() {
     local system=$1
     SystemNotifyBamboo_${system}
 }
+
+function SystemRunImage() {
+    local system=$1
+    shift
+    SystemRunImage_${system} "$@"
+    return $?
+}
