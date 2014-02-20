@@ -17,6 +17,6 @@ function SystemRunImage_kzm() {
     local completion=$1
     local output=$2
     local kernel=$3
-    RebootConsoleRunOneFile "${completion}" "${outout}" "${kernel}" kzm
+    RebootConsoleRunOneFile "${completion}" "${outout}" "${kernel}" kzm11
     return $?
 }

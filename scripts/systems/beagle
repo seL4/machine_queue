@@ -17,7 +17,7 @@ function SystemRunImage_beagle() {
     local completion=$1
     local output=$2
     local kernel=$3
-    RebootConsoleRunOneFile "${completion}" "${outout}" "${kernel}" beagle
+    RebootConsoleRunOneFile "${completion}" "${outout}" "${kernel}" beagle1
     return $?
 }
 
