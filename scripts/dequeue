@@ -42,4 +42,6 @@ function Dequeue() {
     fi
     RemoveJob ${system} ${user}
     UnlockSystem "${system}"
+    # Go forever
+    Dequeue "${system}"
 }
