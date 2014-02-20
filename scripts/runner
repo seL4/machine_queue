@@ -59,7 +59,7 @@ function RebootConsoleRunTwoFiles() {
         if [ "${output}" = "" ]; then
             /tftpboot/${machine}/reboot -t -1 -c "${completion}" -k "${kernel}" -u "${rootserver}"
         else
-            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -l "${outout}" -k "${kernel}" -u "${rootserver}"
+            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -l "${output}" -k "${kernel}" -u "${rootserver}"
         fi
     fi
 }
@@ -94,7 +94,7 @@ function RebootConsoleRunOneFile() {
         if [ "${output}" = "" ]; then
             /tftpboot/${machine}/reboot -t -1 -c "${completion}" -k "${kernel}"
         else
-            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -l "${outout}" -k "${kernel}"
+            /tftpboot/${machine}/reboot -t -1 -c "${completion}" -l "${output}" -k "${kernel}"
         fi
     fi
 }
