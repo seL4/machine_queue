@@ -37,6 +37,7 @@ function AddToQueue() {
     # So quote everything and use eval to unpack it
     RemoteCommand eval "echo '${user}' >> '$(QueueName ${system})'"
     FixQueuePermissions "${system}"
+    return 0
 }
 
 # Removes a job from the runqueue
