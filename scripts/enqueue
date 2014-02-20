@@ -144,6 +144,7 @@ function Enqueue() {
         echo "Failed to acquire system (${system}) lock. Assuming kill occured, nothing to clean up"
         exit -1
     fi
+    trap "UnlockSystem ${system}; exit 1" ${SIGNALS}
 
     echo "Seeing if ${user} already has a job for ${system}"
 
@@ -156,7 +157,6 @@ function Enqueue() {
 
     # Add a job. But first setup a signal handler that will try and remove a running job
     echo "Attempting to add job for ${user} to ${system}"
-    trap "SignalRemoveJob ${system} ${user}" ${SIGNALS}
     if ! AddJob "${system}" "${user}"; then
         echo "Failed to add job somehow. Removing locks and exiting"
         UnlockSystem "${system}"
@@ -165,6 +165,7 @@ function Enqueue() {
 
     # Setup is done, release the lock
     UnlockSystem "${system}"
+    trap "SignalRemoveJob ${system} ${user}" ${SIGNALS}
     echo "Released queue lock for ${system}"
 
     echo "Notifying bamboo to run ${system}"
@@ -180,8 +181,10 @@ function Enqueue() {
             echo "Failed to acquire system lock. Job may not have been cleaned up correctly"
             exit -1
         fi
+        trap "UnlockSystem ${SYSTEM}; exit 1" ${SIGNALS}
         RemoveJob "${system}" "${user}"
         UnlockSystem "${system}"
+        trap "exit 1" ${SIGNALS}
         echo "Failed to wait for the chance to run job. Cleaned up and now exiting"
         exit -1
     fi
@@ -207,9 +210,11 @@ function Enqueue() {
         echo "Failed to acquire lock to cleanup job. Cleaning up what we can without a lock"
         exit -1
     fi
+    trap "UnlockSystem ${SYSTEM}; exit 1" ${SIGNALS}
 
     RemoveJob ${system} ${user}
     UnlockSystem ${system}
+    trap "exit 1" ${SIGNALS}
 
     exit $ret
 
