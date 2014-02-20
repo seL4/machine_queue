@@ -6,8 +6,8 @@ if [ "${SCRIPT_PATH}" == "" ]; then
 fi
 
 # Define some global configuration variables and routines
-BASE=/home/adanis/src/machine_queue
-HOST=kart
+BASE=/scratch/bamboo/machine_queue
+HOST=saison
 
 # Add all the other bits and pieces
 
