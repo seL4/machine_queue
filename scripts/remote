@@ -18,7 +18,7 @@ function RemoteCommandOn() {
 }
 
 function RemoteCommand() {
-    if [ $(hostname) = BLAH${HOST} ]; then
+    if [ $(hostname) = ${HOST} ]; then
         "$@"
         return $?
     else
