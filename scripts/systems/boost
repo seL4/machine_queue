@@ -18,6 +18,6 @@ function SystemRunImage_boost() {
     local output=$2
     local kernel=$3
     local rootserver=$4
-    RebootConsoleRunTwoFiles "${completion}" "${outout}" "${kernel}" "${rootserver}" boost
+    RebootConsoleRunTwoFiles "${completion}" "${output}" "${kernel}" "${rootserver}" boost
     return $?
 }

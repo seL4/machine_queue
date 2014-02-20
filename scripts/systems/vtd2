@@ -18,7 +18,7 @@ function SystemRunImage_vtd2() {
     local output=$2
     local kernel=$3
     local rootserver=$4
-    RebootConsoleRunTwoFiles "${completion}" "${outout}" "${kernel}" "${rootserver}" vtd2
+    RebootConsoleRunTwoFiles "${completion}" "${output}" "${kernel}" "${rootserver}" vtd2
     return $?
 }
 
