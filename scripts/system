@@ -5,13 +5,6 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-
-
-for system in ${SCRIPT_PATH}/scripts/systems/*
-do
-    . ${system}
-done
-
 function IsSystemValid() {
     local system=$1
     if [ -e "${SCRIPT_PATH}/scripts/systems/${system}" ]; then
@@ -20,6 +13,21 @@ function IsSystemValid() {
         return 1
     fi
 }
+
+function SystemList() {
+    local system=""
+    for system in `ls ${SCRIPT_PATH}/scripts/systems/`
+    do
+        if IsSystemValid; then
+            echo "${system}"
+        fi
+    done
+}
+
+for system in `SystemList`
+do
+    . ${SCRIPT_PATH}/scripts/systems/${system}
+done
 
 function SystemCorrectNumberOfFiles() {
     local system=$1

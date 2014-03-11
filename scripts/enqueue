@@ -125,7 +125,8 @@ function Enqueue() {
     # Verify the requested system exists
     IsSystemValid "${system}"
     if [ $? -ne 0 ] ; then
-        echo "System $system does not exist"
+        echo "System $system does not exist. Valid systems are"
+        SystemList
         exit -1
     fi
 

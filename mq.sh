@@ -48,6 +48,10 @@ case "$command" in
         # Should not get here
         exit -1
     ;;
+    systems)
+        SystemList
+        exit 0
+    ;;
     dequeue)
         Dequeue "$@"
         # Should not get here
