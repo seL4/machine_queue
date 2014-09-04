@@ -10,7 +10,7 @@ function SystemNumFiles_haswell3() {
 }
 
 function SystemNotifyBamboo_haswell3() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDHASWELL3JOBS'
+    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RQHJ'
 }
 
 function SystemRunImage_haswell3() {
