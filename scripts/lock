@@ -7,35 +7,49 @@ fi
 
 function LockName() {
     local system=$1
-    echo "${BASE}/${system}/queue.lock"
+    echo "${BASE}/${system}.lock"
+}
+
+function LockOwner() {
+    local system=$1
+    RemoteCommand bash -c "stat --format='%U' $(LockName ${system}) 2>/dev/null" | sed 's/\r//g'
+}
+
+function LockGetInfo() {
+    RemoteCommand bash -c "stat --format='%U,%y' $(LockName ${system}) 2>/dev/null"| sed 's/\r//g'
+}
+
+function LockSystemPrintInfo() {
+    local system=$1
+    local info=$(LockGetInfo)
+    local owner=`echo $info | cut -d ',' -f 1`
+    local since=`echo $info | cut -d ',' -f 2`
+    if [ "${owner}" == "" ]; then
+        echo "Lock for $system currently free"
+        return;
+    fi
+    echo "Lock for $system held by $owner since $since"
 }
 
 function LockSystem() {
     local system=$1
-    # Retry the lock every second, retrying 60 times for a total of 1 minute
-    # If we don't get it after that then the lock is bugged
-    RemoteCommand lockfile -1 -r 60 "$(LockName ${system})"
-    return $?
-}
-
-function FastLockSystem() {
-    local system=$1
-    # Retry the lock every second for 2 seconds
-    RemoteCommand lockfile -1 -r 2 "$(LockName ${system})"
-    return $?
-}
-
-# Performs lockfile, but does scaling delay to acquire the lock fast
-# under the assumption that it should be free. Then slows down to conserve resources
-function LockFileInteractive() {
-    local lock=$1
-    # Try every 2 seconds
-    RemoteCommand lockfile -2 "${lock}"
+    local retry_period=$2
+    local total_retries=$3
+    local owner=`LockOwner ${system}`
+    if [ "${owner}" == "${REMOTEUSER}" ]; then
+        echo "Attempting to grab lock you already own. Please explicitly release"
+        return -1
+    fi
+    RemoteCommand lockfile -${retry_period} -r ${total_retries} "$(LockName ${system})"
     return $?
 }
 
 function UnlockSystem() {
     local sytem=$1
+    local owner=`LockOwner ${system}`
+    if [ ${owner} != ${REMOTEUSER} ]; then
+        echo "Attempting to unlock system ${system} that you do not hold"
+        return;
+    fi
     RemoteCommand rm -f "$(LockName ${system})"
 }
-

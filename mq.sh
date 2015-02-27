@@ -28,6 +28,9 @@ if ! diff "${SCRIPT_PATH}/VERSION" <(RemoteCommand cat "${BASE}/VERSION" | tr -d
     exit -1
 fi
 
+# Detrmine the remote user name
+REMOTEUSER=$(RemoteCommand bash -c 'eval echo "\$USER"' | sed 's/\r//g')
+
 # Expect command to be run to be the first argument
 if [ "$#" -lt 1 ]; then
     Usage

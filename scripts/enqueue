@@ -37,7 +37,8 @@ function EnqueueUsage() {
 function Enqueue() {
     # Parse the command line
     local file_count=0
-    local wait_time=8
+    local retry_period=8
+    local total_retries=8
     local logfile=""
     local interact=""
     local completion=""
@@ -84,7 +85,7 @@ function Enqueue() {
             ;;
             -w)
                 shift
-                wait_time="$1"
+                retry_period="$1"
             ;;
             --)
                 break
@@ -100,7 +101,7 @@ function Enqueue() {
 
     # Debugging stuff
     if [ "$interact" != "-r" ]; then
-        echo "Only reservations allowed when debugging
+        echo "Only reservations allowed when debugging"
         exit -1
     fi
 
@@ -140,8 +141,8 @@ function Enqueue() {
     # the lock before releasing it
     trap "UnlockSystem ${system}; exit 1" ${SIGNALS}
 
-    if ! LockSystem "${system}" "${wait_time}"; then
-        echo "Failed to acquire system (${system}) lock. Assuming kill occured, nothing to clean up"
+    if ! LockSystem "${system}" "${retry_period}" "${total_retries}"; then
+        echo "Failed to acquire system (${system})"
         exit -1
     fi
 
