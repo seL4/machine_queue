@@ -138,7 +138,7 @@ function Enqueue() {
 
     # We can setup the trap early as we check if we actually own the
     # the lock before releasing it
-    trap "UnlockSystem ${system}; exit 1" ${SIGNALS}
+    trap "UnlockSystem ${system} 0; exit 1" ${SIGNALS}
 
     if ! LockSystem "${system}" "${retry_period}" "${total_retries}"; then
         echo "Failed to acquire lock for system (${system})"
@@ -160,7 +160,7 @@ function Enqueue() {
     fi
 
 
-    UnlockSystem ${system}
+    UnlockSystem ${system} 0
     trap "exit 1" ${SIGNALS}
 
     exit $ret
