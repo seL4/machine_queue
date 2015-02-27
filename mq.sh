@@ -16,10 +16,14 @@ popd  > /dev/null
 Usage () {
     echo "Machine Queue"
     echo
-    echo "run      Run a new job on a machine"
-    echo "systems  Query information on available machines"
+    echo " Commands:"
     echo
-    echo "sem      Directly interact with the machine locks"
+    echo "  run      Run a new job on a machine"
+    echo "  systems  Query information on available machines"
+    echo
+    echo "  sem      Directly interact with the machine locks"
+    echo
+    echo "Use '$0 COMMAND help' to get detailed help for each command"
 }
 
 # Check the version of our scripts compared to the cannonical host
