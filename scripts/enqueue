@@ -104,12 +104,6 @@ function Enqueue() {
         shift
     done
 
-    # Debugging stuff
-    if [ "$interact" != "-r" ]; then
-        echo "Only reservations allowed when debugging"
-        exit -1
-    fi
-
     # Check that we got enough parameters
     if [ "$system" = "" ]; then
         EnqueueUsage
