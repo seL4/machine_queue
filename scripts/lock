@@ -46,10 +46,113 @@ function LockSystem() {
 
 function UnlockSystem() {
     local sytem=$1
-    local owner=`LockOwner ${system}`
-    if [ ${owner} != ${REMOTEUSER} ]; then
-        echo "Attempting to unlock system ${system} that you do not hold"
-        return;
+    local force=$2
+    if [ "${force}" -ne 1 ]; then
+        local owner=`LockOwner ${system}`
+        if [ ${owner} != ${REMOTEUSER} ]; then
+            echo "Attempting to unlock system ${system} that you do not hold"
+            return;
+        fi
     fi
     RemoteCommand rm -f "$(LockName ${system})"
+}
+
+function UserLockUsage() {
+    echo "$0 sem -signal|-wait|-info SYSTEM [-f] [-w retry-time] [-t retry-count]"
+    echo
+    echo "   Manually manipulate locks for machines. The lock for each system"
+    echo "   can be acquired or released."
+    echo
+    echo "   You can forcively release a lock for a system that you do not"
+    echo "   currently own by the -f flag"
+    echo
+    echo " Options:"
+    echo
+    echo " -info SYSTEM     Display lock information for the specified SYSTEM"
+    echo " -signal SYSTEM   Release the lock for the specified SYSTEM"
+    echo " -wait SYSTEM     Acquire the lock for the specified SYSTEM"
+    echo " -w TIME          Number of seconds to wait between each attempt to acquire the lock (default 8)"
+    echo " -t RETRIES       Number of retries to preform for acquiring the lock (default 8)"
+    echo " -f               Forcefully releases a lock even if you are not the owner"
+    echo
+}
+
+function UserLock() {
+    local system=""
+    local action=""
+    local retry_period=8
+    local total_retries=8
+    local force=0
+    while [ "$#" -ne 0 ]; do
+        case "$1" in
+            -info)
+                shift
+                system="$1"
+                action="-info"
+            ;;
+            -signal)
+                shift
+                system="$1"
+                action="-signal"
+            ;;
+            -wait)
+                shift
+                system="$1"
+                action="-wait"
+            ;;
+            -w)
+                shift
+                retry_period="$1"
+            ;;
+            -t)
+                shift
+                total_retries="$1"
+            ;;
+            -f)
+                shift
+                force=1
+            ;;
+            help)
+                UserLockUsage
+                exit -1
+            ;;
+            --)
+                break
+            ;;
+            *)
+                echo "Unknown option $1"
+                UserLockUsage
+                exit -1
+            ;;
+        esac
+        shift
+    done
+
+    IsSystemValid "${system}"
+    if [ $? -ne 0 ]; then
+        echo "System $system does not exist. Valid systems are"
+        SystemList
+        exit -1
+    fi
+
+    case "${action}" in
+        -info)
+            LockSystemPrintInfo "${system}"
+        ;;
+        -signal)
+            UnlockSystem "${system}" "${force}"
+        ;;
+        -wait)
+            if ! LockSystem "${system}" "${retry_period}" "${total_retries}"; then
+                echo "Failed to acquire lock for system (${system})"
+                exit -1
+            fi
+        ;;
+        *)
+            echo "Unknown usage"
+            UserLockUsage
+            exit -1
+        ;;
+    esac
+    exit 0
 }

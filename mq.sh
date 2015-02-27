@@ -49,6 +49,11 @@ case "$command" in
         SystemList
         exit 0
     ;;
+    sem)
+        UserLock "$@"
+        # Should not get here
+        exit -1
+    ;;
     help|*)
         Usage
         exit 0

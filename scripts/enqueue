@@ -10,7 +10,7 @@ fi
 SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
 function EnqueueUsage() {
-    echo "$0 run -r|-i|-c <string> -l logfile -s system [-w retry-time] -f file1 -f file2 .. -f filen"
+    echo "$0 run -r|-i|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] -f file1 -f file2 .. -f filen"
     echo
     echo "   Acquires a lock for a machine, and once locked runs the specified job"
     echo "   Jobs can include just a reservation"
@@ -30,7 +30,8 @@ function EnqueueUsage() {
     echo " -l FILE     Optional location to write all the console output to"
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
-    echo " -w time     Number of seconds to wait between each attempt to acquire the lock (default 8)"
+    echo " -w TIME     Number of seconds to wait between each attempt to acquire the lock (default 8)"
+    echo " -t RETRIES  Number of retries to preform for acquiring the lock (default 8)"
     echo
 }
 
@@ -87,6 +88,10 @@ function Enqueue() {
                 shift
                 retry_period="$1"
             ;;
+            -t)
+                shift
+                total_retries="$1"
+            ;;
             --)
                 break
             ;;
@@ -142,7 +147,7 @@ function Enqueue() {
     trap "UnlockSystem ${system}; exit 1" ${SIGNALS}
 
     if ! LockSystem "${system}" "${retry_period}" "${total_retries}"; then
-        echo "Failed to acquire system (${system})"
+        echo "Failed to acquire lock for system (${system})"
         exit -1
     fi
 
