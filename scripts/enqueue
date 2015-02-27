@@ -9,25 +9,11 @@ fi
 # 'if anything at all happens try and shut down our job cleanly' approach
 SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
-function SignalRemoveJob() {
-    local system=$1
-    local user=$2
-    # First do fast cleanup that doesn't require any locks
-    FastRemoveJob ${system} ${user}
-    echo "Received signal. Finishing clean up, please be patient"
-    # Now attempt to get the lock and do the rest of cleanup. But do so in a fast way
-    if FastLockSystem ${system}; then
-        RemoveJob ${system} ${user}
-        UnlockSystem ${system}
-    fi
-    exit -1
-}
-
 function EnqueueUsage() {
-    echo "$0 run -r|-i|-c <string> -l logfile -s system -f file1 -f file2 .. -f filen"
+    echo "$0 run -r|-i|-c <string> -l logfile -s system [-w retry-time] -f file1 -f file2 .. -f filen"
     echo
-    echo "   Enqueues a new job and then waits for it to complete before returning."
-    echo "   Jobs can include reservations due to synchronous nature."
+    echo "   Acquires a lock for a machine, and once locked runs the specified job"
+    echo "   Jobs can include just a reservation"
     echo
     echo "   Output from the machine is generally collected and passed back to the"
     echo "   user both on stdout and in the form of an option logfile."
@@ -44,24 +30,20 @@ function EnqueueUsage() {
     echo " -l FILE     Optional location to write all the console output to"
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
+    echo " -w time     Number of seconds to wait between each attempt to acquire the lock (default 8)"
     echo
 }
 
 function Enqueue() {
     # Parse the command line
     local file_count=0
+    local wait_time=8
     local logfile=""
     local interact=""
     local completion=""
     local files=""
     local system=""
     local file_prefix=""
-    local user=$USER
-    if [ "${user}" == "" ]; then
-        echo "Attempted to user USER environment variable to construct a user name"
-        echo "but received an empty string. Please set to your user name"
-        exit -1
-    fi
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -l)
@@ -100,6 +82,10 @@ function Enqueue() {
                 shift
                 file_prefix="$1"
             ;;
+            -w)
+                shift
+                wait_time="$1"
+            ;;
             --)
                 break
             ;;
@@ -111,6 +97,12 @@ function Enqueue() {
         esac
         shift
     done
+
+    # Debugging stuff
+    if [ "$interact" != "-r" ]; then
+        echo "Only reservations allowed when debugging
+        exit -1
+    fi
 
     # Check that we got enough parameters
     if [ "$system" = "" ]; then
@@ -138,59 +130,22 @@ function Enqueue() {
         fi
     fi
 
-    echo "Acquring lock to enqueue for ${system}"
+    echo "Acquiring lock for ${system}"
 
-    # Grab the main lock for the system
-    if ! LockSystem "${system}"; then
+    # Print out potentially useful information to the user about
+    # the current status of the lock
+    LockSystemPrintInfo "${system}"
+
+    # We can setup the trap early as we check if we actually own the
+    # the lock before releasing it
+    trap "UnlockSystem ${system}; exit 1" ${SIGNALS}
+
+    if ! LockSystem "${system}" "${wait_time}"; then
         echo "Failed to acquire system (${system}) lock. Assuming kill occured, nothing to clean up"
         exit -1
     fi
-    trap "UnlockSystem ${system}; exit 1" ${SIGNALS}
 
-    echo "Seeing if ${user} already has a job for ${system}"
-
-    # See if we have an outstanding lock or lock request for this system
-    if JobExists "${system}" "${user}"; then
-        echo "You already have a job queued or in progress for this system (${system})"
-        UnlockSystem "${system}"
-        exit -1
-    fi
-
-    # Add a job. But first setup a signal handler that will try and remove a running job
-    echo "Attempting to add job for ${user} to ${system}"
-    if ! AddJob "${system}" "${user}"; then
-        echo "Failed to add job somehow. Removing locks and exiting"
-        UnlockSystem "${system}"
-        exit -1
-    fi
-
-    # Setup is done, release the lock
-    UnlockSystem "${system}"
-    trap "SignalRemoveJob ${system} ${user}" ${SIGNALS}
-    echo "Released queue lock for ${system}"
-
-    echo "Notifying bamboo to run ${system}"
-    SystemNotifyBamboo ${system}
-
-    echo "Waiting for permission to run..."
-    # Now wait for the job
-    if ! WaitJob "${system}" "${user}"; then
-        # Assume ctrl+c, clean up ASAP. This does not require any locks
-        FastRemoveJob "${system}" "${user}"
-        # Now do the rest
-        if ! LockSystem "${system}"; then
-            echo "Failed to acquire system lock. Job may not have been cleaned up correctly"
-            exit -1
-        fi
-        trap "UnlockSystem ${SYSTEM}; exit 1" ${SIGNALS}
-        RemoveJob "${system}" "${user}"
-        UnlockSystem "${system}"
-        trap "exit 1" ${SIGNALS}
-        echo "Failed to wait for the chance to run job. Cleaned up and now exiting"
-        exit -1
-    fi
-
-    echo "We are allowed to run"
+    echo "Lock acquire, we are allowed to run"
     local ret=0
 
     if [ "${interact}" = "-r" ]; then
@@ -205,15 +160,6 @@ function Enqueue() {
     fi
 
 
-    echo "All done. Cleaning up job for ${user} on ${system}"
-    if ! LockSystem ${system}; then
-        FastRemoveJob ${system} ${user}
-        echo "Failed to acquire lock to cleanup job. Cleaning up what we can without a lock"
-        exit -1
-    fi
-    trap "UnlockSystem ${SYSTEM}; exit 1" ${SIGNALS}
-
-    RemoveJob ${system} ${user}
     UnlockSystem ${system}
     trap "exit 1" ${SIGNALS}
 
