@@ -16,16 +16,10 @@ popd  > /dev/null
 Usage () {
     echo "Machine Queue"
     echo
-    echo "General user commands:"
-    echo
     echo "run      Run a new job on a machine"
     echo "systems  Query information on available machines"
     echo
-    echo
-    echo "Server commands:"
-    echo
-    echo "dequeue  Run a job in the queue"
-    echo
+    echo "sem      Directly interact with the machine locks"
 }
 
 # Check the version of our scripts compared to the cannonical host
@@ -51,11 +45,6 @@ case "$command" in
     systems)
         SystemList
         exit 0
-    ;;
-    dequeue)
-        Dequeue "$@"
-        # Should not get here
-        exit -1
     ;;
     help|*)
         Usage
