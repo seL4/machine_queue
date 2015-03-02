@@ -49,7 +49,7 @@ function UnlockSystem() {
     local force=$2
     if [ "${force}" -ne 1 ]; then
         local owner=`LockOwner ${system}`
-        if [ ${owner} != ${REMOTEUSER} ]; then
+        if [ "${owner}" != "${REMOTEUSER}" ]; then
             echo "Attempting to unlock system ${system} that you do not hold"
             return;
         fi
