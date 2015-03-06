@@ -31,7 +31,7 @@ function EnqueueUsage() {
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
     echo " -w TIME     Number of seconds to wait between each attempt to acquire the lock (default 8)"
-    echo " -t RETRIES  Number of retries to preform for acquiring the lock (default 8)"
+    echo " -t RETRIES  Number of retries to preform for acquiring the lock (default -1)"
     echo
 }
 
@@ -39,7 +39,7 @@ function Enqueue() {
     # Parse the command line
     local file_count=0
     local retry_period=8
-    local total_retries=8
+    local total_retries=-1
     local logfile=""
     local interact=""
     local completion=""
