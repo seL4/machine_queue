@@ -40,7 +40,7 @@ function LockSystem() {
         echo "Attempting to grab lock you already own. Please explicitly release"
         return -1
     fi
-    RemoteCommand lockfile -${retry_period} -r ${total_retries} "$(LockName ${system})"
+    RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName ${system})"
     return $?
 }
 
@@ -72,7 +72,7 @@ function UserLockUsage() {
     echo " -signal SYSTEM   Release the lock for the specified SYSTEM"
     echo " -wait SYSTEM     Acquire the lock for the specified SYSTEM"
     echo " -w TIME          Number of seconds to wait between each attempt to acquire the lock (default 8)"
-    echo " -t RETRIES       Number of retries to preform for acquiring the lock (default 8)"
+    echo " -t RETRIES       Number of retries to preform for acquiring the lock (default -1)"
     echo " -f               Forcefully releases a lock even if you are not the owner"
     echo
 }
@@ -81,7 +81,7 @@ function UserLock() {
     local system=""
     local action=""
     local retry_period=8
-    local total_retries=8
+    local total_retries=-1
     local force=0
     while [ "$#" -ne 0 ]; do
         case "$1" in
