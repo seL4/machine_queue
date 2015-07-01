@@ -5,7 +5,7 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-DEFAULTREBOOT=bob
+DEFAULTREBOOT=duvel
 
 function HaveRebootAndConsole() {
     for host in duvel bob saison
@@ -15,6 +15,15 @@ function HaveRebootAndConsole() {
         fi
     done
     return 1
+}
+
+function RebootShutdown() {
+    local machine=$1
+    if ! HaveRebootAndConsole; then
+        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot --shutdown"
+    else
+        /tftpboot/${machine}/reboot --shutdown
+    fi       
 }
 
 function RebootConsoleRunTwoFiles() {

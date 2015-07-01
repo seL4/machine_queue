@@ -21,3 +21,7 @@ function SystemRunImage_beagle() {
     return $?
 }
 
+function SystemPowerOff_beagle() {
+    RebootShutdown beagle
+}
+

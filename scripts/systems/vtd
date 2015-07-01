@@ -22,3 +22,7 @@ function SystemRunImage_vtd() {
     return $?
 }
 
+function SystemPowerOff_vtd() {
+    RebootShutdown vtd
+}
+

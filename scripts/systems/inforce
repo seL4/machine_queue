@@ -21,3 +21,7 @@ function SystemRunImage_inforce() {
     return $?
 }
 
+function SystemPowerOff_inforce() {
+    RebootShutdown inforce
+}
+

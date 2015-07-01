@@ -21,3 +21,7 @@ function SystemRunImage_zc706() {
     return $?
 }
 
+function SystemPowerOff_zc706() {
+    RebootShutdown zc706
+}
+

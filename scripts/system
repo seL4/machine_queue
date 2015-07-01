@@ -45,6 +45,11 @@ function SystemNotifyBamboo() {
     SystemNotifyBamboo_${system}
 }
 
+function SystemPowerOff() {
+    local system=$1
+    SystemPowerOff_${system}
+}
+
 function SystemRunImage() {
     local system=$1
     shift

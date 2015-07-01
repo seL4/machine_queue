@@ -21,3 +21,7 @@ function SystemRunImage_odroidxu() {
     return $?
 }
 
+function SystemPowerOff_odroidxu() {
+    RebootShutdown odroidxu
+}
+

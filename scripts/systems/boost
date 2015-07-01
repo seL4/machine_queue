@@ -21,3 +21,8 @@ function SystemRunImage_boost() {
     RebootConsoleRunTwoFiles "${completion}" "${output}" "${kernel}" "${rootserver}" boost
     return $?
 }
+
+function SystemPowerOff_boost() {
+    RebootShutdown boost
+}
+    

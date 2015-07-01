@@ -21,3 +21,7 @@ function SystemRunImage_sabre3() {
     return $?
 }
 
+function SystemPowerOff_sabre3() {
+    RebootShutdown sabre3
+}
+

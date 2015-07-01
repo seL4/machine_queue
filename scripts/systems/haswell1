@@ -22,3 +22,6 @@ function SystemRunImage_haswell1() {
     return $?
 }
 
+function SystemPowerOff_haswell1() {
+    RebootShutdown haswell1
+}

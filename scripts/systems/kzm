@@ -20,3 +20,8 @@ function SystemRunImage_kzm() {
     RebootConsoleRunOneFile "${completion}" "${output}" "${kernel}" kzm11
     return $?
 }
+
+function SystemPowerOff_kzm() {
+    RebootShutdown kzm
+}
+

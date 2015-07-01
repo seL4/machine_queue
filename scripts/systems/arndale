@@ -21,3 +21,7 @@ function SystemRunImage_arndale() {
     return $?
 }
 
+function SystemPowerOff_arndale() {
+    RebootShutdown arndale
+}
+    
