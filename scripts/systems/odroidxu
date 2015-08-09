@@ -22,6 +22,6 @@ function SystemRunImage_odroidxu() {
 }
 
 function SystemPowerOff_odroidxu() {
-    RebootShutdown odroidxu
+    RebootShutdown odroid-xu
 }
 
