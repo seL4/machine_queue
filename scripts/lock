@@ -55,6 +55,11 @@ function UnlockSystem() {
         fi
     fi
     RemoteCommand rm -f "$(LockName ${system})"
+    local owner=`LockOwner ${system}`
+    if [ "${owner}" == "${REMOTEUSER}" ]; then
+        echo "Failed to release lock. Retrying"
+        UnlockSystem "${system}" "${force}"
+    fi
 }
 
 function UserLockUsage() {
