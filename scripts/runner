@@ -32,6 +32,11 @@ function RebootConsoleRunTwoFiles() {
     local kernel=$3
     local rootserver=$4
     local machine=$5
+
+    if echo "$kernel" | grep -iq -v "kernel" && echo "$rootserver" | grep -iq "kernel"; then
+        echo -e "\e[31mWARNING: Kernel image file must precede rootserver image file!\e[0m"
+    fi
+
     if ! HaveRebootAndConsole; then
         local logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
         # need to copy remotely
