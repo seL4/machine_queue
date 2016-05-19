@@ -26,6 +26,12 @@ Usage () {
     echo "Use '$0 COMMAND help' to get detailed help for each command"
 }
 
+# Check we can talk to the cannonical host
+if ! RemoteCommand exit; then
+    echo "Unable to ssh to ${HOST}"
+    exit -1
+fi
+
 # Check the version of our scripts compared to the cannonical host
 if ! diff "${SCRIPT_PATH}/VERSION" <(RemoteCommand cat "${BASE}/VERSION" | tr -d '\r'); then
     echo "Local version of mq.sh appears to differ to version on ${HOST} at ${BASE}"
