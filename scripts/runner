@@ -5,7 +5,7 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-DEFAULTREBOOT=duvel
+DEFAULTREBOOT=duvel.keg.ertos.in.nicta.com.au
 
 function HaveRebootAndConsole() {
     for host in duvel bob saison

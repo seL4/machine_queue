@@ -7,7 +7,7 @@ fi
 
 # Define some global configuration variables and routines
 BASE=/var/cache/machinelocks
-HOST=duvel
+HOST=duvel.keg.ertos.in.nicta.com.au
 
 # Add all the other bits and pieces
 
