@@ -60,7 +60,7 @@ function RebootConsoleRunTwoFiles() {
             RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t -1 -k '${kernelfile}' -u '${rootserverfile}'"
+        out=$(ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t -1 -k '${kernelfile}' -u '${rootserverfile}'")
         local ret=$?
         if [ "${outout}" != "" ]; then
             scp "${DEFAULTREBOOT}:${logfile}" "${output}"
@@ -96,7 +96,7 @@ function RebootConsoleRunOneFile() {
             RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t -1 -k '${kernelfile}'"
+        out=$(ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t -1 -k '${kernelfile}'")
         local ret=$?
         if [ "${output}" != "" ]; then
             scp "${DEFAULTREBOOT}:${logfile}" "${output}"
