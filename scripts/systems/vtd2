@@ -9,10 +9,6 @@ function SystemNumFiles_vtd2() {
     echo 2
 }
 
-function SystemNotifyBamboo_vtd2() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDVTD2JOBS'
-}
-
 function SystemRunImage_vtd2() {
     local completion=$1
     local output=$2

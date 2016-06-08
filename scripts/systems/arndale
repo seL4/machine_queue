@@ -9,10 +9,6 @@ function SystemNumFiles_arndale() {
     echo 1
 }
 
-function SystemNotifyBamboo_arndale() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDARNDALEJOBS'
-}
-
 function SystemRunImage_arndale() {
     local completion=$1
     local output=$2

@@ -9,10 +9,6 @@ function SystemNumFiles_beagle() {
     echo 1
 }
 
-function SystemNotifyBamboo_beagle() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDBEAGLEJOBS'
-}
-
 function SystemRunImage_beagle() {
     local completion=$1
     local output=$2

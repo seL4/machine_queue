@@ -9,10 +9,6 @@ function SystemNumFiles_inforce() {
     echo 1
 }
 
-function SystemNotifyBamboo_inforce() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDINFORCEJOBS'
-}
-
 function SystemRunImage_inforce() {
     local completion=$1
     local output=$2

@@ -40,11 +40,6 @@ function SystemCorrectNumberOfFiles() {
     fi
 }
 
-function SystemNotifyBamboo() {
-    local system=$1
-    SystemNotifyBamboo_${system}
-}
-
 function SystemPowerOff() {
     local system=$1
     SystemPowerOff_${system}

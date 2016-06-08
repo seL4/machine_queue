@@ -9,10 +9,6 @@ function SystemNumFiles_haswell1() {
     echo 2
 }
 
-function SystemNotifyBamboo_haswell1() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDHASWELL1JOBS'
-}
-
 function SystemRunImage_haswell1() {
     local completion=$1
     local output=$2

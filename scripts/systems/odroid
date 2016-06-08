@@ -9,10 +9,6 @@ function SystemNumFiles_odroid() {
     echo 1
 }
 
-function SystemNotifyBamboo_odroid() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDODROIDJOBS'
-}
-
 function SystemRunImage_odroid() {
     local completion=$1
     local output=$2

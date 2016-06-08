@@ -9,10 +9,6 @@ function SystemNumFiles_zc706() {
     echo 1
 }
 
-function SystemNotifyBamboo_zc706() {
-    curl --user admin:ertos -X POST -d 'JOB1&ExecuteAllStages' 'http://saison.keg.ertos.in.nicta.com.au:8085/rest/api/latest/queue/TOOLS-RUNQUEUEDZC706JOBS'
-}
-
 function SystemRunImage_zc706() {
     local completion=$1
     local output=$2
