@@ -21,3 +21,33 @@ function SystemRunImage_sandy() {
 function SystemPowerOff_sandy() {
     RebootShutdown sandy
 }
+
+function Arch_sandy() {
+    echo "x86"
+}
+
+function ISA_sandy() {
+    echo "x86_64"
+}
+
+function SOC_sandy() {
+    echo "sandybridge"
+}
+
+function CPU_sandy() {
+    echo "i7-2600"
+}
+
+function Cores_sandy() {
+    echo "4"
+}
+
+function RAM_sandy() {
+    echo "?"
+}
+
+function MaxCLK_sandy() {
+    echo "3.4Ghz"
+}
+
+

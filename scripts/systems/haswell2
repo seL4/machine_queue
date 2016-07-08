@@ -26,3 +26,32 @@ function SystemPowerOff_haswell2() {
     RebootShutdown haswell2
 }
 
+function Arch_haswell2() {
+    echo "x86"
+}
+
+function ISA_haswell2() {
+    echo "x86_64"
+}
+
+function SOC_haswell2() {
+    echo "haswell"
+}
+
+function CPU_haswell2() {
+    echo "E3-1220v3"
+}
+
+function Cores_haswell2() {
+    echo "4(8)"
+}
+
+function RAM_haswell2() {
+    echo "?"
+}
+
+function MaxCLK_haswell2() {
+    echo "3.1Ghz"
+}
+
+

@@ -21,3 +21,33 @@ function SystemRunImage_tardec1() {
 function SystemPowerOff_tardec1() {
     RebootShutdown tardec1
 }
+
+function Arch_tardec1() {
+    echo "x86"
+}
+
+function ISA_tardec1() {
+    echo "x86_64"
+}
+
+function SOC_tardec1() {
+    echo "?"
+}
+
+function CPU_tardec1() {
+    echo "i7-351UE"
+}
+
+function Cores_tardec1() {
+    echo "2"
+}
+
+function RAM_tardec1() {
+    echo "4GB"
+}
+
+function MaxCLK_tardec1() {
+    echo "1.7Ghz"
+}
+
+

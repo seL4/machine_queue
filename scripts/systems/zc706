@@ -25,3 +25,32 @@ function SystemPowerOff_zc706() {
     RebootShutdown zc706
 }
 
+function Arch_zc706() {
+    echo "arm"
+}
+
+function ISA_zc706() {
+    echo "armv7-a"
+}
+
+function SOC_zc706() {
+    echo "zynq-7000"
+}
+
+function CPU_zc706() {
+    echo "cortex-a9"
+}
+
+function Cores_zc706() {
+    echo "2"
+}
+
+function RAM_zc706() {
+    echo "1GB"
+}
+
+function MaxCLK_zc706() {
+    echo "800Mhz"
+}
+
+

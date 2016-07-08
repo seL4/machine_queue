@@ -56,7 +56,7 @@ case "$command" in
         exit -1
     ;;
     systems)
-        SystemList
+        OutputSystemList
         exit 0
     ;;
     sem)

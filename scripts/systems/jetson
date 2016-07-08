@@ -22,6 +22,35 @@ function SystemRunImage_jetson() {
 }
 
 function SystemPowerOff_jetson() {
-    RebootShutdown jetson1 
+    RebootShutdown jetson1
 }
+
+function Arch_jetson() {
+    echo "arm"
+}
+
+function ISA_jetson() {
+    echo "armv7-a"
+}
+
+function SOC_jetson() {
+    echo "TegraK1"
+}
+
+function CPU_jetson() {
+    echo "cortex-a15"
+}
+
+function Cores_jetson() {
+echo "4(1)"
+}
+
+function RAM_jetson() {
+    echo "2GB"
+}
+
+function MaxCLK_jetson() {
+    echo "2.3Ghz"
+}
+
 

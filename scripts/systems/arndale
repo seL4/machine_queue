@@ -24,4 +24,32 @@ function SystemRunImage_arndale() {
 function SystemPowerOff_arndale() {
     RebootShutdown arndale
 }
-    
+
+function Arch_arndale() {
+    echo "arm"
+}
+
+function ISA_arndale() {
+    echo "armv7-a"
+}
+
+function SOC_arndale() {
+    echo "exynos5"
+}
+
+function CPU_arndale() {
+    echo "cortex-a15"
+}
+
+function Cores_arndale() {
+    echo "2"
+}
+
+function RAM_arndale() {
+    echo "2GB"
+}
+
+function MaxCLK_arndale() {
+    echo "1.7GHz"
+}
+

@@ -25,3 +25,32 @@ function SystemPowerOff_inforce() {
     RebootShutdown inforce
 }
 
+function Arch_inforce() {
+    echo "arm"
+}
+
+function ISA_inforce() {
+    echo "armv7-a"
+}
+
+function SOC_inforce() {
+    echo "SnapdragonS4"
+}
+
+function CPU_inforce() {
+    echo "Krait"
+}
+
+function Cores_inforce() {
+    echo "4"
+}
+
+function RAM_inforce() {
+    echo "2GB"
+}
+
+function MaxCLK_inforce() {
+    echo "1.7Ghz"
+}
+
+

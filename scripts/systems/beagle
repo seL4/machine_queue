@@ -25,3 +25,31 @@ function SystemPowerOff_beagle() {
     RebootShutdown beagle
 }
 
+function Arch_beagle() {
+    echo "arm"
+}
+
+function ISA_beagle() {
+    echo "armv7-a"
+}
+
+function SOC_beagle() {
+    echo "omap3"
+}
+
+function CPU_beagle() {
+    echo "cortex-a9"
+}
+
+function Cores_beagle() {
+    echo "1"
+}
+
+function RAM_beagle() {
+    echo "256MB"
+}
+
+function MaxCLK_beagle() {
+    echo "720Mhz"
+}
+
