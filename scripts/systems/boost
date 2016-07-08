@@ -21,4 +21,33 @@ function SystemRunImage_boost() {
 function SystemPowerOff_boost() {
     RebootShutdown boost
 }
-    
+
+function Arch_boost() {
+    echo "x86"
+}
+
+function ISA_boost() {
+    echo "x86_64"
+}
+
+function SOC_boost() {
+    echo "xeon"
+}
+
+function CPU_boost() {
+    echo "?"
+}
+
+function Cores_boost() {
+    echo "4"
+}
+
+function RAM_boost() {
+    echo "?"
+}
+
+function MaxCLK_boost() {
+    echo "?"
+}
+
+

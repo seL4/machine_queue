@@ -29,6 +29,25 @@ do
     . ${SCRIPT_PATH}/scripts/systems/${system}
 done
 
+function OutputSystemList() {
+    local system=""
+    printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
+    printf "| Name       | Arch | ISA     | SoC          | CPU            | Cores | RAM   | MaxCLK |\n"
+    printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
+    for system in `SystemList`
+    do
+        printf "| %10s " ${system}
+        printf "| %4s " `Arch_${system}`
+        printf "| %7s " `ISA_${system}`
+        printf "| %12s " `SOC_${system}`
+        printf "| %14s " `CPU_${system}`
+        printf "| %5s " `Cores_${system}`
+        printf "| %5s " `RAM_${system}`
+        printf "| %6s " `MaxCLK_${system}`
+        printf "|\n"
+    done
+}
+
 function SystemCorrectNumberOfFiles() {
     local system=$1
     local num=$2

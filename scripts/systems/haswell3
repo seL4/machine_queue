@@ -21,4 +21,33 @@ function SystemRunImage_haswell3() {
 function SystemPowerOff_haswell3() {
     RebootShutdown haswell3
 }
-    
+
+function Arch_haswell3() {
+    echo "x86"
+}
+
+function ISA_haswell3() {
+    echo "x86_64"
+}
+
+function SOC_haswell3() {
+    echo "haswell"
+}
+
+function CPU_haswell3() {
+    echo "?"
+}
+
+function Cores_haswell3() {
+    echo "4(8)"
+}
+
+function RAM_haswell3() {
+    echo "?"
+}
+
+function MaxCLK_haswell3() {
+    echo "3.1Ghz"
+}
+
+

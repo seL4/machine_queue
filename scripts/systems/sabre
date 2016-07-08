@@ -21,3 +21,32 @@ function SystemPowerOff_sabre() {
     RebootShutdown sabre
 }
 
+function Arch_sabre() {
+    echo "arm"
+}
+
+function ISA_sabre() {
+    echo "armv7-a"
+}
+
+function SOC_sabre() {
+    echo "imx6"
+}
+
+function CPU_sabre() {
+    echo "cortex-a9"
+}
+
+function Cores_sabre() {
+    echo "4"
+}
+
+function RAM_sabre() {
+    echo "1GB"
+}
+
+function MaxCLK_sabre() {
+    echo "1Ghz"
+}
+
+

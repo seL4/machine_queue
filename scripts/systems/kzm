@@ -21,3 +21,32 @@ function SystemPowerOff_kzm() {
     RebootShutdown kzm
 }
 
+function Arch_kzm() {
+    echo "arm"
+}
+
+function ISA_kzm() {
+    echo "armv6"
+}
+
+function SOC_kzm() {
+    echo "imx31"
+}
+
+function CPU_kzm() {
+    echo "arm1136"
+}
+
+function Cores_kzm() {
+    echo "1"
+}
+
+function RAM_kzm() {
+    echo "128MB"
+}
+
+function MaxCLK_kzm() {
+    echo "532Mhz"
+}
+
+

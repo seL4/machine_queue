@@ -21,3 +21,32 @@ function SystemPowerOff_odroid() {
     RebootShutdown odroid
 }
 
+function Arch_odroid() {
+    echo "arm"
+}
+
+function ISA_odroid() {
+    echo "armv7-a"
+}
+
+function SOC_odroid() {
+    echo "exynos4412"
+}
+
+function CPU_odroid() {
+    echo "cortex-a9"
+}
+
+function Cores_odroid() {
+    echo "4"
+}
+
+function RAM_odroid() {
+    echo "1GB"
+}
+
+function MaxCLK_odroid() {
+    echo "1.4Ghz"
+}
+
+

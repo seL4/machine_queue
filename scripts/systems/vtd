@@ -22,3 +22,8 @@ function SystemPowerOff_vtd() {
     RebootShutdown vtd
 }
 
+function SystemOutputDetails_vtd() {
+    # "Arch\tISA\tCPU\tcores\tRAM\tClock\n"
+        echo -e "x86\tx86_64\tCore 2\t???\t2\t???\t???"
+}
+

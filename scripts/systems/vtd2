@@ -22,3 +22,6 @@ function SystemPowerOff_vtd2() {
     RebootShutdown vtd2
 }
 
+function SystemOutputDetails_vtd2() {
+    SystemOutputDetails_vtd
+}
