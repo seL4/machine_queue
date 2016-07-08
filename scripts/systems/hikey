@@ -20,3 +20,31 @@ function SystemRunImage_hikey() {
 function SystemPowerOff_hikey() {
     RebootShutdown hikey
 }
+
+function Arch_hikey() {
+    echo "arm"
+}
+
+function ISA_hikey() {
+    echo "armv8-a"
+}
+
+function SOC_hikey() {
+    echo "kirin6220"
+}
+
+function CPU_hikey() {
+    echo "cortex-a53"
+}
+
+function Cores_hikey() {
+    echo "8"
+}
+
+function RAM_hikey() {
+    echo "1GB"
+}
+
+function MaxCLK_hikey() {
+    echo "1.2Ghz"
+}
