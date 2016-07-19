@@ -46,6 +46,7 @@ function OutputSystemList() {
         printf "| %6s " `MaxCLK_${system}`
         printf "|\n"
     done
+    printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
 }
 
 function SystemCorrectNumberOfFiles() {
