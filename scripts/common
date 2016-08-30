@@ -9,6 +9,9 @@ fi
 BASE=/var/cache/machinelocks
 HOST=duvel.keg.ertos.in.nicta.com.au
 
+# Config file location
+CONFIG=~/.mq
+
 # Add all the other bits and pieces
 
 . "${SCRIPT_PATH}/scripts/remote"
@@ -16,3 +19,8 @@ HOST=duvel.keg.ertos.in.nicta.com.au
 . "${SCRIPT_PATH}/scripts/runner"
 . "${SCRIPT_PATH}/scripts/system"
 . "${SCRIPT_PATH}/scripts/enqueue"
+
+# Source the config file if it exists
+if test -e $CONFIG; then
+    source $CONFIG
+fi
