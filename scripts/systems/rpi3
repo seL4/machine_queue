@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_rpi3() {
+    echo 1
+}
+
+function SystemRunImage_rpi3() {
+    local completion=$1
+    local output=$2
+    local kernel=$3
+    RebootConsoleRunOneFile "${completion}" "${output}" "${kernel}" rpi3
+    return $?
+}
+
+function SystemPowerOff_rpi3() {
+    RebootShutdown rpi3
+}
+
+function Arch_rpi3() {
+    echo "arm"
+}
+
+function ISA_rpi3() {
+    echo "armv8-a"
+}
+
+function SOC_rpi3() {
+    echo "bcm2837"
+}
+
+function CPU_rpi3() {
+    echo "cortex-a53"
+}
+
+function Cores_rpi3() {
+    echo "4"
+}
+
+function RAM_rpi3() {
+    echo "1GB"
+}
+
+function MaxCLK_rpi3() {
+    echo "1.2Ghz"
+}
