@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_bboneblack() {
+    echo 1
+}
+
+function SystemRunImage_bboneblack() {
+    local completion=$1
+    local output=$2
+    local kernel=$3
+    RebootConsoleRunOneFile "${completion}" "${output}" "${kernel}" bboneblack
+    return $?
+}
+
+function SystemPowerOff_bboneblack() {
+    RebootShutdown bboneblack
+}
+
+function Arch_bboneblack() {
+    echo "arm"
+}
+
+function ISA_bboneblack() {
+    echo "armv7"
+}
+
+function SOC_bboneblack() {
+    echo "am335x"
+}
+
+function CPU_bboneblack() {
+    echo "cortex-a8"
+}
+
+function Cores_bboneblack() {
+    echo "1"
+}
+
+function RAM_bboneblack() {
+    echo "512MB"
+}
+
+function MaxCLK_bboneblack() {
+    echo "1GHZ"
+}
