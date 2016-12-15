@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_skylake() {
+    echo 2
+}
+
+function SystemRunImage_skylake() {
+    local completion=$1
+    local output=$2
+    local kernel=$3
+    local rootserver=$4
+    RebootConsoleRunTwoFiles "${completion}" "${output}" "${kernel}" "${rootserver}" skylake
+    return $?
+}
+
+function SystemPowerOff_skylake() {
+    RebootShutdown skylake
+}
+
+function Arch_skylake() {
+    echo "x86"
+}
+
+function ISA_skylake() {
+    echo "x86_64"
+}
+
+function SOC_skylake() {
+    echo "skylake"
+}
+
+function CPU_skylake() {
+    echo "i5-??"
+}
+
+function Cores_skylake() {
+    echo "?"
+}
+
+function RAM_skylake() {
+    echo "?"
+}
+
+function MaxCLK_skylake() {
+    echo "?.?Ghz"
+}
+
+
