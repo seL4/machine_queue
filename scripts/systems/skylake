@@ -35,19 +35,19 @@ function SOC_skylake() {
 }
 
 function CPU_skylake() {
-    echo "i5-??"
+    echo "i7-6700"
 }
 
 function Cores_skylake() {
-    echo "?"
+    echo "4"
 }
 
 function RAM_skylake() {
-    echo "?"
+    echo "8GB"
 }
 
 function MaxCLK_skylake() {
-    echo "?.?Ghz"
+    echo "3.4Ghz"
 }
 
 
