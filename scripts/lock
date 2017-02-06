@@ -150,7 +150,7 @@ function UserLock() {
         -wait)
             if ! LockSystem "${system}" "${retry_period}" "${total_retries}"; then
                 echo "Failed to acquire lock for system (${system})"
-                exit -1
+                exit 2
             fi
         ;;
         *)
