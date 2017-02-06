@@ -1,0 +1,52 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_jet_tx1_1() {
+    echo 1
+}
+
+function SystemRunImage_jet_tx1_1() {
+    local completion=$1
+    local output=$2
+    local kernel=$3
+    RebootConsoleRunOneFile "${completion}" "${output}" "${kernel}" jetson-tx1-1
+    return $?
+}
+
+function SystemPowerOff_jet_tx1_1() {
+    RebootShutdown jetson-tx1-1
+}
+
+function Arch_jet_tx1_1() {
+    echo "arm"
+}
+
+function ISA_jet_tx1_1() {
+    echo "armv8-a"
+}
+
+function SOC_jet_tx1_1() {
+    echo "TegraTX1"
+}
+
+function CPU_jet_tx1_1() {
+    echo "cortex-a57"
+}
+
+function Cores_jet_tx1_1() {
+    echo "4"
+}
+
+function RAM_jet_tx1_1() {
+    echo "4GB"
+}
+
+function MaxCLK_jet_tx1_1() {
+    echo "1.9Ghz"
+}
+
+
