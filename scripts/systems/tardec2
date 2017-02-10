@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_tardec2() {
+    echo 2
+}
+
+function SystemRunImage_tardec2() {
+    local completion=$1
+    local output=$2
+    local kernel=$3
+    local rootserver=$4
+    RebootConsoleRunTwoFiles "${completion}" "${output}" "${kernel}" "${rootserver}" tardec2
+    return $?
+}
+
+function SystemPowerOff_tardec2() {
+    RebootShutdown tardec2
+}
+
+function Arch_tardec2() {
+    echo "x86"
+}
+
+function ISA_tardec2() {
+    echo "x86_64"
+}
+
+function SOC_tardec2() {
+    echo "?"
+}
+
+function CPU_tardec2() {
+    echo "i7-351UE"
+}
+
+function Cores_tardec2() {
+    echo "2"
+}
+
+function RAM_tardec2() {
+    echo "4GB"
+}
+
+function MaxCLK_tardec2() {
+    echo "1.7Ghz"
+}
+
+
