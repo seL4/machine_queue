@@ -11,9 +11,10 @@ function SystemNumFiles_inforce() {
 
 function SystemRunImage_inforce() {
     local completion=$1
-    local output=$2
-    local kernel=$3
-    RebootConsoleRunOneFile "${completion}" "${output}" "${kernel}" inforce
+    local completion_timeout=$2
+    local output=$3
+    local kernel=$4
+    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${output}" "${kernel}" inforce
     return $?
 }
 

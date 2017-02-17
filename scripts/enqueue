@@ -27,6 +27,7 @@ function EnqueueUsage() {
     echo
     echo " -r          Reserves the device. Will not reboot or run an image"
     echo " -c TEXT     Image is run until the specified regular completion text"
+    echo " -d TIME     Timeout (in seconds) to wait for the completion text (default -1 AKA no timeout)"
     echo " -l FILE     Optional location to write all the console output to"
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
@@ -43,6 +44,7 @@ function Enqueue() {
     local logfile=""
     local interact=""
     local completion=""
+    local completion_timeout=-1
     local files=""
     local system=""
     local file_prefix=""
@@ -60,6 +62,10 @@ function Enqueue() {
                     exit -1
                 fi
                 interact="-c"
+            ;;
+            -d)
+                shift
+                completion_timeout="$1"
             ;;
             -r)
                 interact="-r"
@@ -157,7 +163,7 @@ function Enqueue() {
     else
         # Run the image. 'files' is deliberately no in quotes so the multiple
         # files expands to multiple arguments
-        SystemRunImage ${system} "${completion}" "${logfile}" $files
+        SystemRunImage ${system} "${completion}" "${completion_timeout}" "${logfile}" $files
         ret=$?
     fi
 
