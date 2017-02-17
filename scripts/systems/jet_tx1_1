@@ -14,7 +14,7 @@ function SystemRunImage_jet_tx1_1() {
     local completion_timeout=$2
     local output=$3
     local kernel=$4
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${output}" "${kernel}" jetson-tx1-1
+    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${output}" "${kernel}" jet_tx1_1
     return $?
 }
 
