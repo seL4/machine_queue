@@ -164,7 +164,7 @@ function Enqueue() {
         fi
     fi
 
-    echo "Lock acquire, we are allowed to run"
+    echo "Lock acquired, we are allowed to run"
     local ret=0
 
     if [ "${interact}" = "-r" ]; then
