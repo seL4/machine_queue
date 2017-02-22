@@ -19,6 +19,15 @@ function LockGetInfo() {
     RemoteCommand bash -c "stat --format='%U,%y' $(LockName ${system}) 2>/dev/null"| sed 's/\r//g'
 }
 
+function LockIOwn() {
+    local system=$1
+    local owner=`LockOwner ${system}`
+    if [ "${owner}" != "${REMOTEUSER}" ]; then
+        return -1
+    fi
+    return
+}
+
 function LockSystemPrintInfo() {
     local system=$1
     local info=$(LockGetInfo)
