@@ -63,7 +63,7 @@ function RebootConsoleRunTwoFiles() {
         fi
         ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t "${completion_timeout}" -k '${kernelfile}' -u '${rootserverfile}'"
         local ret=$?
-        if [ "${outout}" != "" ]; then
+        if [ "${output}" != "" ]; then
             scp "${DEFAULTREBOOT}:${logfile}" "${output}"
         fi
         RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
