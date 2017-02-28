@@ -12,11 +12,11 @@ function SystemNumFiles_boost() {
 function SystemRunImage_boost() {
     local completion=$1
     local completion_timeout=$2
-    local output=$3
-    local kernel=$4
-    local rootserver=$5
-    RebootConsoleRunTwoFiles "${completion}" "${output}" "${kernel}" "${rootserver}" 
-boost
+    local errortxt=$3
+    local output=$4
+    local kernel=$5
+    local rootserver=$6
+    RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${rootserver}" boost
     return $?
 }
 
@@ -51,5 +51,3 @@ function RAM_boost() {
 function MaxCLK_boost() {
     echo "?"
 }
-
-

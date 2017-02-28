@@ -10,7 +10,7 @@ fi
 SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
 function EnqueueUsage() {
-    echo "$0 run -r|-i|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] -f file1 -f file2 .. -f filen"
+    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-d timeout] [-e <string>] -f file1 -f file2 .. -f filen"
     echo
     echo "   Acquires a lock for a machine, and once locked runs the specified job"
     echo "   Jobs can include just a reservation"
@@ -28,6 +28,7 @@ function EnqueueUsage() {
     echo " -r          Reserves the device. Will not reboot or run an image"
     echo " -n          No lock changes. Checks that you have the lock, and then runs an image. Will not unlock afterwards."
     echo " -c TEXT     Image is run until the specified regular completion text"
+    echo " -e TEXT     Image is run until the specified error text is found"
     echo " -d TIME     Timeout (in seconds) to wait for the completion text (default -1 AKA no timeout)"
     echo " -l FILE     Optional location to write all the console output to"
     echo " -s TEXT     Specifies which machine this job is for"
@@ -47,6 +48,7 @@ function Enqueue() {
     local no_lock_mods=false
     local completion=""
     local completion_timeout=-1
+    local errortxt=""
     local files=""
     local system=""
     local file_prefix=""
@@ -64,6 +66,10 @@ function Enqueue() {
                     exit -1
                 fi
                 interact="-c"
+            ;;
+            -e)
+                shift
+                errortxt="$1"
             ;;
             -d)
                 shift
@@ -176,7 +182,7 @@ function Enqueue() {
     else
         # Run the image. 'files' is deliberately no in quotes so the multiple
         # files expands to multiple arguments
-        SystemRunImage ${system} "${completion}" "${completion_timeout}" "${logfile}" $files
+        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" $files
         ret=$?
     fi
 

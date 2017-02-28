@@ -12,9 +12,10 @@ function SystemNumFiles_kzm() {
 function SystemRunImage_kzm() {
     local completion=$1
     local completion_timeout=$2
-    local output=$3
-    local kernel=$4
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${output}" "${kernel}" kzm11
+    local errortxt=$3
+    local output=$4
+    local kernel=$5
+    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" kzm11
     return $?
 }
 

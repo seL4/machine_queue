@@ -29,10 +29,11 @@ function RebootShutdown() {
 function RebootConsoleRunTwoFiles() {
     local completion=$1
     local completion_timeout=$2
-    local output=$3
-    local kernel=$4
-    local rootserver=$5
-    local machine=$6
+    local errortxt=$3
+    local output=$4
+    local kernel=$5
+    local rootserver=$6
+    local machine=$7
 
     if echo "$kernel" | grep -iq -v "kernel" && echo "$rootserver" | grep -iq "kernel"; then
         echo -e "\e[31mWARNING: Kernel image file must precede rootserver image file!\e[0m"
@@ -61,7 +62,7 @@ function RebootConsoleRunTwoFiles() {
             RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t "${completion_timeout}" -k '${kernelfile}' -u '${rootserverfile}'"
+        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' -u '${rootserverfile}'"
         local ret=$?
         if [ "${output}" != "" ]; then
             scp "${DEFAULTREBOOT}:${logfile}" "${output}"
@@ -72,9 +73,9 @@ function RebootConsoleRunTwoFiles() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -k "${kernel}" -u "${rootserver}"
+            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}"
         else
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -l "${output}" -k "${kernel}" -u "${rootserver}"
+            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}"
         fi
     fi
 }
@@ -82,9 +83,10 @@ function RebootConsoleRunTwoFiles() {
 function RebootConsoleRunOneFile() {
     local completion=$1
     local completion_timeout=$2
-    local output=$3
-    local kernel=$4
-    local machine=$5
+    local errortxt=$3
+    local output=$4
+    local kernel=$5
+    local machine=$6
     if ! HaveRebootAndConsole; then
         local logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
         # need to copy remotely
@@ -98,7 +100,7 @@ function RebootConsoleRunOneFile() {
             RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t "${completion_timeout}" -k '${kernelfile}'"
+        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}'"
         local ret=$?
         if [ "${output}" != "" ]; then
             scp "${DEFAULTREBOOT}:${logfile}" "${output}"
@@ -108,9 +110,9 @@ function RebootConsoleRunOneFile() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -k "${kernel}"
+            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}"
         else
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -l "${output}" -k "${kernel}"
+            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}"
         fi
     fi
 }

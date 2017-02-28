@@ -12,10 +12,11 @@ function SystemNumFiles_tardec2() {
 function SystemRunImage_tardec2() {
     local completion=$1
     local completion_timeout=$2
-    local output=$3
-    local kernel=$4
-    local rootserver=$5
-    RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${output}" "${kernel}" "${rootserver}" tardec2
+    local errortxt=$3
+    local output=$4
+    local kernel=$5
+    local rootserver=$6
+    RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${rootserver}" tardec2
     return $?
 }
 
