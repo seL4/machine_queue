@@ -7,21 +7,14 @@ fi
 
 function IsSystemValid() {
     local system=$1
-    if [ -e "${SCRIPT_PATH}/scripts/systems/${system}" ]; then
-        return 0
-    else
-        return 1
-    fi
+    [ -e "${SCRIPT_PATH}/scripts/systems/${system}" ]
 }
 
 function SystemList() {
-    local system=""
-    for system in `ls ${SCRIPT_PATH}/scripts/systems/`
-    do
-        if IsSystemValid; then
-            echo "${system}"
-        fi
-    done
+    (
+	cd ${SCRIPT_PATH}/scripts/systems/
+	echo *
+    )
 }
 
 for system in `SystemList`
@@ -53,11 +46,7 @@ function SystemCorrectNumberOfFiles() {
     local system=$1
     local num=$2
     local system_num=$(SystemNumFiles_${system})
-    if [ "${num}" -eq "${system_num}" ]; then
-        return 0
-    else
-        return 1
-    fi
+    [ "${num}" -eq "${system_num}" ]
 }
 
 function SystemPowerOff() {
@@ -69,5 +58,4 @@ function SystemRunImage() {
     local system=$1
     shift
     SystemRunImage_${system} "$@"
-    return $?
 }

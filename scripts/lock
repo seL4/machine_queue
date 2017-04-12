@@ -25,7 +25,7 @@ function LockIOwn() {
     if [ "${owner}" != "${REMOTEUSER}" ]; then
         return -1
     fi
-    return
+    return 0
 }
 
 function LockSystemPrintInfo() {
