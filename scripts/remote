@@ -19,7 +19,10 @@ function RemoteCommandOn() {
 
 function RemoteCommand() {
     if [ $(hostname -f) = ${HOST} ]; then
-        "$@"
+	( # execute in a subshell so things like RemoteCommand exit
+	  # don't teminate the shell.
+            "$@"
+	)
         return $?
     else
         RemoteCommandOn ${HOST} "$@"
