@@ -1,0 +1,55 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_horde() {
+    echo 2
+}
+
+function SystemRunImage_horde() {
+    local completion=$1
+    local completion_timeout=$2
+    local errortxt=$3
+    local output=$4
+    local kernel=$5
+    local rootserver=$6
+    RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${rootserver}" horde
+    return $?
+}
+
+function SystemPowerOff_horde() {
+    RebootShutdown horde
+}
+
+function Arch_horde() {
+    echo "x86"
+}
+
+function ISA_horde() {
+    echo "x86_64"
+}
+
+function SOC_horde() {
+    echo "haswell"
+}
+
+function CPU_horde() {
+    echo "E5-2683v3"
+}
+
+function Cores_horde() {
+    echo "28(56)"
+}
+
+function RAM_horde() {
+    echo "256GB"
+}
+
+function MaxCLK_horde() {
+    echo "2.0Ghz"
+}
+
+
