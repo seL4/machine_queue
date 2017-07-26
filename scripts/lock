@@ -75,10 +75,10 @@ function LockSystem() {
 
     RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName ${system})"
 
-    if [ "${key}" != "" ]; then
+    if [ "$?" == 0 ] && [ "${key}" != "" ]; then
         # If a key was used, put it inside the lock
         RemoteCommand chmod u+w "$(LockName ${system})"
-        RemoteCommand echo -n "${key}" > "$(LockName ${system})"
+        RemoteCommand bash -c "echo -n \"${key}\" > \"$(LockName ${system})\""
         RemoteCommand chmod u-w "$(LockName ${system})"
     fi
 
