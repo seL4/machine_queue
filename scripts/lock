@@ -44,7 +44,7 @@ function LockSystemPrintInfo() {
         return;
     fi
     echo -n "Lock for $system held by $owner since $since"
-    if [ "${lockkey}" != "" ]; then
+    if [ "${lockkey}" != "0" ]; then
         echo " with key '${lockkey}'"
     else
         echo ""
@@ -62,7 +62,7 @@ function LockSystem() {
     #                - if they are trying to, check if they are using a different key
     if [ "${owner}" == "${REMOTEUSER}" ]; then
         lockkey=`LockGetKey ${system}`
-        if [ "${lockkey}" == "" ]; then
+        if [ "${lockkey}" == "0" ] && [ "${key}" == "0" ]; then
             echo "Attempting to grab lock you already own. Please explicitly release"
             return -1
         else
@@ -136,7 +136,7 @@ function UserLock() {
     local retry_period=8
     local total_retries=-1
     local force=0
-    local key=""
+    local key="0"
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -info)
