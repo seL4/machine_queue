@@ -10,7 +10,7 @@ fi
 SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
 function EnqueueUsage() {
-    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-d timeout] [-e <string>] -f file1 -f file2 .. -f filen"
+    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-d timeout] [-e <string>] [-k <string>] -f file1 -f file2 .. -f filen"
     echo
     echo "   Acquires a lock for a machine, and once locked runs the specified job"
     echo "   Jobs can include just a reservation"
@@ -30,6 +30,7 @@ function EnqueueUsage() {
     echo " -c TEXT     Image is run until the specified regular completion text"
     echo " -e TEXT     Image is run until the specified error text is found"
     echo " -d TIME     Timeout (in seconds) to wait for the completion text (default -1 AKA no timeout)"
+    echo " -k KEY      Key for obtaining the lock"
     echo " -l FILE     Optional location to write all the console output to"
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
@@ -52,6 +53,7 @@ function Enqueue() {
     local files=""
     local system=""
     local file_prefix=""
+    local key="0"
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -l)
@@ -96,6 +98,10 @@ function Enqueue() {
             -s)
                 shift
                 system="$1"
+            ;;
+            -k)
+                shift
+                key="$1"
             ;;
             -p)
                 shift
@@ -162,9 +168,9 @@ function Enqueue() {
 
         # We can setup the trap early as we check if we actually own the
         # the lock before releasing it
-        trap "UnlockSystem ${system} 0; exit 1" ${SIGNALS}
+        trap "UnlockSystem ${system} 0 ${key}; exit 1" ${SIGNALS}
 
-        if ! LockSystem "${system}" "${retry_period}" "${total_retries}"; then
+        if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
             echo "Failed to acquire lock for system (${system})"
             exit 2
         fi
@@ -187,7 +193,7 @@ function Enqueue() {
     fi
 
     if ! ${no_lock_mods} ; then
-        UnlockSystem ${system} 0
+        UnlockSystem ${system} 0 ${key}
         trap "exit 1" ${SIGNALS}
     fi
 
