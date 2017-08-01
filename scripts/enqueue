@@ -138,11 +138,22 @@ function Enqueue() {
     fi
 
     # Verify the requested system exists
-    IsSystemValid "${system}"
+    IsSystemValid "${system}" 
     if [ $? -ne 0 ] ; then
-        echo "System $system does not exist. Valid systems are"
-        SystemList
-        exit -1
+        # If it's not a system, is it a pool?
+        IsPoolValid "${system}"
+        if [ $? -ne 0 ] ; then
+            echo "System or pool '$system' does not exist. Valid systems are"
+            SystemList
+            echo "Valid pools are"
+            PoolList
+            exit -1
+        else
+            # Select a system from the pool
+            pool=${system}
+            system=`GetRandomSystemFromPool_${pool}`
+            echo "Selecting system '${system}' from pool '${pool}'"
+        fi
     fi
 
     # Check that the number of files specified is correct

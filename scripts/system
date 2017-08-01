@@ -40,6 +40,7 @@ function OutputSystemList() {
         printf "|\n"
     done
     printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
+    OutputPoolList
 }
 
 function SystemCorrectNumberOfFiles() {

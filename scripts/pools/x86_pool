@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function Systems_x86_pool() {
+    # This function can be explicit or programatic
+
+    #for system in `SystemList`
+    #do
+    #    if [ `Arch_${system}` == "x86" ]; then
+    #        echo ${system}
+    #    fi
+    #done
+    
+    # Explicit:
+    echo "haswell3"
+    echo "haswell4"
+    echo "skylake"
+    echo "sandy"
+}
+
+
+function containsElement() {
+    local e
+    for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+    return 1
+}
+
+
+function GetRandomSystemFromPool_x86_pool() {
+    # Get a random system from the pool, unlocked if possible
+    local x86_systems=()
+    local free_x86_systems=()
+    local locked_systems=()
+
+    for lockedsys in `GetAllLockedSystems`; do 
+        locked_systems+=(${lockedsys})
+    done
+
+    for system in `Systems_x86_pool`
+    do
+        x86_systems+=(${system})
+        `containsElement "${system}" "${locked_systems[@]}"`
+        if [ "$?" -ne 0 ]; then 
+            free_x86_systems+=(${system})
+        fi
+    done
+
+    local RANDOM=$$$(date +%s)
+
+    if [ "${#free_x86_systems[@]}" == "0" ]; then
+        # No free systems available, choosing random one
+        echo ${x86_systems[$RANDOM % ${#x86_systems[@]} ]}
+    else
+        echo ${free_x86_systems[$RANDOM % ${#free_x86_systems[@]} ]}
+    fi 
+}
+
+
+

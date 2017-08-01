@@ -33,6 +33,14 @@ function LockIOwn() {
     return 0
 }
 
+function GetAllLockedSystems() {
+    local lockfiles=$(RemoteCommand bash -c "find ${BASE} -name '*.lock'")
+    for l in ${lockfiles}; do
+        echo -n "$(basename $l | tr -d '\r' | sed 's/.lock//g') "
+    done
+    echo ""
+}
+
 function LockSystemPrintInfo() {
     local system=$1
     local info=$(LockGetInfo)
@@ -188,9 +196,20 @@ function UserLock() {
 
     IsSystemValid "${system}"
     if [ $? -ne 0 ]; then
-        echo "System $system does not exist. Valid systems are"
-        SystemList
-        exit -1
+        # If it's not a system, is it a pool?
+        IsPoolValid "${system}"
+        if [ $? -ne 0 ] ; then
+            echo "System or pool '$system' does not exist. Valid systems are"
+            SystemList
+            echo "Valid pools are"
+            PoolList
+            exit -1
+        else
+            # Select a system from the pool
+            pool=${system}
+            system=`GetRandomSystemFromPool_${pool}`
+            echo "${system}"
+        fi
     fi
 
     case "${action}" in
