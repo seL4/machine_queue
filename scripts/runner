@@ -10,7 +10,7 @@ DEFAULTREBOOT=duvel.keg.ertos.in.nicta.com.au
 function HaveRebootAndConsole() {
     for host in duvel bob saison
     do
-        if [ $(hostname) = $host ]; then
+        if [ "$(hostname)" = "${host}" ]; then
             return 0
         fi
     done
@@ -22,7 +22,7 @@ function RebootShutdown() {
     if ! HaveRebootAndConsole; then
         ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot --shutdown"
     else
-        /tftpboot/${machine}/reboot --shutdown
+        "/tftpboot/${machine}/reboot" --shutdown
     fi       
 }
 
@@ -35,19 +35,23 @@ function RebootConsoleRunTwoFiles() {
     local rootserver=$6
     local machine=$7
 
+    local logfile=""
+    local kernelfile=""
+    local rootserverfile=""
+
     if echo "$kernel" | grep -iq -v "kernel" && echo "$rootserver" | grep -iq "kernel"; then
         echo -e "\e[31mWARNING: Kernel image file must precede rootserver image file!\e[0m"
     fi
 
     if ! HaveRebootAndConsole; then
-        local logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
         # need to copy remotely
-        local kernelfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
-        local rootserverfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        kernelfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        rootserverfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
         # Strip trailing \r
-        kernelfile=$(echo -n $kernelfile | tr -d '\r')
-        rootserverfile=$(echo -n $rootserverfile | tr -d '\r')
-        logfile=$(echo -n $logfile | tr -d '\r')
+        kernelfile=$(echo -n "${kernelfile}" | tr -d '\r')
+        rootserverfile=$(echo -n "${rootserverfile}" | tr -d '\r')
+        logfile=$(echo -n "${logfile}" | tr -d '\r')
         if ! scp "${kernel}" "${DEFAULTREBOOT}:${kernelfile}"; then
             echo "Failed to copy kernel image"
             RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
@@ -73,9 +77,9 @@ function RebootConsoleRunTwoFiles() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}"
         else
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}"
         fi
     fi
 }
@@ -87,13 +91,17 @@ function RebootConsoleRunOneFile() {
     local output=$4
     local kernel=$5
     local machine=$6
+    
+    local logfile=""
+    local kernelfile=""
+
     if ! HaveRebootAndConsole; then
-        local logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
         # need to copy remotely
-        local kernelfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
+        kernelfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
         # Strip trailing \r
-        kernelfile=$(echo -n $kernelfile | tr -d '\r')
-        logfile=$(echo -n $logfile | tr -d '\r')
+        kernelfile=$(echo -n "${kernelfile}" | tr -d '\r')
+        logfile=$(echo -n "${logfile}" | tr -d '\r')
         if ! scp "${kernel}" "${DEFAULTREBOOT}:${kernelfile}"; then
             echo "Failed to copy kernel image"
             RemoteCommandOn ${DEFAULTREBOOT} rm "${kernelfile}"
@@ -110,9 +118,9 @@ function RebootConsoleRunOneFile() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}"
         else
-            /tftpboot/${machine}/reboot -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}"
         fi
     fi
 }

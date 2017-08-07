@@ -12,41 +12,49 @@ function LockName() {
 
 function LockOwner() {
     local system=$1
-    RemoteCommand bash -c "stat --format='%U' $(LockName ${system}) 2>/dev/null" | sed 's/\r//g'
+    RemoteCommand bash -c "stat --format='%U' $(LockName "${system}") 2>/dev/null" | sed 's/\r//g'
 }
 
 function LockGetInfo() {
-    RemoteCommand bash -c "stat --format='%U,%y' $(LockName ${system}) 2>/dev/null"| sed 's/\r//g'
+    RemoteCommand bash -c "stat --format='%U,%y' $(LockName "${system}") 2>/dev/null"| sed 's/\r//g'
 }
 
 function LockGetKey() {
     local system=$1
-    echo `RemoteCommand bash -c "cat $(LockName ${system})"`
+    RemoteCommand bash -c "cat $(LockName "${system}")"
 }
 
 function LockIOwn() {
     local system=$1
-    local owner=`LockOwner ${system}`
+    local owner=""
+    owner=$(LockOwner "${system}")
     if [ "${owner}" != "${REMOTEUSER}" ]; then
-        return -1
+        return 1
     fi
     return 0
 }
 
 function GetAllLockedSystems() {
-    local lockfiles=$(RemoteCommand bash -c "find ${BASE} -name '*.lock'")
+    local lockfiles=""
+    lockfiles=$(RemoteCommand bash -c "find ${BASE} -name '*.lock'")
     for l in ${lockfiles}; do
-        echo -n "$(basename $l | tr -d '\r' | sed 's/.lock//g') "
+        echo -n "$(basename "$l" | tr -d '\r' | sed 's/.lock//g') "
     done
     echo ""
 }
 
 function LockSystemPrintInfo() {
     local system=$1
-    local info=$(LockGetInfo)
-    local owner=`echo $info | cut -d ',' -f 1`
-    local since=`echo $info | cut -d ',' -f 2`
-    local lockkey=`LockGetKey ${system}`
+
+    local info=""
+    local owner=""
+    local since=""
+    local lockkey=""
+
+    info=$(LockGetInfo)
+    owner=$(echo "$info" | cut -d ',' -f 1)
+    since=$(echo "$info" | cut -d ',' -f 2)
+    lockkey=$(LockGetKey "${system}")
     if [ "${owner}" == "" ]; then
         echo "Lock for $system currently free"
         return;
@@ -64,53 +72,57 @@ function LockSystem() {
     local retry_period=$2
     local total_retries=$3
     local key=$4
-    local owner=`LockOwner ${system}`
+
+    local owner=""
+
+    owner=$(LockOwner "${system}")
 
     # Error checking - the same person can't relock the same lock
     #                - if they are trying to, check if they are using a different key
     if [ "${owner}" == "${REMOTEUSER}" ]; then
-        lockkey=`LockGetKey ${system}`
+        lockkey=$(LockGetKey "${system}")
         if [ "${lockkey}" == "0" ] && [ "${key}" == "0" ]; then
             echo "Attempting to grab lock you already own. Please explicitly release"
-            return -1
+            return 1
         else
             if [ "${lockkey}" == "${key}" ]; then
                 echo "Attempting to grab lock you already own with the same key. Please explicitly release"
-                return -1
+                return 2
             fi
         fi
     fi
 
-    RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName ${system})"
+    RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName "${system}")"
 
-    if [ "$?" == 0 ] && [ "${key}" != "" ]; then
+    if [ "$?" == 0 ] && [ "${key}" != "0" ]; then
         # If a key was used, put it inside the lock
-        RemoteCommand chmod u+w "$(LockName ${system})"
-        RemoteCommand bash -c "echo -n \"${key}\" > \"$(LockName ${system})\""
-        RemoteCommand chmod u-w "$(LockName ${system})"
+        comm="chmod u+w \"$(LockName "${system}")\" && echo -n '${key}' > \"$(LockName "${system}")\" && chmod u-w \"$(LockName "${system}")\""
+        RemoteCommand bash -c "${comm}"
     fi
 
     return $?
 }
 
 function UnlockSystem() {
-    local sytem=$1
+    local system=$1
     local force=$2
     local key=$3
+    local owner=""
+
     if [ "${force}" -ne 1 ]; then
-        local owner=`LockOwner ${system}`
+        owner=$(LockOwner "${system}")
         if [ "${owner}" != "${REMOTEUSER}" ]; then
             echo "Attempting to unlock system ${system} that you do not hold"
             return;
         fi
-        lockkey=`LockGetKey ${system}`
+        lockkey=$(LockGetKey "${system}")
         if [ "${lockkey}" != "${key}" ]; then
             echo "Attempting to unlock system ${system} with the wrong key!"
             return;
         fi 
     fi
-    RemoteCommand rm -f "$(LockName ${system})"
-    local owner=`LockOwner ${system}`
+    RemoteCommand rm -f "$(LockName "${system}")"
+    owner=$(LockOwner "${system}")
     if [ "${owner}" == "${REMOTEUSER}" ]; then
         echo "Failed to release lock. Retrying"
         UnlockSystem "${system}" "${force}" "${key}"
@@ -207,7 +219,7 @@ function UserLock() {
         else
             # Select a system from the pool
             pool=${system}
-            system=`GetRandomSystemFromPool_${pool}`
+            system=$(GetRandomSystemFromPool_"${pool}")
             echo "${system}"
         fi
     fi

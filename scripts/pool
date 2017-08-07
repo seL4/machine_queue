@@ -12,24 +12,24 @@ function IsPoolValid() {
 
 function PoolList() {
     (
-	cd ${SCRIPT_PATH}/scripts/pools/
+	cd "${SCRIPT_PATH}/scripts/pools/" || exit
 	echo *
     )
 }
 
-for pool in `PoolList`
+for pool in $(PoolList)
 do
-    . ${SCRIPT_PATH}/scripts/pools/${pool}
+    . "${SCRIPT_PATH}/scripts/pools/${pool}"
 done
 
 function OutputPoolList() {
     printf "+------------+-------------------------------------------------------------------------+\n"
     printf "| Name       | Systems                                                                 |\n"
     printf "+------------+-------------------------------------------------------------------------+\n"
-    for pool in `PoolList`
+    for pool in $(PoolList)
     do
-        printf "| %10s " ${pool}
-        printf "| %4s " `Systems_${pool}`
+        printf "| %10s " "${pool}"
+        printf "| %-71s " "$("Systems_${pool}" | tr "\n" " ")"
         printf "|\n"
     done
     printf "+------------+-------------------------------------------------------------------------+\n"

@@ -52,7 +52,6 @@ function Enqueue() {
     local errortxt=""
     local files=""
     local system=""
-    local file_prefix=""
     local key="0"
     while [ "$#" -ne 0 ]; do
         case "$1" in
@@ -103,10 +102,6 @@ function Enqueue() {
                 shift
                 key="$1"
             ;;
-            -p)
-                shift
-                file_prefix="$1"
-            ;;
             -w)
                 shift
                 retry_period="$1"
@@ -138,11 +133,9 @@ function Enqueue() {
     fi
 
     # Verify the requested system exists
-    IsSystemValid "${system}" 
-    if [ $? -ne 0 ] ; then
+    if ! IsSystemValid "${system}" ; then
         # If it's not a system, is it a pool?
-        IsPoolValid "${system}"
-        if [ $? -ne 0 ] ; then
+        if ! IsPoolValid "${system}" ; then
             echo "System or pool '$system' does not exist. Valid systems are"
             SystemList
             echo "Valid pools are"
@@ -151,7 +144,7 @@ function Enqueue() {
         else
             # Select a system from the pool
             pool=${system}
-            system=`GetRandomSystemFromPool_${pool}`
+            system=$(GetRandomSystemFromPool_"${pool}")
             echo "Selecting system '${system}' from pool '${pool}'"
         fi
     fi
@@ -179,7 +172,7 @@ function Enqueue() {
 
         # We can setup the trap early as we check if we actually own the
         # the lock before releasing it
-        trap "UnlockSystem ${system} 0 ${key}; exit 1" ${SIGNALS}
+        trap 'UnlockSystem "${system}" 0 "${key}"; exit 1"' ${SIGNALS}
 
         if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
             echo "Failed to acquire lock for system (${system})"
@@ -195,7 +188,7 @@ function Enqueue() {
         echo "can do what you want. Press ctrl+d or enter here when done"
         read line
         echo "Attempting to power off machine now that you are done"
-        SystemPowerOff ${system}
+        SystemPowerOff "${system}"
     else
         # Run the image. 'files' is deliberately no in quotes so the multiple
         # files expands to multiple arguments
@@ -204,7 +197,7 @@ function Enqueue() {
     fi
 
     if ! ${no_lock_mods} ; then
-        UnlockSystem ${system} 0 ${key}
+        UnlockSystem "${system}" 0 "${key}"
         trap "exit 1" ${SIGNALS}
     fi
 

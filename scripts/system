@@ -12,14 +12,14 @@ function IsSystemValid() {
 
 function SystemList() {
     (
-	cd ${SCRIPT_PATH}/scripts/systems/
+	cd "${SCRIPT_PATH}/scripts/systems/"
 	echo *
     )
 }
 
-for system in `SystemList`
+for system in $(SystemList)
 do
-    . ${SCRIPT_PATH}/scripts/systems/${system}
+    . "${SCRIPT_PATH}/scripts/systems/${system}"
 done
 
 function OutputSystemList() {
@@ -27,16 +27,16 @@ function OutputSystemList() {
     printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
     printf "| Name       | Arch | ISA     | SoC          | CPU            | Cores | RAM   | MaxCLK |\n"
     printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
-    for system in `SystemList`
+    for system in $(SystemList)
     do
-        printf "| %10s " ${system}
-        printf "| %4s " `Arch_${system}`
-        printf "| %7s " `ISA_${system}`
-        printf "| %12s " `SOC_${system}`
-        printf "| %14s " `CPU_${system}`
-        printf "| %5s " `Cores_${system}`
-        printf "| %5s " `RAM_${system}`
-        printf "| %6s " `MaxCLK_${system}`
+        printf "| %10s " "${system}"
+        printf "| %4s "  "$("Arch_${system}")"
+        printf "| %7s "  "$("ISA_${system}")"
+        printf "| %12s " "$("SOC_${system}")"
+        printf "| %14s " "$("CPU_${system}")"
+        printf "| %5s "  "$("Cores_${system}")"
+        printf "| %5s "  "$("RAM_${system}")"
+        printf "| %6s "  "$("MaxCLK_${system}")"
         printf "|\n"
     done
     printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
@@ -46,17 +46,18 @@ function OutputSystemList() {
 function SystemCorrectNumberOfFiles() {
     local system=$1
     local num=$2
-    local system_num=$(SystemNumFiles_${system})
+    local system_num=""
+    system_num="$("SystemNumFiles_${system}")"
     [ "${num}" -eq "${system_num}" ]
 }
 
 function SystemPowerOff() {
     local system=$1
-    SystemPowerOff_${system}
+    "SystemPowerOff_${system}"
 }
 
 function SystemRunImage() {
     local system=$1
     shift
-    SystemRunImage_${system} "$@"
+    "SystemRunImage_${system}" "$@"
 }

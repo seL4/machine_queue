@@ -13,19 +13,19 @@ function RemoteCommandOn() {
         argline="${argline} \"$1\""
         shift
     done
-    ssh -tt -oLogLevel=quiet ${host} "stty isig -echoctl -echo ; ${argline}"
+    ssh -tt -oLogLevel=quiet "${host}" "stty isig -echoctl -echo ; ${argline}"
     return $?
 }
 
 function RemoteCommand() {
-    if [ $(hostname -f) = ${HOST} ]; then
+    if [ "$(hostname -f)" = "${HOST}" ]; then
 	( # execute in a subshell so things like RemoteCommand exit
 	  # don't teminate the shell.
             "$@"
 	)
         return $?
     else
-        RemoteCommandOn ${HOST} "$@"
+        RemoteCommandOn "${HOST}" "$@"
         return $?
     fi
 }
