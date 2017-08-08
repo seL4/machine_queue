@@ -9,14 +9,8 @@ function SystemNumFiles_arndale() {
     echo 1
 }
 
-function SystemRunImage_arndale() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" arndale
-    return $?
+function SystemName_arndale() {
+    echo "arndale"
 }
 
 function SystemPowerOff_arndale() {

@@ -9,14 +9,8 @@ function SystemNumFiles_beagle() {
     echo 1
 }
 
-function SystemRunImage_beagle() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" beagle1
-    return $?
+function SystemName_beagle() {
+    echo "beagle1"
 }
 
 function SystemPowerOff_beagle() {

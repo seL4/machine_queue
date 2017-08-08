@@ -9,14 +9,8 @@ function SystemNumFiles_inforce() {
     echo 1
 }
 
-function SystemRunImage_inforce() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" inforce
-    return $?
+function SystemName_inforce() {
+    echo "inforce"
 }
 
 function SystemPowerOff_inforce() {

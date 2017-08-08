@@ -9,14 +9,8 @@ function SystemNumFiles_zc706() {
     echo 1
 }
 
-function SystemRunImage_zc706() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" zc706
-    return $?
+function SystemName_zc706() {
+    echo "zc706"
 }
 
 function SystemPowerOff_zc706() {

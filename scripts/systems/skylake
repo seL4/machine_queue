@@ -9,15 +9,8 @@ function SystemNumFiles_skylake() {
     echo 2
 }
 
-function SystemRunImage_skylake() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    local rootserver=$6
-    RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${rootserver}" skylake
-    return $?
+function SystemName_skylake() {
+    echo "skylake"
 }
 
 function SystemPowerOff_skylake() {

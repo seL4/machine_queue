@@ -9,14 +9,8 @@ function SystemNumFiles_sabre() {
     echo 1
 }
 
-function SystemRunImage_sabre() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" sabre
-    return $?
+function SystemName_sabre() {
+    echo "sabre"
 }
 
 function SystemPowerOff_sabre() {

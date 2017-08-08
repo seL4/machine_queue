@@ -9,15 +9,8 @@ function SystemNumFiles_horde() {
     echo 2
 }
 
-function SystemRunImage_horde() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    local rootserver=$6
-    RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${rootserver}" horde
-    return $?
+function SystemName_horde() {
+    echo "horde"
 }
 
 function SystemPowerOff_horde() {

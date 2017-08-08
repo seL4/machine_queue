@@ -58,6 +58,22 @@ function SystemPowerOff() {
 
 function SystemRunImage() {
     local system=$1
-    shift
-    "SystemRunImage_${system}" "$@"
+    local completion=$2
+    local completion_timeout=$3
+    local errortxt=$4
+    local logfile=$5
+    local kernel=$6
+    local rootserver=""
+    local system_name=""
+
+    system_name="$("SystemName_${system}")"
+
+    if [ "$("SystemNumFiles_${system}")" == "2" ]; then
+        rootserver=$7
+        RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${rootserver}" "${system_name}"
+    else
+        RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${system_name}"
+    fi
+
+
 }

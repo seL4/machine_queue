@@ -9,14 +9,8 @@ function SystemNumFiles_odroid() {
     echo 1
 }
 
-function SystemRunImage_odroid() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" odroid
-    return $?
+function SystemName_odroid() {
+    echo "odroid"
 }
 
 function SystemPowerOff_odroid() {

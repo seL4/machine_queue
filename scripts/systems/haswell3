@@ -9,15 +9,8 @@ function SystemNumFiles_haswell3() {
     echo 2
 }
 
-function SystemRunImage_haswell3() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    local rootserver=$6
-    RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" "${rootserver}" haswell3
-    return $?
+function SystemName_haswell3() {
+    echo "haswell3"
 }
 
 function SystemPowerOff_haswell3() {

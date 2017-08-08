@@ -9,14 +9,8 @@ function SystemNumFiles_rpi3() {
     echo 1
 }
 
-function SystemRunImage_rpi3() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local kernel=$5
-    RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${kernel}" rpi3
-    return $?
+function SystemName_rpi3() {
+    echo "rpi3"
 }
 
 function SystemPowerOff_rpi3() {
