@@ -10,7 +10,7 @@ fi
 SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
 function EnqueueUsage() {
-    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-d timeout] [-e <string>] [-k <string>] -f file1 -f file2 .. -f filen"
+    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] -f file1 -f file2 .. -f filen"
     echo
     echo "   Acquires a lock for a machine, and once locked runs the specified job"
     echo "   Jobs can include just a reservation"
@@ -27,6 +27,7 @@ function EnqueueUsage() {
     echo
     echo " -r          Reserves the device. Will not reboot or run an image"
     echo " -n          No lock changes. Checks that you have the lock, and then runs an image. Will not unlock afterwards."
+    echo " -a          Keep the machine alive after image is done"
     echo " -c TEXT     Image is run until the specified regular completion text"
     echo " -e TEXT     Image is run until the specified error text is found"
     echo " -d TIME     Timeout (in seconds) to wait for the completion text (default -1 AKA no timeout)"
@@ -47,6 +48,7 @@ function Enqueue() {
     local logfile=""
     local interact=""
     local no_lock_mods=false
+    local keep_alive=false
     local completion=""
     local completion_timeout=-1
     local errortxt=""
@@ -78,6 +80,9 @@ function Enqueue() {
             ;;
             -r)
                 interact="-r"
+            ;;
+            -a)
+                keep_alive=true
             ;;
             -n)
                 no_lock_mods=true
@@ -192,7 +197,7 @@ function Enqueue() {
     else
         # Run the image. 'files' is deliberately no in quotes so the multiple
         # files expands to multiple arguments
-        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" $files
+        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" $files
         ret=$?
     fi
 

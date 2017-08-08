@@ -31,9 +31,10 @@ function RebootConsoleRunTwoFiles() {
     local completion_timeout=$2
     local errortxt=$3
     local output=$4
-    local kernel=$5
-    local rootserver=$6
-    local machine=$7
+    local keep_alive=$5
+    local kernel=$6
+    local rootserver=$7
+    local machine=$8
 
     local logfile=""
     local kernelfile=""
@@ -41,6 +42,11 @@ function RebootConsoleRunTwoFiles() {
 
     if echo "$kernel" | grep -iq -v "kernel" && echo "$rootserver" | grep -iq "kernel"; then
         echo -e "\e[31mWARNING: Kernel image file must precede rootserver image file!\e[0m"
+    fi
+
+    local ka_flag=""
+    if $keep_alive ; then
+        ka_flag="-a"
     fi
 
     if ! HaveRebootAndConsole; then
@@ -66,7 +72,7 @@ function RebootConsoleRunTwoFiles() {
             RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' -u '${rootserverfile}'"
+        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' -u '${rootserverfile}' ${ka_flag}"
         local ret=$?
         if [ "${output}" != "" ]; then
             scp "${DEFAULTREBOOT}:${logfile}" "${output}"
@@ -77,9 +83,9 @@ function RebootConsoleRunTwoFiles() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" "${ka_flag}"
         else
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" "${ka_flag}"
         fi
     fi
 }
@@ -89,11 +95,17 @@ function RebootConsoleRunOneFile() {
     local completion_timeout=$2
     local errortxt=$3
     local output=$4
-    local kernel=$5
-    local machine=$6
+    local keep_alive=$5
+    local kernel=$6
+    local machine=$7
     
     local logfile=""
     local kernelfile=""
+
+    local ka_flag=""
+    if $keep_alive ; then
+        ka_flag="-a"
+    fi
 
     if ! HaveRebootAndConsole; then
         logfile=$(RemoteCommandOn ${DEFAULTREBOOT} "mktemp")
@@ -108,7 +120,7 @@ function RebootConsoleRunOneFile() {
             RemoteCommandOn ${DEFAULTREBOOT} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}'"
+        ssh -tt -oLogLevel=quiet ${DEFAULTREBOOT} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' ${ka_flag}"
         local ret=$?
         if [ "${output}" != "" ]; then
             scp "${DEFAULTREBOOT}:${logfile}" "${output}"
@@ -118,9 +130,9 @@ function RebootConsoleRunOneFile() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" "${ka_flag}"
         else
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" "${ka_flag}"
         fi
     fi
 }
