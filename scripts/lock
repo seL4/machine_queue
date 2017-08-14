@@ -93,6 +93,9 @@ function LockSystem() {
     fi
 
     RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName "${system}")"
+    if [ "$?" != 0 ]; then
+        return 3
+    fi
 
     if [ "$?" == 0 ] && [ "${key}" != "0" ]; then
         # If a key was used, put it inside the lock
