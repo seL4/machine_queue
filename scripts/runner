@@ -83,9 +83,9 @@ function RebootConsoleRunTwoFiles() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" "${ka_flag}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
         else
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" "${ka_flag}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
         fi
     fi
 }
@@ -130,9 +130,9 @@ function RebootConsoleRunOneFile() {
         return $ret
     else
         if [ "${output}" = "" ]; then
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" "${ka_flag}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" ${ka_flag}
         else
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" "${ka_flag}"
+            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" ${ka_flag}
         fi
     fi
 }
