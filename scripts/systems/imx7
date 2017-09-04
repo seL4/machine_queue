@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_imx7() {
+    echo 1
+}
+
+function SystemName_imx7() {
+    echo "imx7"
+}
+
+function SystemPowerOff_imx7() {
+    RebootShutdown imx7 
+}
+
+function Arch_imx7() {
+    echo "arm"
+}
+
+function ISA_imx7() {
+    echo "armv7-a"
+}
+
+function SOC_imx7() {
+    echo "imx7"
+}
+
+function CPU_imx7() {
+    echo "cortex-a7"
+}
+
+function Cores_imx7() {
+    echo "2"
+}
+
+function RAM_imx7() {
+    echo "1GB"
+}
+
+function MaxCLK_imx7() {
+    echo "1Ghz"
+}
+
+
