@@ -71,9 +71,9 @@ function SystemRunImage() {
 
     if [ "$("SystemNumFiles_${system}")" == "2" ]; then
         rootserver=$8
-        RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
+        RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
     else
-        RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${output}" "${keep_alive}" "${kernel}" "${system_name}"
+        RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
     fi
 
 
