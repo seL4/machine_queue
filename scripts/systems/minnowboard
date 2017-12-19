@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_minnowboard() {
+    echo 2
+}
+
+function SystemName_minnowboard() {
+    echo "minnowboard"
+}
+
+function SystemPowerOff_minnowboard() {
+    RebootShutdown minnowboard
+}
+
+function Arch_minnowboard() {
+    echo "x86"
+}
+
+function ISA_minnowboard() {
+    echo "x86_64"
+}
+
+function SOC_minnowboard() {
+    echo "minnowboard"
+}
+
+function CPU_minnowboard() {
+    echo "Intel Atom E3825"
+}
+
+function Cores_minnowboard() {
+    echo "2"
+}
+
+function RAM_minnowboard() {
+    echo "2GB"
+}
+
+function MaxCLK_minnowboard() {
+    echo "1.33Ghz"
+}
+
+
