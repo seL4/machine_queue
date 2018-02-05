@@ -26,7 +26,7 @@ function ISA_arndale() {
 }
 
 function SOC_arndale() {
-    echo "exynos5"
+    echo "exynos5250"
 }
 
 function CPU_arndale() {

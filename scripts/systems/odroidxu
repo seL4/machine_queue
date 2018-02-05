@@ -26,7 +26,7 @@ function ISA_odroidxu() {
 }
 
 function SOC_odroidxu() {
-    echo "exynos5"
+    echo "exynos5410"
 }
 
 function CPU_odroidxu() {
