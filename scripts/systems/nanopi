@@ -1,0 +1,46 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_nanopi() {
+    echo 1
+}
+
+function SystemName_nanopi() {
+    echo "nanopi"
+}
+
+function SystemPowerOff_nanopi() {
+    RebootShutdown nanopi
+}
+
+function Arch_nanopi() {
+    echo "arm"
+}
+
+function ISA_nanopi() {
+    echo "armv8-a"
+}
+
+function SOC_nanopi() {
+    echo "nanopi"
+}
+
+function CPU_nanopi() {
+    echo "cortex-a53"
+}
+
+function Cores_nanopi() {
+    echo "4"
+}
+
+function RAM_nanopi() {
+    echo "1GB"
+}
+
+function MaxCLK_nanopi() {
+    echo "1.5GHz"
+}
