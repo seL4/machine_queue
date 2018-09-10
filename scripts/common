@@ -7,7 +7,7 @@ fi
 
 # Define some global configuration variables and routines
 BASE=/var/cache/machinelocks
-HOST=duvel.keg.ertos.in.nicta.com.au
+HOST=duvel.keg.data61.csiro.au
 
 # Config file location
 CONFIG=~/.mq
