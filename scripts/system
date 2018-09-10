@@ -24,12 +24,12 @@ done
 
 function OutputSystemList() {
     local system=""
-    printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
-    printf "| Name       | Arch | ISA     | SoC          | CPU            | Cores | RAM   | MaxCLK |\n"
-    printf "+------------+------+---------+--------------+----------------+-------+-------+--------+\n"
+    printf "+----------------+------+---------+--------------+----------------+-------+-------+--------+\n"
+    printf "| Name           | Arch | ISA     | SoC          | CPU            | Cores | RAM   | MaxCLK |\n"
+    printf "+----------------+------+---------+--------------+----------------+-------+-------+--------+\n"
     for system in $(SystemList)
     do
-        printf "| %10s " "${system}"
+        printf "| %14s " "${system}"
         printf "| %4s "  "$("Arch_${system}")"
         printf "| %7s "  "$("ISA_${system}")"
         printf "| %12s " "$("SOC_${system}")"
