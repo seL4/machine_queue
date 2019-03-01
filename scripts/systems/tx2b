@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_tx2b() {
+    echo 1
+}
+
+function SystemName_tx2b() {
+    echo "tx2b"
+}
+
+function SystemPowerOff_tx2b() {
+    RebootShutdown tx2b
+}
+
+function Arch_tx2b() {
+    echo "arm"
+}
+
+function ISA_tx2b() {
+    echo "armv8-a"
+}
+
+function SOC_tx2b() {
+    echo "TegraTX2"
+}
+
+function CPU_tx2b() {
+    echo "cortex-a57"
+}
+
+function Cores_tx2b() {
+    echo "4"
+}
+
+function RAM_tx2b() {
+    echo "8GB"
+}
+
+function MaxCLK_tx2b() {
+    echo "1.9Ghz"
+}
+
+
