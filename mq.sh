@@ -1,5 +1,15 @@
 #!/bin/bash
 
+
+scp() {
+    /usr/bin/scp -oProxyJump=login.ts.data61.csiro.au "$@"
+}
+
+ssh() {
+    /usr/bin/ssh -o ProxyCommand='/usr/bin/ssh -W %h:%p login.ts.data61.csiro.au' "$@"
+}
+
+
 # Determine root directory of script. This is some black magic found on stackoverflow
 pushd . > /dev/null
 SCRIPT_PATH="${BASH_SOURCE[0]}";
