@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_hifive1() {
+    echo 1
+}
+
+function SystemName_hifive1() {
+    echo "hifive1"
+}
+
+function SystemPowerOff_hifive1() {
+    RebootShutdown hifive1
+}
+
+function Arch_hifive1() {
+    echo "riscv"
+}
+
+function ISA_hifive1() {
+    echo "riscv64"
+}
+
+function SOC_hifive1() {
+    echo "SiFive Freedom U540"
+}
+
+function CPU_hifive1() {
+    echo "U54-MC"
+}
+
+function Cores_hifive1() {
+    echo "4"
+}
+
+function RAM_hifive1() {
+    echo "2"
+}
+
+function MaxCLK_hifive1() {
+    echo "??"
+}
+
+
