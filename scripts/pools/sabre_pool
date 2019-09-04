@@ -8,9 +8,9 @@ fi
 function Systems_sabre_pool() {
     # This function can be explicit or programatic
 
-    for system in `SystemList`
+    for system in $(SystemList)
     do
-        if [ "`SOC_${system}`" == "imx6" ]; then
+        if [ "$(SOC_${system})" == "imx6" ]; then
             echo ${system}
         fi
     done
@@ -34,15 +34,15 @@ function GetRandomSystemFromPool_sabre_pool() {
     local free_sabre_systems=()
     local locked_systems=()
 
-    for lockedsys in `GetAllLockedSystems`; do 
+    for lockedsys in $(GetAllLockedSystems); do 
         locked_systems+=(${lockedsys})
     done
 
-    for system in `Systems_sabre_pool`
+    for system in $(Systems_sabre_pool)
     do
         sabre_systems+=(${system})
-        `containsElement "${system}" "${locked_systems[@]}"`
-        if [ "$?" -ne 0 ]; then 
+        if containsElement "${system}" "${locked_systems[@]}"
+        then
             free_sabre_systems+=(${system})
         fi
     done
