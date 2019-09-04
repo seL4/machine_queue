@@ -10,7 +10,7 @@ function Systems_sabre_pool() {
 
     for system in `SystemList`
     do
-        if [ `SOC_${system}` == "imx6" ]; then
+        if [ "`SOC_${system}`" == "imx6" ]; then
             echo ${system}
         fi
     done
