@@ -34,3 +34,15 @@ function OutputPoolList() {
     done
     printf "+------------+-------------------------------------------------------------------------+\n"
 }
+
+function OutputPoolTSV() {
+    for pool in $(PoolList)
+    do
+        printf "%s" "${pool}"
+        for system in $("Systems_${pool}")
+        do
+            printf "\t%s" "${system}"
+        done
+        printf "\n"
+    done
+}

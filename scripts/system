@@ -43,6 +43,25 @@ function OutputSystemList() {
     OutputPoolList
 }
 
+function OutputSystemTSV() {
+    printf "name\tarch\tsel4_plat\tisa\tsoc\tcpu\tcores\tram\tmax_clk\tnum_files\n"
+    for system in $(SystemList)
+    do
+		printf \
+			"%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" \
+        	"${system}" \
+        	"$("Arch_${system}")" \
+        	"$("Sel4Plat_${system}")" \
+        	"$("ISA_${system}")" \
+        	"$("SOC_${system}")" \
+        	"$("CPU_${system}")" \
+        	"$("Cores_${system}")" \
+        	"$("RAM_${system}")" \
+        	"$("MaxCLK_${system}")" \
+			"$("SystemNumFiles_${system}")"
+    done
+}
+
 function SystemCorrectNumberOfFiles() {
     local system=$1
     local num=$2

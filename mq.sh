@@ -59,6 +59,14 @@ case "$command" in
         OutputSystemList
         exit 0
     ;;
+    system-tsv)
+        OutputSystemTSV
+        exit 0
+    ;;
+    pool-tsv)
+        OutputPoolTSV
+        exit 0
+    ;;
     sem)
         UserLock "$@"
         # Should not get here
