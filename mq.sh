@@ -18,10 +18,12 @@ Usage () {
     echo
     echo " Commands:"
     echo
-    echo "  run      Run a new job on a machine"
-    echo "  systems  Query information on available machines"
+    echo "  run         Run a new job on a machine"
+    echo "  systems     Query information on available machines"
+    echo "  system-tsv  List available machines as TSV"
+    echo "  pool-tsv    List available machine pools as tab-separated lists"
     echo
-    echo "  sem      Directly interact with the machine locks"
+    echo "  sem         Directly interact with the machine locks"
     echo
     echo "Use '$0 COMMAND help' to get detailed help for each command"
 }
