@@ -67,6 +67,31 @@ function LockSystemPrintInfo() {
     fi
 }
 
+# This prints the status of the lock in a more machine-readable format
+function LockSystemDumpInfo() {
+    local system=$1
+
+    local info=""
+    local owner=""
+    local since=""
+    local lockkey=""
+
+    info=$(LockGetInfo)
+    owner=$(echo "$info" | cut -d ',' -f 1)
+    since=$(echo "$info" | cut -d ',' -f 2)
+    lockkey=$(LockGetKey "${system}")
+    if [ "${owner}" == "" ]; then
+		echo "FREE";
+	else
+		echo "LOCKED";
+		echo "$owner";
+		echo "$since";
+    	if [ "${lockkey}" != "0" ]; then
+        	echo "${lockkey}"
+		fi
+    fi
+}
+
 function LockSystem() {
     local system=$1
     local retry_period=$2
@@ -144,6 +169,7 @@ function UserLockUsage() {
     echo " Options:"
     echo
     echo " -info SYSTEM     Display lock information for the specified SYSTEM"
+    echo " -mr-info SYSTEM  Display lock information for the specified SYSTEM in machine-readable format"
     echo " -signal SYSTEM   Release the lock for the specified SYSTEM"
     echo " -wait SYSTEM     Acquire the lock for the specified SYSTEM"
     echo " -w TIME          Number of seconds to wait between each attempt to acquire the lock (default 8)"
@@ -166,6 +192,11 @@ function UserLock() {
                 shift
                 system="$1"
                 action="-info"
+            ;;
+            -mr-info)
+                shift
+                system="$1"
+                action="-mr-info"
             ;;
             -signal)
                 shift
@@ -230,6 +261,9 @@ function UserLock() {
     case "${action}" in
         -info)
             LockSystemPrintInfo "${system}"
+        ;;
+        -mr-info)
+            LockSystemDumpInfo "${system}"
         ;;
         -signal)
             UnlockSystem "${system}" "${force}" "${key}"
