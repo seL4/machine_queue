@@ -44,3 +44,7 @@ function RAM_odroidc2() {
 function MaxCLK_odroidc2() {
     echo "1.5GHz"
 }
+
+function Sel4Plat_odroidc2() {
+    echo "odroidc2"
+}

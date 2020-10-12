@@ -45,4 +45,6 @@ function MaxCLK_kzm() {
     echo "532Mhz"
 }
 
-
+function Sel4Plat_kzm() {
+    echo "imx31:kzm"
+}

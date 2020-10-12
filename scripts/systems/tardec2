@@ -45,4 +45,6 @@ function MaxCLK_tardec2() {
     echo "1.7Ghz"
 }
 
-
+function Sel4Plat_tardec2() {
+    echo "pc99"
+}

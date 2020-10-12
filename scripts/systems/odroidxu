@@ -45,4 +45,6 @@ function MaxCLK_odroidxu() {
     echo "2Ghz"
 }
 
-
+function Sel4Plat_odroidxu() {
+    echo "exynos5:exynos5410"
+}

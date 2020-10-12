@@ -45,4 +45,6 @@ function MaxCLK_tx2() {
     echo "1.9Ghz"
 }
 
-
+function Sel4Plat_tx2() {
+    echo "tx2"
+}

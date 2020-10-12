@@ -45,4 +45,6 @@ function MaxCLK_jetson() {
     echo "2.3Ghz"
 }
 
-
+function Sel4Plat_jetson() {
+    echo "tk1"
+}

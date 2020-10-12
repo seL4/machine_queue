@@ -44,3 +44,7 @@ function RAM_hikey() {
 function MaxCLK_hikey() {
     echo "1.2Ghz"
 }
+
+function Sel4Plat_hikey() {
+    echo "hikey"
+}

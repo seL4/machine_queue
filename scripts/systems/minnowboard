@@ -45,4 +45,6 @@ function MaxCLK_minnowboard() {
     echo "1.33Ghz"
 }
 
-
+function Sel4Plat_minnowboard() {
+    echo "pc99"
+}

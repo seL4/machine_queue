@@ -45,4 +45,6 @@ function MaxCLK_haswell3() {
     echo "3.1Ghz"
 }
 
-
+function Sel4Plat_haswell3() {
+    echo "pc99:haswell"
+}

@@ -45,4 +45,6 @@ function MaxCLK_horde() {
     echo "2.0Ghz"
 }
 
-
+function Sel4Plat_horde() {
+    echo "pc99:haswell"
+}

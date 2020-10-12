@@ -45,4 +45,6 @@ function MaxCLK_rockpro64a() {
     echo "1.9Ghz"
 }
 
-
+function Sel4Plat_rockpro64a() {
+    echo "rockpro64"
+}

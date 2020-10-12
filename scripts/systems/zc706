@@ -45,4 +45,6 @@ function MaxCLK_zc706() {
     echo "800Mhz"
 }
 
-
+function Sel4Plat_zc706() {
+    echo "zynq7000"
+}

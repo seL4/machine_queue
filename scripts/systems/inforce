@@ -45,4 +45,6 @@ function MaxCLK_inforce() {
     echo "1.7Ghz"
 }
 
-
+function Sel4Plat_inforce() {
+    echo "apq8064"
+}

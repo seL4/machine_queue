@@ -45,4 +45,6 @@ function MaxCLK_hifive1() {
     echo "??"
 }
 
-
+function Sel4Plat_hifive1() {
+    echo "hifive"
+}

@@ -44,3 +44,9 @@ function RAM_nanopi() {
 function MaxCLK_nanopi() {
     echo "1.5GHz"
 }
+
+function Sel4Plat_nanopi() {
+	# This is an rk3399, similar to the rockpro64, should probably have
+	# its own DTS?
+    echo "rockpro64"
+}

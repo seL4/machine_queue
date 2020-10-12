@@ -44,3 +44,7 @@ function RAM_imx8mm() {
 function MaxCLK_imx8mm() {
     echo "1.2Ghz"
 }
+
+function Sel4Plat_imx8mm() {
+    echo "imx8mm-evk"
+}

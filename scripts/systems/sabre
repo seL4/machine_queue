@@ -45,4 +45,6 @@ function MaxCLK_sabre() {
     echo "1Ghz"
 }
 
-
+function Sel4Plat_sabre() {
+    echo "imx6:sabre"
+}

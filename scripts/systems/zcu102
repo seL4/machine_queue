@@ -45,4 +45,6 @@ function MaxCLK_zcu102() {
     echo "??"
 }
 
-
+function Sel4Plat_zcu102() {
+    echo "zynqmp"
+}

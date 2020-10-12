@@ -44,3 +44,7 @@ function RAM_arndale() {
 function MaxCLK_arndale() {
     echo "1.7GHz"
 }
+
+function Sel4Plat_arndale() {
+    echo "exynos5:exynos5250"
+}

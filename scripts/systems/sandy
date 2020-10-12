@@ -45,4 +45,6 @@ function MaxCLK_sandy() {
     echo "3.4Ghz"
 }
 
-
+function Sel4Plat_sandy() {
+    echo "pc99:sandybridge"
+}

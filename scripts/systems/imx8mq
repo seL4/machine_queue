@@ -45,4 +45,6 @@ function MaxCLK_imx8mq() {
     echo "1.4Ghz"
 }
 
-
+function Sel4Plat_imx8mq() {
+    echo "imx8mq-evk"
+}

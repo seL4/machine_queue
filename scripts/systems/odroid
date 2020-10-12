@@ -45,4 +45,6 @@ function MaxCLK_odroid() {
     echo "1.4Ghz"
 }
 
-
+function Sel4Plat_odroid() {
+    echo "exynos4"
+}

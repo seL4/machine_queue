@@ -45,3 +45,6 @@ function MaxCLK_beagle() {
     echo "720Mhz"
 }
 
+function Sel4Plat_beagle() {
+    echo "omap3"
+}

@@ -44,3 +44,7 @@ function RAM_rpi3() {
 function MaxCLK_rpi3() {
     echo "1.2Ghz"
 }
+
+function Sel4Plat_rpi3() {
+    echo "bcm2837:rpi3"
+}

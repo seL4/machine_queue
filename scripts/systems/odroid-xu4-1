@@ -44,3 +44,7 @@ function RAM_odroid-xu4-1() {
 function MaxCLK_odroid-xu4-1() {
     echo "2GHz"
 }
+
+function Sel4Plat_odroid-xu4-1() {
+    echo "exynos5:exynos5422"
+}

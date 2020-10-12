@@ -44,3 +44,7 @@ function RAM_bboneblack() {
 function MaxCLK_bboneblack() {
     echo "1GHZ"
 }
+
+function Sel4Plat_bboneblack() {
+    echo "am335x:am335x-boneblack"
+}
