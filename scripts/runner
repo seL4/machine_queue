@@ -6,13 +6,10 @@ if [ "${SCRIPT_PATH}" == "" ]; then
 fi
 
 function HaveRebootAndConsole() {
-    for host in duvel bob saison
-    do
-        if [ "$(hostname)" = "${host}" ]; then
-            return 0
-        fi
-    done
-    return 1
+    HOSTS="
+tiger-un
+ts-iot"
+    echo "$HOSTS" | grep -q $(hostname)
 }
 
 function RebootShutdown() {

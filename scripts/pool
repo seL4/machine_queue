@@ -7,13 +7,13 @@ fi
 
 function IsPoolValid() {
     local pool=$1
-    [ -e "${SCRIPT_PATH}/scripts/pools/${pool}" ]
+    [ -f "${SCRIPT_PATH}/scripts/pools/${pool}" ]
 }
 
 function PoolList() {
     (
 	cd "${SCRIPT_PATH}/scripts/pools/" || exit
-	echo *
+	echo * | sed 's/unavailable//'
     )
 }
 
