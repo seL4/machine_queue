@@ -28,6 +28,34 @@ Usage () {
     echo "Use '$0 COMMAND help' to get detailed help for each command"
 }
 
+# Expect command to be run to be the first argument
+if [ "$#" -lt 1 ]; then
+    Usage
+    exit -1
+fi
+
+command=$1
+shift
+case "$command" in
+    systems)
+        OutputSystemList "$@"
+        exit 0
+    ;;
+    system-tsv)
+        OutputSystemTSV
+        exit 0
+    ;;
+    pool-tsv)
+        OutputPoolTSV
+        exit 0
+    ;;
+    help)
+        Usage
+        exit 0
+    ;;
+esac
+
+
 # Check we can talk to the cannonical host
 if ! RemoteCommand exit; then
     echo "Unable to ssh to ${HOST}"
@@ -43,31 +71,11 @@ fi
 # Detrmine the remote user name
 REMOTEUSER=$(RemoteCommand bash -c 'eval echo "\$USER"' | sed 's/\r//g')
 
-# Expect command to be run to be the first argument
-if [ "$#" -lt 1 ]; then
-    Usage
-    exit -1
-fi
-
-command=$1
-shift
 case "$command" in
     run)
         Enqueue "$@"
         # Should not get here
         exit -1
-    ;;
-    systems)
-        OutputSystemList
-        exit 0
-    ;;
-    system-tsv)
-        OutputSystemTSV
-        exit 0
-    ;;
-    pool-tsv)
-        OutputPoolTSV
-        exit 0
     ;;
     sem)
         UserLock "$@"
@@ -79,3 +87,4 @@ case "$command" in
         exit 0
     ;;
 esac
+

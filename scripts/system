@@ -13,7 +13,7 @@ function IsSystemValid() {
 function SystemList() {
     (
 	cd "${SCRIPT_PATH}/scripts/systems/"
-	echo * | sed 's/unavailable//'
+	echo * | sed -e 's/ unavailable//' -e 's/  */\n/g'
     )
 }
 
@@ -24,6 +24,18 @@ done
 
 function OutputSystemList() {
     local system=""
+
+    case "$1" in
+	help)
+	    printf >&2 "systems [help|simple]"
+	    printf >&2 "Print list of available systems.  With 'simple' just give their names"
+	    return 0
+	    ;;
+	simple)
+	    SystemList
+	    return 0
+	    ;;
+    esac
     printf "+----------------+------+---------+-----------------+----------------+-------+-------+--------+\n" 
     printf "| Name           | Arch | ISA     | SoC             | CPU            | Cores | RAM   | MaxCLK |\n"
     printf "+----------------+------+---------+-----------------+----------------+-------+-------+--------+\n"
