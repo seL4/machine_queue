@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function SystemNumFiles_pi4B() {
+    echo 1
+}
+
+function SystemName_pi4B() {
+    echo "pi4B"
+}
+
+function SystemPowerOff_pi4B() {
+    RebootShutdown pi4B
+}
+
+function Arch_pi4B() {
+    echo "arm"
+}
+
+function ISA_pi4B() {
+    echo "armv8-a"
+}
+
+function SOC_pi4B() {
+    echo "bcm2711"
+}
+
+function CPU_pi4B() {
+    echo "cortex-a72"
+}
+
+function Cores_pi4B() {
+    echo "4"
+}
+
+function RAM_pi4B() {
+    echo "4GB"
+}
+
+function MaxCLK_pi4B() {
+    echo "1.5Ghz"
+}
+
+function Sel4Plat_pi4B() {
+    echo "rpi4"
+}
