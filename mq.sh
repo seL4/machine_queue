@@ -1,14 +1,18 @@
-#!/bin/bash
+#!/bin/sh
 
-# Determine root directory of script. This is some black magic found on stackoverflow
-pushd . > /dev/null
-SCRIPT_PATH="${BASH_SOURCE[0]}";
-if ([ -h "${SCRIPT_PATH}" ]) then
-    while([ -h "${SCRIPT_PATH}" ]) do cd "$(dirname "$SCRIPT_PATH")" || exit; SCRIPT_PATH=$(readlink "${SCRIPT_PATH}"); done
-fi
-cd "$(dirname "${SCRIPT_PATH}")" || exit > /dev/null
-SCRIPT_PATH=$(pwd);
-popd  > /dev/null
+file_to_dir() {
+    F="$1"
+    while test -h "$F"
+    do
+	cd $(dirname "$F")
+	F=$(readlink "$F")
+    done;
+    cd $(dirname "$F")
+    pwd
+}
+
+SCRIPT_PATH=$(file_to_dir "$0")
+cmdname=$(basename "$0")
 
 # Include common elements
 . "${SCRIPT_PATH}/scripts/common"
@@ -25,7 +29,7 @@ Usage () {
     echo
     echo "  sem         Directly interact with the machine locks"
     echo
-    echo "Use '$0 COMMAND help' to get detailed help for each command"
+    echo "Use '$cmdname COMMAND help' to get detailed help for each command"
 }
 
 # Expect command to be run to be the first argument
@@ -62,14 +66,17 @@ if ! RemoteCommand exit; then
     exit -1
 fi
 
-# Check the version of our scripts compared to the cannonical host
-if ! diff "${SCRIPT_PATH}/VERSION" <(RemoteCommand cat "${BASE}/VERSION" | tr -d '\r'); then
-    echo "Local version of mq.sh appears to differ to version on ${HOST} at ${BASE}"
+# Check the version of our scripts compared to the canonical host
+if ! RemoteCommand cat "${BASE}/VERSION" |
+	tr -d '\r' |
+	diff "${SCRIPT_PATH}/VERSION" -
+then
+    echo "Local version of mq.sh appears to differ from version on ${HOST} at ${BASE}"
     exit -1
 fi
 
-# Detrmine the remote user name
-REMOTEUSER=$(RemoteCommand bash -c 'eval echo "\$USER"' | sed 's/\r//g')
+# Determine the remote user name
+REMOTEUSER=$(RemoteCommand whoami)
 
 case "$command" in
     run)
@@ -87,4 +94,3 @@ case "$command" in
         exit 0
     ;;
 esac
-

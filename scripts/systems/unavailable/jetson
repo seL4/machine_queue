@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_jetson() {
+SystemNumFiles_jetson() {
     echo 1
 }
 
-function SystemName_jetson() {
+SystemName_jetson() {
     echo "jetson1"
 }
 
-function SystemPowerOff_jetson() {
+SystemPowerOff_jetson() {
     RebootShutdown jetson1
 }
 
-function Arch_jetson() {
+Arch_jetson() {
     echo "arm"
 }
 
-function ISA_jetson() {
+ISA_jetson() {
     echo "armv7-a"
 }
 
-function SOC_jetson() {
+SOC_jetson() {
     echo "TegraK1"
 }
 
-function CPU_jetson() {
+CPU_jetson() {
     echo "cortex-a15"
 }
 
-function Cores_jetson() {
+Cores_jetson() {
 echo "4(1)"
 }
 
-function RAM_jetson() {
+RAM_jetson() {
     echo "2GB"
 }
 
-function MaxCLK_jetson() {
+MaxCLK_jetson() {
     echo "2.3Ghz"
 }
 
-function Sel4Plat_jetson() {
+Sel4Plat_jetson() {
     echo "tk1"
 }

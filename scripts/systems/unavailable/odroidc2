@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_odroidc2() {
+SystemNumFiles_odroidc2() {
     echo 1
 }
 
-function SystemName_odroidc2() {
+SystemName_odroidc2() {
     echo "odroidc2"
 }
 
-function SystemPowerOff_odroidc2() {
+SystemPowerOff_odroidc2() {
     RebootShutdown odroidc2
 }
 
-function Arch_odroidc2() {
+Arch_odroidc2() {
     echo "arm"
 }
 
-function ISA_odroidc2() {
+ISA_odroidc2() {
     echo "armv8-a"
 }
 
-function SOC_odroidc2() {
+SOC_odroidc2() {
     echo "odroidc2"
 }
 
-function CPU_odroidc2() {
+CPU_odroidc2() {
     echo "cortex-a53"
 }
 
-function Cores_odroidc2() {
+Cores_odroidc2() {
     echo "4"
 }
 
-function RAM_odroidc2() {
+RAM_odroidc2() {
     echo "2GB"
 }
 
-function MaxCLK_odroidc2() {
+MaxCLK_odroidc2() {
     echo "1.5GHz"
 }
 
-function Sel4Plat_odroidc2() {
+Sel4Plat_odroidc2() {
     echo "odroidc2"
 }

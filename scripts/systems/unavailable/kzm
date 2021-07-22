@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_kzm() {
+SystemNumFiles_kzm() {
     echo 1
 }
 
-function SystemName_kzm() {
+SystemName_kzm() {
     echo "kzm11"
 }
 
-function SystemPowerOff_kzm() {
+SystemPowerOff_kzm() {
     RebootShutdown kzm
 }
 
-function Arch_kzm() {
+Arch_kzm() {
     echo "arm"
 }
 
-function ISA_kzm() {
+ISA_kzm() {
     echo "armv6"
 }
 
-function SOC_kzm() {
+SOC_kzm() {
     echo "imx31"
 }
 
-function CPU_kzm() {
+CPU_kzm() {
     echo "arm1136"
 }
 
-function Cores_kzm() {
+Cores_kzm() {
     echo "1"
 }
 
-function RAM_kzm() {
+RAM_kzm() {
     echo "128MB"
 }
 
-function MaxCLK_kzm() {
+MaxCLK_kzm() {
     echo "532Mhz"
 }
 
-function Sel4Plat_kzm() {
+Sel4Plat_kzm() {
     echo "imx31:kzm"
 }

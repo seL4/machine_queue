@@ -1,19 +1,19 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function HaveRebootAndConsole() {
+HaveRebootAndConsole() {
     HOSTS="
-tiger-un
-ts-iot"
+tftp
+"
     echo "$HOSTS" | grep -q $(hostname)
 }
 
-function RebootShutdown() {
-    local machine=$1
+RebootShutdown() {
+    machine=$1
     if ! HaveRebootAndConsole; then
         ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot --shutdown"
     else
@@ -21,25 +21,21 @@ function RebootShutdown() {
     fi       
 }
 
-function RebootConsoleRunTwoFiles() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local keep_alive=$5
-    local kernel=$6
-    local rootserver=$7
-    local machine=$8
-
-    local logfile=""
-    local kernelfile=""
-    local rootserverfile=""
+RebootConsoleRunTwoFiles() {
+    completion="$1"
+    completion_timeout="$2"
+    errortxt="$3"
+    output="$4"
+    keep_alive="$5"
+    kernel="$6"
+    rootserver="$7"
+    machine="$8"
 
     if echo "$kernel" | grep -iq -v "kernel" && echo "$rootserver" | grep -iq "kernel"; then
         echo -e "\e[31mWARNING: Kernel image file must precede rootserver image file!\e[0m"
     fi
 
-    local ka_flag=""
+    ka_flag=""
     if $keep_alive ; then
         ka_flag="-a"
     fi
@@ -68,7 +64,7 @@ function RebootConsoleRunTwoFiles() {
             return 1
         fi
         ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' -u '${rootserverfile}' ${ka_flag}"
-        local ret=$?
+        ret=$?
         if [ "${output}" != "" ]; then
             scp "${HOST}:${logfile}" "${output}"
         fi
@@ -76,28 +72,27 @@ function RebootConsoleRunTwoFiles() {
         RemoteCommandOn ${HOST} rm "${rootserverfile}"
         RemoteCommandOn ${HOST} rm "${logfile}"
         return $ret
+    fi
+    if [ "${output}" = "" ]; then
+        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
     else
-        if [ "${output}" = "" ]; then
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
-        else
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
-        fi
+        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
     fi
 }
 
-function RebootConsoleRunOneFile() {
-    local completion=$1
-    local completion_timeout=$2
-    local errortxt=$3
-    local output=$4
-    local keep_alive=$5
-    local kernel=$6
-    local machine=$7
+RebootConsoleRunOneFile() {
+    completion=$1
+    completion_timeout=$2
+    errortxt=$3
+    output=$4
+    keep_alive=$5
+    kernel=$6
+    machine=$7
     
-    local logfile=""
-    local kernelfile=""
+    logfile=""
+    kernelfile=""
 
-    local ka_flag=""
+    ka_flag=""
     if $keep_alive ; then
         ka_flag="-a"
     fi
@@ -116,18 +111,17 @@ function RebootConsoleRunOneFile() {
             return 1
         fi
         ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' ${ka_flag}"
-        local ret=$?
+        ret=$?
         if [ "${output}" != "" ]; then
             scp "${HOST}:${logfile}" "${output}"
         fi
         RemoteCommandOn ${HOST} rm "${kernelfile}"
         RemoteCommandOn ${HOST} rm "${logfile}"
         return $ret
+    fi
+    if [ "${output}" = "" ]; then
+        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" ${ka_flag}
     else
-        if [ "${output}" = "" ]; then
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" ${ka_flag}
-        else
-            "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" ${ka_flag}
-        fi
+        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" ${ka_flag}
     fi
 }

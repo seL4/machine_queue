@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_beagle() {
+SystemNumFiles_beagle() {
     echo 1
 }
 
-function SystemName_beagle() {
+SystemName_beagle() {
     echo "beagle1"
 }
 
-function SystemPowerOff_beagle() {
+SystemPowerOff_beagle() {
     RebootShutdown beagle
 }
 
-function Arch_beagle() {
+Arch_beagle() {
     echo "arm"
 }
 
-function ISA_beagle() {
+ISA_beagle() {
     echo "armv7-a"
 }
 
-function SOC_beagle() {
+SOC_beagle() {
     echo "omap3"
 }
 
-function CPU_beagle() {
+CPU_beagle() {
     echo "cortex-a9"
 }
 
-function Cores_beagle() {
+Cores_beagle() {
     echo "1"
 }
 
-function RAM_beagle() {
+RAM_beagle() {
     echo "256MB"
 }
 
-function MaxCLK_beagle() {
+MaxCLK_beagle() {
     echo "720Mhz"
 }
 
-function Sel4Plat_beagle() {
+Sel4Plat_beagle() {
     echo "omap3"
 }

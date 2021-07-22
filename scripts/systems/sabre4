@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_sabre4() {
+SystemNumFiles_sabre4() {
     echo 1
 }
 
-function SystemName_sabre4() {
+SystemName_sabre4() {
     echo "sabre4"
 }
 
-function SystemPowerOff_sabre4() {
+SystemPowerOff_sabre4() {
     RebootShutdown sabre4
 }
 
-function Arch_sabre4() {
+Arch_sabre4() {
     echo "arm"
 }
 
-function ISA_sabre4() {
+ISA_sabre4() {
     echo "armv7-a"
 }
 
-function SOC_sabre4() {
+SOC_sabre4() {
     echo "imx6"
 }
 
-function CPU_sabre4() {
+CPU_sabre4() {
     echo "cortex-a9"
 }
 
-function Cores_sabre4() {
+Cores_sabre4() {
     echo "4"
 }
 
-function RAM_sabre4() {
+RAM_sabre4() {
     echo "1GB"
 }
 
-function MaxCLK_sabre4() {
+MaxCLK_sabre4() {
     echo "1Ghz"
 }
 
-function Sel4Plat_sabre4() {
+Sel4Plat_sabre4() {
     echo "imx6:sabre"
 }

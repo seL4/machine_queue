@@ -1,13 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
 # Define some global configuration variables and routines
 BASE=/var/cache/machinelocks
-HOST=ts-iot.data61.csiro.au
+HOST=tftp.keg.cse.unsw.edu.au
 
 # Config file location
 CONFIG=~/.mq

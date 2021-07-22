@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_jet_tx1_2() {
+SystemNumFiles_jet_tx1_2() {
     echo 1
 }
 
-function SystemName_jet_tx1_2() {
+SystemName_jet_tx1_2() {
     echo "jet_tx1_2"
 }
 
-function SystemPowerOff_jet_tx1_2() {
+SystemPowerOff_jet_tx1_2() {
     RebootShutdown jetson-tx1-2
 }
 
-function Arch_jet_tx1_2() {
+Arch_jet_tx1_2() {
     echo "arm"
 }
 
-function ISA_jet_tx1_2() {
+ISA_jet_tx1_2() {
     echo "armv8-a"
 }
 
-function SOC_jet_tx1_2() {
+SOC_jet_tx1_2() {
     echo "TegraTX1"
 }
 
-function CPU_jet_tx1_2() {
+CPU_jet_tx1_2() {
     echo "cortex-a57"
 }
 
-function Cores_jet_tx1_2() {
+Cores_jet_tx1_2() {
     echo "4"
 }
 
-function RAM_jet_tx1_2() {
+RAM_jet_tx1_2() {
     echo "4GB"
 }
 
-function MaxCLK_jet_tx1_2() {
+MaxCLK_jet_tx1_2() {
     echo "1.9Ghz"
 }
 
-function Sel4Plat_jet_tx1_2() {
+Sel4Plat_jet_tx1_2() {
     echo "tx1"
 }

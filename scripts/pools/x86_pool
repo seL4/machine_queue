@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+function Systems_x86_pool() {
+    # This function can be explicit or programatic
+
+    #for system in `SystemList`
+    #do
+    #    if [ `Arch_${system}` == "x86" ]; then
+    #        echo ${system}
+    #    fi
+    #done
+    
+    # Explicit:
+    echo "haswell3"
+    echo "haswell4"
+    echo "skylake"
+    echo "skylake2"
+#    echo "sandy"
+}
+
+
+
+
+GselectOne(){
+    n=`echo "$1" | wc -l`
+    r=`expr 1 + $RANDOM % $n`
+    echo "$1" | sed -n ${r}p
+}
+
+
+GetRandomSystemFromPool_x86_pool() {
+    # Get a random system from the pool, unlocked if possible
+    locked_systems="$(GetAllLockedSystems)"
+    x86_systems="$(Systems_x86_pool)"
+    free_x86_systems="$(echo "$x86_systems" | grep -F -v -x "$locked_systems")"
+    if [ "$free_x86_systems" ]
+    then
+	selectOne "$free_x86_systems"
+    else
+	selectOne "$x86_systems"
+    fi 
+}
+
+
+

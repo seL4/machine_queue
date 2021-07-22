@@ -5,46 +5,46 @@ if [ "${SCRIPT_PATH}" == "" ]; then
     exit -1
 fi
 
-SystemNumFiles_sabre() {
+SystemNumFiles_sabre2() {
     echo 1
 }
 
-SystemName_sabre() {
-    echo "sabre"
+SystemName_sabre2() {
+    echo "sabre2"
 }
 
-SystemPowerOff_sabre() {
-    RebootShutdown sabre
+SystemPowerOff_sabre2() {
+    RebootShutdown sabre2
 }
 
-Arch_sabre() {
+Arch_sabre2() {
     echo "arm"
 }
 
-ISA_sabre() {
+ISA_sabre2() {
     echo "armv7-a"
 }
 
-SOC_sabre() {
+SOC_sabre2() {
     echo "imx6"
 }
 
-CPU_sabre() {
+CPU_sabre2() {
     echo "cortex-a9"
 }
 
-Cores_sabre() {
+Cores_sabre2() {
     echo "4"
 }
 
-RAM_sabre() {
+RAM_sabre2() {
     echo "1GB"
 }
 
-MaxCLK_sabre() {
+MaxCLK_sabre2() {
     echo "1Ghz"
 }
 
-Sel4Plat_sabre() {
+Sel4Plat_sabre2() {
     echo "imx6:sabre"
 }

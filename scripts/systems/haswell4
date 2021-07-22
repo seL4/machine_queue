@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_haswell4() {
+SystemNumFiles_haswell4() {
     echo 2
 }
 
-function SystemName_haswell4() {
+SystemName_haswell4() {
     echo "haswell4"
 }
 
-function SystemPowerOff_haswell4() {
+SystemPowerOff_haswell4() {
     RebootShutdown haswell4
 }
 
-function Arch_haswell4() {
+Arch_haswell4() {
     echo "x86"
 }
 
-function ISA_haswell4() {
+ISA_haswell4() {
     echo "x86_64"
 }
 
-function SOC_haswell4() {
+SOC_haswell4() {
     echo "haswell"
 }
 
-function CPU_haswell4() {
+CPU_haswell4() {
     echo "i7-4770"
 }
 
-function Cores_haswell4() {
+Cores_haswell4() {
     echo "4"
 }
 
-function RAM_haswell4() {
+RAM_haswell4() {
     echo "16GB"
 }
 
-function MaxCLK_haswell4() {
+MaxCLK_haswell4() {
     echo "3.4Ghz"
 }
 
-function Sel4Plat_haswell4() {
+Sel4Plat_haswell4() {
     echo "pc99:haswell"
 }

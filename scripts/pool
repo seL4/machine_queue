@@ -1,16 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ ! "${SCRIPT_PATH}" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function IsPoolValid() {
-    local pool=$1
+IsPoolValid() {
+    pool=$1
     [ -f "${SCRIPT_PATH}/scripts/pools/${pool}" ]
 }
 
-function PoolList() {
+PoolList() {
     (
 	cd "${SCRIPT_PATH}/scripts/pools/" || exit
 	echo * | sed 's/unavailable//'
@@ -22,7 +22,7 @@ do
     . "${SCRIPT_PATH}/scripts/pools/${pool}"
 done
 
-function OutputPoolList() {
+OutputPoolList() {
     printf "+------------+-------------------------------------------------------------------------+\n"
     printf "| Name       | Systems                                                                 |\n"
     printf "+------------+-------------------------------------------------------------------------+\n"
@@ -35,7 +35,7 @@ function OutputPoolList() {
     printf "+------------+-------------------------------------------------------------------------+\n"
 }
 
-function OutputPoolTSV() {
+OutputPoolTSV() {
     for pool in $(PoolList)
     do
         printf "%s" "${pool}"

@@ -1,61 +1,46 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ ! "${SCRIPT_PATH}" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function LockName() {
-    local system=$1
-    echo "${BASE}/${system}.lock"
+LockName() {
+    echo "${BASE}/$1.lock"
 }
 
-function LockOwner() {
-    local system=$1
-    RemoteCommand bash -c "stat --format='%U' $(LockName "${system}") 2>/dev/null" | sed 's/\r//g'
+LockOwner() {
+    RemoteCommand "/bin/sh -c \"stat --format='%U' $(LockName "$1") 2>/dev/null\""
 }
 
-function LockGetInfo() {
-    RemoteCommand bash -c "stat --format='%U,%y' $(LockName "${system}") 2>/dev/null"| sed 's/\r//g'
+LockGetInfo() {
+    RemoteCommand "/bin/sh -c \"stat --format='%U,%y' $(LockName "$1") 2>/dev/null\""
 }
 
-function LockGetKey() {
-    local system=$1
-    RemoteCommand bash -c "cat $(LockName "${system}")"
+LockGetKey() {
+    RemoteCommand cat $(LockName "$1")
 }
 
-function LockIOwn() {
-    local system=$1
-    local owner=""
-    owner=$(LockOwner "${system}")
-    if [ "${owner}" != "${REMOTEUSER}" ]; then
-        return 1
-    fi
-    return 0
+LockIOwn() {
+    owner="$(LockOwner "$1")"
+    return [ "${owner}" = "${REMOTEUSER}" ]
+
 }
 
-function GetAllLockedSystems() {
-    local lockfiles=""
-    lockfiles=$(RemoteCommand bash -c "find ${BASE} -name '*.lock'")
-    for l in ${lockfiles}; do
-        echo -n "$(basename "$l" | tr -d '\r' | sed 's/.lock//g') "
-    done
-    echo ""
+GetAllLockedSystems() {
+    RemoteCommand find ${BASE} -name '*.lock' -print0 |
+	xargs -0 -i basename {} .lock
+    echo
 }
 
-function LockSystemPrintInfo() {
-    local system=$1
+LockSystemPrintInfo() {
+    system="$1"
 
-    local info=""
-    local owner=""
-    local since=""
-    local lockkey=""
-
-    info=$(LockGetInfo)
+    info="$(LockGetInfo "$system")"
     owner=$(echo "$info" | cut -d ',' -f 1)
     since=$(echo "$info" | cut -d ',' -f 2)
     lockkey=$(LockGetKey "${system}")
-    if [ "${owner}" == "" ]; then
+    if [ ! "${owner}" ]; then
         echo "Lock for $system currently free"
         return;
     fi
@@ -68,74 +53,68 @@ function LockSystemPrintInfo() {
 }
 
 # This prints the status of the lock in a more machine-readable format
-function LockSystemDumpInfo() {
-    local system=$1
-
-    local info=""
-    local owner=""
-    local since=""
-    local lockkey=""
-
+LockSystemDumpInfo() {
+    system="$1"
     info=$(LockGetInfo)
     owner=$(echo "$info" | cut -d ',' -f 1)
     since=$(echo "$info" | cut -d ',' -f 2)
     lockkey=$(LockGetKey "${system}")
-    if [ "${owner}" == "" ]; then
-		echo "FREE";
-	else
-		echo "LOCKED";
-		echo "$owner";
-		echo "$since";
-    	if [ "${lockkey}" != "0" ]; then
-        	echo "${lockkey}"
-		fi
+    if [ "${owner}" = "" ];
+    then
+	echo "FREE"
+    else
+	echo "LOCKED"
+	echo "$owner"
+	echo "$since"
+    	if [ "${lockkey}" != "0" ];
+	then
+            echo "${lockkey}"
+	fi
     fi
 }
 
-function LockSystem() {
-    local system=$1
-    local retry_period=$2
-    local total_retries=$3
-    local key=$4
-
-    local owner=""
-
+LockSystem() {
+    system="$1"
+    retry_period="$2"
+    total_retries="$3"
+    key="$4"
     owner=$(LockOwner "${system}")
 
     # Error checking - the same person can't relock the same lock
     #                - if they are trying to, check if they are using a different key
-    if [ "${owner}" == "${REMOTEUSER}" ]; then
+    if [ "${owner}" = "${REMOTEUSER}" ];
+    then
         lockkey=$(LockGetKey "${system}")
-        if [ "${lockkey}" == "0" ] && [ "${key}" == "0" ]; then
+        if [ "${lockkey}" -eq 0 -a  "${key}" -eq 0 ];
+	then
             echo "Attempting to grab lock you already own. Please explicitly release"
             return 1
-        else
-            if [ "${lockkey}" == "${key}" ]; then
-                echo "Attempting to grab lock you already own with the same key. Please explicitly release"
-                return 2
-            fi
+	fi
+        if [ "${lockkey}" = "${key}" ];
+	then
+            echo "Attempting to grab lock you already own with the same key. Please explicitly release"
+            return 2
         fi
     fi
 
     RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName "${system}")"
-    if [ "$?" != 0 ]; then
-        return 3
-    fi
+     [ "$?" -ne  0 ] && return 3
 
-    if [ "$?" == 0 ] && [ "${key}" != "0" ]; then
-        # If a key was used, put it inside the lock
-        comm="chmod u+w \"$(LockName "${system}")\" && echo -n '${key}' > \"$(LockName "${system}")\" && chmod u-w \"$(LockName "${system}")\""
-        RemoteCommand bash -c "${comm}"
-    fi
+     if [ "$?" -eq 0  -a "${key}" -ne "0" ];
+     then
+         # If a key was used, put it inside the lock
+	 lock=$(LockName "$system")
+         comm="chmod u+w '$lock' && echo -n '${key}' > '$lock' && chmod u-w '$lock'"
+         RemoteCommand /bin/sh -c "${comm}"
+     fi
 
-    return $?
+     return $?
 }
 
-function UnlockSystem() {
-    local system=$1
-    local force=$2
-    local key=$3
-    local owner=""
+UnlockSystem() {
+    system="$1"
+    force="$2"
+    key="$3"
 
     if [ "${force}" -ne 1 ]; then
         owner=$(LockOwner "${system}")
@@ -157,7 +136,7 @@ function UnlockSystem() {
     fi
 }
 
-function UserLockUsage() {
+UserLockUsage() {
     echo "$0 sem -signal|-wait|-info SYSTEM [-f] [-w retry-time] [-t retry-count] [-k LOCK_KEY]"
     echo
     echo "   Manually manipulate locks for machines. The lock for each system"
@@ -180,12 +159,10 @@ function UserLockUsage() {
 }
 
 function UserLock() {
-    local system=""
-    local action=""
-    local retry_period=8
-    local total_retries=-1
-    local force=0
-    local key="0"
+    retry_period=8
+    total_retries=-1
+    force=0
+    key="0"
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -info)
@@ -250,12 +227,11 @@ function UserLock() {
             echo "Valid pools are"
             PoolList
             exit -1
-        else
-            # Select a system from the pool
-            pool=${system}
-            system=$(GetRandomSystemFromPool_"${pool}")
-            echo "${system}"
-        fi
+	fi
+        # Select a system from the pool
+        pool=${system}
+        system=$(GetRandomSystemFromPool_"${pool}")
+        echo "${system}"
     fi
 
     case "${action}" in

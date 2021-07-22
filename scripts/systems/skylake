@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_skylake() {
+SystemNumFiles_skylake() {
     echo 2
 }
 
-function SystemName_skylake() {
+SystemName_skylake() {
     echo "skylake"
 }
 
-function SystemPowerOff_skylake() {
+SystemPowerOff_skylake() {
     RebootShutdown skylake
 }
 
-function Arch_skylake() {
+Arch_skylake() {
     echo "x86"
 }
 
-function ISA_skylake() {
+ISA_skylake() {
     echo "x86_64"
 }
 
-function SOC_skylake() {
+SOC_skylake() {
     echo "skylake"
 }
 
-function CPU_skylake() {
+CPU_skylake() {
     echo "i7-6700"
 }
 
-function Cores_skylake() {
+Cores_skylake() {
     echo "4"
 }
 
-function RAM_skylake() {
+RAM_skylake() {
     echo "8GB"
 }
 
-function MaxCLK_skylake() {
+MaxCLK_skylake() {
     echo "3.4Ghz"
 }
 
-function Sel4Plat_skylake() {
+Sel4Plat_skylake() {
     echo "pc99:skylake"
 }

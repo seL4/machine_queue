@@ -1,16 +1,16 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function IsSystemValid() {
-    local system=$1
+IsSystemValid() {
+    system="$1"
     [ -f "${SCRIPT_PATH}/scripts/systems/${system}" ]
 }
 
-function SystemList() {
+SystemList() {
     (
 	cd "${SCRIPT_PATH}/scripts/systems/"
 	echo * | sed -e 's/ unavailable//' -e 's/  */\n/g'
@@ -22,8 +22,8 @@ do
     . "${SCRIPT_PATH}/scripts/systems/${system}"
 done
 
-function OutputSystemList() {
-    local system=""
+OutputSystemList() {
+    system=""
 
     case "$1" in
 	help)
@@ -55,7 +55,7 @@ function OutputSystemList() {
     OutputPoolList
 }
 
-function OutputSystemTSV() {
+OutputSystemTSV() {
     printf "name\tarch\tsel4_plat\tisa\tsoc\tcpu\tcores\tram\tmax_clk\tnum_files\n"
     for system in $(SystemList)
     do
@@ -74,38 +74,35 @@ function OutputSystemTSV() {
     done
 }
 
-function SystemCorrectNumberOfFiles() {
-    local system=$1
-    local num=$2
-    local system_num=""
+SystemCorrectNumberOfFiles() {
+    system=$1
+    num=$2
+    system_num=""
     system_num="$("SystemNumFiles_${system}")"
     [ "${num}" -eq "${system_num}" ]
 }
 
-function SystemPowerOff() {
-    local system=$1
+SystemPowerOff() {
+    system=$1
     "SystemPowerOff_${system}"
 }
 
-function SystemRunImage() {
-    local system=$1
-    local completion=$2
-    local completion_timeout=$3
-    local errortxt=$4
-    local logfile=$5
-    local keep_alive=$6
-    local kernel=$7
-    local rootserver=""
-    local system_name=""
+SystemRunImage() {
+    system="$1"
+    completion="$2"
+    completion_timeout="$3"
+    errortxt="$4"
+    logfile="$5"
+    keep_alive="$6"
+    kernel="$7"
+    rootserver=""
 
     system_name="$("SystemName_${system}")"
 
-    if [ "$("SystemNumFiles_${system}")" == "2" ]; then
-        rootserver=$8
+    if [ "$("SystemNumFiles_${system}")" -eq 2 ]; then
+        rootserver="$8"
         RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
     else
         RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
     fi
-
-
 }

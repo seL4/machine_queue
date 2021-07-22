@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_odroidxu() {
+SystemNumFiles_odroidxu() {
     echo 1
 }
 
-function SystemName_odroidxu() {
+SystemName_odroidxu() {
     echo "odroid-xu"
 }
 
-function SystemPowerOff_odroidxu() {
+SystemPowerOff_odroidxu() {
     RebootShutdown odroid-xu
 }
 
-function Arch_odroidxu() {
+Arch_odroidxu() {
     echo "arm"
 }
 
-function ISA_odroidxu() {
+ISA_odroidxu() {
     echo "armv7-a"
 }
 
-function SOC_odroidxu() {
+SOC_odroidxu() {
     echo "exynos5410"
 }
 
-function CPU_odroidxu() {
+CPU_odroidxu() {
     echo "cortex-a15(a7)"
 }
 
-function Cores_odroidxu() {
+Cores_odroidxu() {
     echo "4(8)"
 }
 
-function RAM_odroidxu() {
+RAM_odroidxu() {
     echo "2GB"
 }
 
-function MaxCLK_odroidxu() {
+MaxCLK_odroidxu() {
     echo "2Ghz"
 }
 
-function Sel4Plat_odroidxu() {
+Sel4Plat_odroidxu() {
     echo "exynos5:exynos5410"
 }

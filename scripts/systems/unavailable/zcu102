@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_zcu102() {
+SystemNumFiles_zcu102() {
     echo 1
 }
 
-function SystemName_zcu102() {
+SystemName_zcu102() {
     echo "zcu102"
 }
 
-function SystemPowerOff_zcu102() {
+SystemPowerOff_zcu102() {
     RebootShutdown zcu102
 }
 
-function Arch_zcu102() {
+Arch_zcu102() {
     echo "arm"
 }
 
-function ISA_zcu102() {
+ISA_zcu102() {
     echo "armv8-a"
 }
 
-function SOC_zcu102() {
+SOC_zcu102() {
     echo "zcu102"
 }
 
-function CPU_zcu102() {
+CPU_zcu102() {
     echo "cortex-a53"
 }
 
-function Cores_zcu102() {
+Cores_zcu102() {
     echo "4"
 }
 
-function RAM_zcu102() {
+RAM_zcu102() {
     echo "4GB"
 }
 
-function MaxCLK_zcu102() {
+MaxCLK_zcu102() {
     echo "??"
 }
 
-function Sel4Plat_zcu102() {
+Sel4Plat_zcu102() {
     echo "zynqmp"
 }

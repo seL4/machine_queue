@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
@@ -9,7 +9,7 @@ fi
 # 'if anything at all happens try and shut down our job cleanly' approach
 SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
 
-function EnqueueUsage() {
+EnqueueUsage() {
     echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] -f file1 -f file2 .. -f filen"
     echo
     echo "   Acquires a lock for a machine, and once locked runs the specified job"
@@ -40,7 +40,7 @@ function EnqueueUsage() {
     echo
 }
 
-function Enqueue() {
+Enqueue() {
     # Parse the command line
     local file_count=0
     local retry_period=8
@@ -64,7 +64,7 @@ function Enqueue() {
             -c)
                 shift
                 completion="$1"
-                if [ "$interact" != "" ]; then
+                if [ "$interact" ]; then
                     EnqueueUsage
                     exit -1
                 fi
@@ -128,11 +128,11 @@ function Enqueue() {
     done
 
     # Check that we got enough parameters
-    if [ "$system" = "" ]; then
+    if [ ! "$system" ]; then
         EnqueueUsage
         exit -1
     fi
-    if [ "$interact" = "" ]; then
+    if [ ! "$interact" ]; then
         EnqueueUsage
         exit -1
     fi

@@ -1,0 +1,43 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" == "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+Systems_sabre_pool() {
+    # This function can be explicit or programatic
+
+    for system in $(SystemList)
+    do
+        if [ "$(SOC_${system})" = "imx6" ]; then
+            echo ${system}
+        fi
+    done
+    
+    # Explicit:
+    #echo "sabre"
+    #echo "sabre2"
+    #echo "sabre4"
+}
+
+selectOne(){
+    n=`echo "$1" | wc -l`
+    r=`expr 1 + $RANDOM % $n`
+    echo "$1" | sed -n ${r}p
+}
+
+
+GetRandomSystemFromPool_sabre_pool() {
+    # Get a random system from the pool, unlocked if possible
+    locked_systems="$(GetAllLockedSystems)"
+    sabre_systems="$(Systems_sabre_pool)"
+    free_sabre_systems="$(echo "$sabre_systems" | grep -F -v -x "$locked_systems")"
+    if [ "$free_sabre_systems" ]
+    then
+	selectOne "$free_sabre_systems"
+    else
+	selectOne "$sabre_systems"
+    fi 
+}
+

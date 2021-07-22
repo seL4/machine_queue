@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_rockpro64b() {
+SystemNumFiles_rockpro64b() {
     echo 1
 }
 
-function SystemName_rockpro64b() {
+SystemName_rockpro64b() {
     echo "rockpro64b"
 }
 
-function SystemPowerOff_rockpro64b() {
+SystemPowerOff_rockpro64b() {
     RebootShutdown rockpro64b
 }
 
-function Arch_rockpro64b() {
+Arch_rockpro64b() {
     echo "arm"
 }
 
-function ISA_rockpro64b() {
+ISA_rockpro64b() {
     echo "armv8-a"
 }
 
-function SOC_rockpro64b() {
+SOC_rockpro64b() {
     echo "Rockchip RK3399"
 }
 
-function CPU_rockpro64b() {
+CPU_rockpro64b() {
     echo "cortex-a53/a72"
 }
 
-function Cores_rockpro64b() {
+Cores_rockpro64b() {
     echo "4+2"
 }
 
-function RAM_rockpro64b() {
+RAM_rockpro64b() {
     echo "4GB"
 }
 
-function MaxCLK_rockpro64b() {
+MaxCLK_rockpro64b() {
     echo "1.9Ghz"
 }
 
-function Sel4Plat_rockpro64b() {
+Sel4Plat_rockpro64b() {
     echo "rockpro64"
 }

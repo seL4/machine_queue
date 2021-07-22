@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_hikey() {
+SystemNumFiles_hikey() {
     echo 1
 }
 
-function SystemName_hikey() {
+SystemName_hikey() {
     echo "hikey"
 }
 
-function SystemPowerOff_hikey() {
+SystemPowerOff_hikey() {
     RebootShutdown hikey
 }
 
-function Arch_hikey() {
+Arch_hikey() {
     echo "arm"
 }
 
-function ISA_hikey() {
+ISA_hikey() {
     echo "armv8-a"
 }
 
-function SOC_hikey() {
+SOC_hikey() {
     echo "kirin6220"
 }
 
-function CPU_hikey() {
+CPU_hikey() {
     echo "cortex-a53"
 }
 
-function Cores_hikey() {
+Cores_hikey() {
     echo "8"
 }
 
-function RAM_hikey() {
+RAM_hikey() {
     echo "1GB"
 }
 
-function MaxCLK_hikey() {
+MaxCLK_hikey() {
     echo "1.2Ghz"
 }
 
-function Sel4Plat_hikey() {
+Sel4Plat_hikey() {
     echo "hikey"
 }

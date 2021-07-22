@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" == "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_zc706() {
+SystemNumFiles_zc706() {
     echo 1
 }
 
-function SystemName_zc706() {
+SystemName_zc706() {
     echo "zc706"
 }
 
-function SystemPowerOff_zc706() {
+SystemPowerOff_zc706() {
     RebootShutdown zc706
 }
 
-function Arch_zc706() {
+Arch_zc706() {
     echo "arm"
 }
 
-function ISA_zc706() {
+ISA_zc706() {
     echo "armv7-a"
 }
 
-function SOC_zc706() {
+SOC_zc706() {
     echo "zynq-7000"
 }
 
-function CPU_zc706() {
+CPU_zc706() {
     echo "cortex-a9"
 }
 
-function Cores_zc706() {
+Cores_zc706() {
     echo "2"
 }
 
-function RAM_zc706() {
+RAM_zc706() {
     echo "1GB"
 }
 
-function MaxCLK_zc706() {
+MaxCLK_zc706() {
     echo "800Mhz"
 }
 
-function Sel4Plat_zc706() {
+Sel4Plat_zc706() {
     echo "zynq7000"
 }
