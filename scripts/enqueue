@@ -42,19 +42,19 @@ EnqueueUsage() {
 
 Enqueue() {
     # Parse the command line
-    local file_count=0
-    local retry_period=8
-    local total_retries=-1
-    local logfile=""
-    local interact=""
-    local no_lock_mods=false
-    local keep_alive=false
-    local completion=""
-    local completion_timeout=-1
-    local errortxt=""
-    local files=""
-    local system=""
-    local key="0"
+    file_count=0
+    retry_period=8
+    total_retries=-1
+    logfile=""
+    interact=""
+    no_lock_mods=false
+    keep_alive=false
+    completion=""
+    completion_timeout=-1
+    errortxt=""
+    files=""
+    system=""
+    key="0"
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -l)
@@ -97,7 +97,7 @@ Enqueue() {
                     files="$files "
                 fi
                 files="$files$1"
-                (( file_count++ ))
+                file_count=`expr $file_count + 1`
             ;;
             -s)
                 shift
@@ -117,11 +117,15 @@ Enqueue() {
             ;;
             --)
                 break
-            ;;
+		;;
+	    help)
+		EnqueueUsage
+		exit 0
+		;;
             *)
                 echo "Unknown option $1"
                 EnqueueUsage
-                exit -1
+                exit 1
             ;;
         esac
         shift
@@ -130,11 +134,11 @@ Enqueue() {
     # Check that we got enough parameters
     if [ ! "$system" ]; then
         EnqueueUsage
-        exit -1
+        exit 1
     fi
     if [ ! "$interact" ]; then
         EnqueueUsage
-        exit -1
+        exit 1
     fi
 
     # Verify the requested system exists
@@ -145,20 +149,19 @@ Enqueue() {
             SystemList
             echo "Valid pools are"
             PoolList
-            exit -1
-        else
-            # Select a system from the pool
-            pool=${system}
-            system=$(GetRandomSystemFromPool_"${pool}")
-            echo "Selecting system '${system}' from pool '${pool}'"
+            exit 1
         fi
+        # Select a system from the pool
+        pool=${system}
+        system=$(GetRandomSystemFromPool_"${pool}")
+        echo "Selecting system '${system}' from pool '${pool}'"
     fi
 
     # Check that the number of files specified is correct
     if [ "$interact" != "-r" ] ; then
         if ! SystemCorrectNumberOfFiles "${system}" "${file_count}"; then
             echo "Wrong number of files specified for system ${system}"
-            exit -1
+            exit 1
         fi
     fi
 
@@ -166,7 +169,7 @@ Enqueue() {
         if ! LockIOwn "${system}"; then
             echo "Failed to run because you said you own the lock (-n flag), but you don't!"
             LockSystemPrintInfo "${system}"
-            exit -1
+            exit 1
         fi
     else
         echo "Acquiring lock for ${system}"

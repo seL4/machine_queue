@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi

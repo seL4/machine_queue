@@ -35,7 +35,7 @@ Usage () {
 # Expect command to be run to be the first argument
 if [ "$#" -lt 1 ]; then
     Usage
-    exit -1
+    exit 1
 fi
 
 command=$1
@@ -63,7 +63,7 @@ esac
 # Check we can talk to the cannonical host
 if ! RemoteCommand exit; then
     echo "Unable to ssh to ${HOST}"
-    exit -1
+    exit 1
 fi
 
 # Check the version of our scripts compared to the canonical host
@@ -72,7 +72,7 @@ if ! RemoteCommand cat "${BASE}/VERSION" |
 	diff "${SCRIPT_PATH}/VERSION" -
 then
     echo "Local version of mq.sh appears to differ from version on ${HOST} at ${BASE}"
-    exit -1
+    exit 1
 fi
 
 # Determine the remote user name
@@ -82,12 +82,12 @@ case "$command" in
     run)
         Enqueue "$@"
         # Should not get here
-        exit -1
+        exit 1
     ;;
     sem)
         UserLock "$@"
         # Should not get here
-        exit -1
+        exit 1
     ;;
     help|*)
         Usage

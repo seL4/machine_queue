@@ -1,16 +1,16 @@
 #!/bin/bash
 
-if [ "${SCRIPT_PATH}" == "" ]; then
+if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function Systems_x86_pool() {
+Systems_x86_pool() {
     # This function can be explicit or programatic
 
     #for system in `SystemList`
     #do
-    #    if [ `Arch_${system}` == "x86" ]; then
+    #    if [ `Arch_${system}` = "x86" ]; then
     #        echo ${system}
     #    fi
     #done

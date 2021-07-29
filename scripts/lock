@@ -130,7 +130,7 @@ UnlockSystem() {
     fi
     RemoteCommand rm -f "$(LockName "${system}")"
     owner=$(LockOwner "${system}")
-    if [ "${owner}" == "${REMOTEUSER}" ]; then
+    if [ "${owner}" = "${REMOTEUSER}" ]; then
         echo "Failed to release lock. Retrying"
         UnlockSystem "${system}" "${force}" "${key}"
     fi
@@ -158,7 +158,7 @@ UserLockUsage() {
     echo
 }
 
-function UserLock() {
+UserLock() {
     retry_period=8
     total_retries=-1
     force=0
