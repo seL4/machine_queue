@@ -7,7 +7,7 @@ fi
 
 # List of a bunch of signals that we will try and trap on. This is basically a
 # 'if anything at all happens try and shut down our job cleanly' approach
-SIGNALS="SIGINT SIGTERM SIGHUP SIGQUIT SIGKILL SIGSTOP SIGPIPE"
+SIGNALS="INT TERM HUP QUIT KILL PIPE"
 
 EnqueueUsage() {
     echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] -f file1 -f file2 .. -f filen"

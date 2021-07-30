@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_colorado2() {
+    echo 1
+}
+
+SystemName_colorado2() {
+    echo "colorado2"
+}
+
+SystemPowerOff_colorado2() {
+    RebootShutdown colorado2
+}
+
+Arch_colorado2() {
+    echo "arm"
+}
+
+ISA_colorado2() {
+    echo "armv7-a"
+}
+
+SOC_colorado2() {
+    echo "TegraK1"
+}
+
+CPU_colorado2() {
+    echo "cortex-a15"
+}
+
+Cores_colorado2() {
+echo "4(1)"
+}
+
+RAM_colorado2() {
+    echo "2GB"
+}
+
+MaxCLK_colorado2() {
+    echo "2.3Ghz"
+}
+
+Sel4Plat_colorado2() {
+    echo "tk1"
+}
