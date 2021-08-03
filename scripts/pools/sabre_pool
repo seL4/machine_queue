@@ -23,7 +23,7 @@ Systems_sabre_pool() {
 
 selectOne(){
     n=`echo "$1" | wc -l`
-    r=`expr 1 + $RANDOM % $n`
+    r=`random $n`
     echo "$1" | sed -n ${r}p
 }
 

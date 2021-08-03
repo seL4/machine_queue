@@ -28,7 +28,7 @@ Systems_x86_pool() {
 
 GselectOne(){
     n=`echo "$1" | wc -l`
-    r=`expr 1 + $RANDOM % $n`
+    r=`random $n`
     echo "$1" | sed -n ${r}p
 }
 

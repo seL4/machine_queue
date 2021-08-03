@@ -25,3 +25,12 @@ CONFIG=~/.mq
 if test -e $CONFIG; then
     source $CONFIG
 fi
+
+# Generate a random number between 1 and $1 inclusive
+random()
+{
+    awk "
+    BEGIN { srand(); 
+    	  printf(\"%d\", $1 * rand() + 1);
+    }"
+}
