@@ -5,46 +5,46 @@ if [ "${SCRIPT_PATH}" = "" ]; then
     exit -1
 fi
 
-SystemNumFiles_odroid_xu4_1() {
+SystemNumFiles_odroidxu4_1() {
     echo 1
 }
 
-SystemName_odroid_xu4_1() {
-    echo "odroid_xu4_1"
+SystemName_odroidxu4_1() {
+    echo "odroidxu4_1"
 }
 
-SystemPowerOff_odroid_xu4_1() {
-    RebootShutdown odroid_xu4_1
+SystemPowerOff_odroidxu4_1() {
+    RebootShutdown odroid-xu4_1
 }
 
-Arch_odroid_xu4_1() {
+Arch_odroidxu4_1() {
     echo "arm"
 }
 
-ISA_odroid_xu4_1() {
+ISA_odroidxu4_1() {
     echo "armv7-a"
 }
 
-SOC_odroid_xu4_1() {
+SOC_odroidxu4_1() {
     echo "Exynos5"
 }
 
-CPU_odroid_xu4_1() {
+CPU_odroidxu4_1() {
     echo "cortex-a15"
 }
 
-Cores_odroid_xu4_1() {
+Cores_odroidxu4_1() {
     echo "4 (8)"
 }
 
-RAM_odroid_xu4_1() {
+RAM_odroidxu4_1() {
     echo "2GB"
 }
 
-MaxCLK_odroid_xu4_1() {
+MaxCLK_odroidxu4_1() {
     echo "2GHz"
 }
 
-Sel4Plat_odroid_xu4_1() {
+Sel4Plat_odroidxu4_1() {
     echo "exynos5:exynos5422"
 }
