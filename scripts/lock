@@ -106,10 +106,10 @@ LockSystem() {
         lock=$(LockName "$system")
         comm="chmod u+w '$lock' && echo -n '${key}' > '$lock' && chmod u-w '$lock'"
         RemoteCommand "${comm}"
+        return $?
     fi
 
-    # $? should now be 0 or exit code of RemoteCommand
-    return $?
+    return 0
 }
 
 UnlockSystem() {
