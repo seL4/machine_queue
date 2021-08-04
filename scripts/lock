@@ -85,7 +85,7 @@ LockSystem() {
     if [ "${owner}" = "${REMOTEUSER}" ];
     then
         lockkey=$(LockGetKey "${system}")
-        if [ "${lockkey}" -eq 0 -a  "${key}" -eq 0 ];
+        if [ "${lockkey}" = "0" -a  "${key}" = "0" ];
 	then
             echo "Attempting to grab lock you already own. Please explicitly release"
             return 1
@@ -98,17 +98,17 @@ LockSystem() {
     fi
 
     RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName "${system}")"
-     [ "$?" -ne  0 ] && return 3
+    [ "$?" -ne  0 ] && return 3
 
-     if [ "$?" -eq 0  -a "${key}" -ne "0" ];
-     then
-         # If a key was used, put it inside the lock
-	 lock=$(LockName "$system")
-         comm="chmod u+w '$lock' && echo -n '${key}' > '$lock' && chmod u-w '$lock'"
-         RemoteCommand /bin/sh -c "${comm}"
-     fi
+    if [ "$?" -eq 0 -a "${key}" != "0" ];
+    then
+        # If a key was used, put it inside the lock
+        lock=$(LockName "$system")
+        comm="chmod u+w '$lock' && echo -n '${key}' > '$lock' && chmod u-w '$lock'"
+        RemoteCommand /bin/sh -c "${comm}"
+    fi
 
-     return $?
+    return $?
 }
 
 UnlockSystem() {
