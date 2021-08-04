@@ -23,8 +23,7 @@ LockGetKey() {
 
 LockIOwn() {
     owner="$(LockOwner "$1")"
-    # the shorter "return [ .. ]" complains about return needing a numeric argument
-    [ "${owner}" = "${REMOTEUSER}" ] && return 0 || return 1
+    [ "${owner}" = "${REMOTEUSER}" ]
 }
 
 GetAllLockedSystems() {
