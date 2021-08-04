@@ -106,7 +106,7 @@ LockSystem() {
         # If a key was used, put it inside the lock
         lock=$(LockName "$system")
         comm="chmod u+w '$lock' && echo -n '${key}' > '$lock' && chmod u-w '$lock'"
-        RemoteCommand /bin/sh -c "${comm}"
+        RemoteCommand "${comm}"
     fi
 
     # $? should now be 0 or exit code of RemoteCommand
