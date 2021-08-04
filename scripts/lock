@@ -100,7 +100,8 @@ LockSystem() {
     RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName "${system}")"
     [ "$?" -ne  0 ] && return 3
 
-    if [ "$?" -eq 0 -a "${key}" != "0" ];
+    # if we get here "$?" was 0, and is now 1 because the test above for nonzero failed
+    if [ "${key}" != "0" ];
     then
         # If a key was used, put it inside the lock
         lock=$(LockName "$system")
@@ -108,6 +109,7 @@ LockSystem() {
         RemoteCommand /bin/sh -c "${comm}"
     fi
 
+    # $? should now be 0 or exit code of RemoteCommand
     return $?
 }
 
