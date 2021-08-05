@@ -26,7 +26,7 @@ ISA_odroidc2() {
 }
 
 SOC_odroidc2() {
-    echo "odroidc2"
+    echo "am-S905"
 }
 
 CPU_odroidc2() {
