@@ -9,6 +9,10 @@ LockName() {
     echo "${BASE}/$1.lock"
 }
 
+KeyName() {
+    echo "${BASE}/$1.key"
+}
+
 LockOwner() {
     RemoteCommand "/bin/sh -c \"stat --format='%U' $(LockName "$1") 2>/dev/null\""
 }
@@ -18,7 +22,7 @@ LockGetInfo() {
 }
 
 LockGetKey() {
-    RemoteCommand cat $(LockName "$1")
+    RemoteCommand cat "$(KeyName "$1")"
 }
 
 LockIOwn() {
@@ -96,18 +100,9 @@ LockSystem() {
         fi
     fi
 
-    RemoteCommand lockfile -"${retry_period}" -r "${total_retries}" "$(LockName "${system}")"
-    [ "$?" -ne  0 ] && return 3
+    RemoteCommand "lockfile -'${retry_period}' -r '${total_retries}' '$(LockName "${system}")' && printf '${key}' > '$(KeyName "${system}")' && chmod a-w '$(KeyName "${system}")'"
 
-    # if we get here "$?" was 0, and is now 1 because the test above for nonzero failed
-    if [ "${key}" != "0" ];
-    then
-        # If a key was used, put it inside the lock
-        lock=$(LockName "$system")
-        comm="chmod u+w '$lock' && echo -n '${key}' > '$lock' && chmod u-w '$lock'"
-        RemoteCommand "${comm}"
-        return $?
-    fi
+    [ "$?" -ne  0 ] && return 3
 
     return 0
 }
@@ -129,7 +124,7 @@ UnlockSystem() {
             return;
         fi 
     fi
-    RemoteCommand rm -f "$(LockName "${system}")"
+    RemoteCommand rm -f "$(KeyName "${system}")" "$(LockName "${system}")"
     owner=$(LockOwner "${system}")
     if [ "${owner}" = "${REMOTEUSER}" ]; then
         echo "Failed to release lock. Retrying"
