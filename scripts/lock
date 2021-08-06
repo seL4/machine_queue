@@ -124,7 +124,7 @@ UnlockSystem() {
             return;
         fi
     fi
-    RemoteCommand rm -f "$(KeyName "${system}")" "$(LockName "${system}")"
+    RemoteCommand "rm -f '$(KeyName "${system}")'; sync; rm -f '$(LockName "${system}")'"
 }
 
 UserLockUsage() {
