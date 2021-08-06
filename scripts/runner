@@ -46,9 +46,9 @@ RebootConsoleRunTwoFiles() {
         kernelfile=$(RemoteCommandOn ${HOST} "mktemp")
         rootserverfile=$(RemoteCommandOn ${HOST} "mktemp")
         # Strip trailing \r
-        kernelfile=$(echo -n "${kernelfile}" | tr -d '\r')
-        rootserverfile=$(echo -n "${rootserverfile}" | tr -d '\r')
-        logfile=$(echo -n "${logfile}" | tr -d '\r')
+        kernelfile=$(printf "${kernelfile}" | tr -d '\r')
+        rootserverfile=$(printf "${rootserverfile}" | tr -d '\r')
+        logfile=$(printf "${logfile}" | tr -d '\r')
         if ! scp "${kernel}" "${HOST}:${kernelfile}"; then
             echo "Failed to copy kernel image"
             RemoteCommandOn ${HOST} rm "${kernelfile}"
@@ -102,8 +102,8 @@ RebootConsoleRunOneFile() {
         # need to copy remotely
         kernelfile=$(RemoteCommandOn ${HOST} "mktemp")
         # Strip trailing \r
-        kernelfile=$(echo -n "${kernelfile}" | tr -d '\r')
-        logfile=$(echo -n "${logfile}" | tr -d '\r')
+        kernelfile=$(printf "${kernelfile}" | tr -d '\r')
+        logfile=$(printf "${logfile}" | tr -d '\r')
         if ! scp "${kernel}" "${HOST}:${kernelfile}"; then
             echo "Failed to copy kernel image"
             RemoteCommandOn ${HOST} rm "${kernelfile}"
