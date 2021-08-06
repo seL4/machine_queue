@@ -47,7 +47,7 @@ LockSystemPrintInfo() {
         echo "Lock for $system currently free"
         return;
     fi
-    echo -n "Lock for $system held by $owner since $since"
+    printf "Lock for $system held by $owner since $since" | tr -d '\r'
     if [ "${lockkey}" != "0" ]; then
         echo " with key '${lockkey}'"
     else
