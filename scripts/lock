@@ -122,14 +122,9 @@ UnlockSystem() {
         if [ "${lockkey}" != "${key}" ]; then
             echo "Attempting to unlock system ${system} with the wrong key!"
             return;
-        fi 
+        fi
     fi
     RemoteCommand rm -f "$(KeyName "${system}")" "$(LockName "${system}")"
-    owner=$(LockOwner "${system}")
-    if [ "${owner}" = "${REMOTEUSER}" ]; then
-        echo "Failed to release lock. Retrying"
-        UnlockSystem "${system}" "${force}" "${key}"
-    fi
 }
 
 UserLockUsage() {
