@@ -32,7 +32,7 @@ LockIOwn() {
 
 GetAllLockedSystems() {
     RemoteCommand find ${BASE} -name '*.lock' -print0 |
-	xargs -0 -i basename {} .lock
+    xargs -0 -i basename {} .lock
     echo
 }
 
@@ -64,15 +64,15 @@ LockSystemDumpInfo() {
     lockkey=$(LockGetKey "${system}")
     if [ "${owner}" = "" ];
     then
-	echo "FREE"
+    echo "FREE"
     else
-	echo "LOCKED"
-	echo "$owner"
-	echo "$since"
-    	if [ "${lockkey}" != "0" ];
-	then
+    echo "LOCKED"
+    echo "$owner"
+    echo "$since"
+        if [ "${lockkey}" != "0" ];
+    then
             echo "${lockkey}"
-	fi
+    fi
     fi
 }
 
@@ -85,16 +85,16 @@ LockSystem() {
 
     # Error checking - the same person can't relock the same lock
     #                - if they are trying to, check if they are using a different key
-    if [ "${owner}" = "${REMOTEUSER}" ];
+    if [ "${owner}" = "${REMOTEUSER}" ]
     then
         lockkey=$(LockGetKey "${system}")
-        if [ "${lockkey}" = "0" -a  "${key}" = "0" ];
-	then
+        if [ "${lockkey}" = "0" -a  "${key}" = "0" ]
+        then
             echo "Attempting to grab lock you already own. Please explicitly release"
             return 1
-	fi
-        if [ "${lockkey}" = "${key}" ];
-	then
+        fi
+        if [ "${lockkey}" = "${key}" ]
+        then
             echo "Attempting to grab lock you already own with the same key. Please explicitly release"
             return 2
         fi
@@ -218,7 +218,7 @@ UserLock() {
             echo "Valid pools are"
             PoolList
             exit -1
-	fi
+    fi
         # Select a system from the pool
         pool=${system}
         system=$(GetRandomSystemFromPool_"${pool}")
