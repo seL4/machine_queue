@@ -127,8 +127,21 @@ UnlockSystem() {
     RemoteCommand "rm -f '$(KeyName "${system}")'; sync; rm -f '$(LockName "${system}")'"
 }
 
+# Kills (TERM) processes on the server that are waiting for specified lock and key.
+# Only kills processes of the current user.
+# This correctly signals to client that lock acquisition has failed, but also works
+# when the client has already been killed and only the server process is left over.
+CancelWait() {
+    system="$1"
+    key="$2"
+
+    # Don't know why there is an \r at the end of REMOTEUSER, but there is. Maybe RemoteCommand produces them?
+    user=$(printf "${REMOTEUSER}" | tr -d '\r')
+    RemoteCommand "pkill -u ${user} -f \"lockfile.*'${key}' > '$(KeyName "${system}")'\""
+}
+
 UserLockUsage() {
-    echo "$0 sem -signal|-wait|-info SYSTEM [-f] [-w retry-time] [-t retry-count] [-k LOCK_KEY]"
+    echo "$0 sem -signal|-wait|-cancel|-info SYSTEM [-f] [-w retry-time] [-t retry-count] [-k LOCK_KEY]"
     echo
     echo "   Manually manipulate locks for machines. The lock for each system"
     echo "   can be acquired or released."
@@ -142,6 +155,7 @@ UserLockUsage() {
     echo " -mr-info SYSTEM  Display lock information for the specified SYSTEM in machine-readable format"
     echo " -signal SYSTEM   Release the lock for the specified SYSTEM"
     echo " -wait SYSTEM     Acquire the lock for the specified SYSTEM"
+    echo " -cancel SYSTEM   Cancel '-wait' processes on the server that are waiting for specified SYSTEM and key"
     echo " -w TIME          Number of seconds to wait between each attempt to acquire the lock (default 8)"
     echo " -t RETRIES       Number of retries to preform for acquiring the lock (default -1)"
     echo " -f               Forcefully releases a lock even if you are not the owner"
@@ -175,6 +189,11 @@ UserLock() {
                 shift
                 system="$1"
                 action="-wait"
+            ;;
+            -cancel)
+                shift
+                system="$1"
+                action="-cancel"
             ;;
             -w)
                 shift
@@ -240,6 +259,9 @@ UserLock() {
                 echo "Failed to acquire lock for system (${system})"
                 exit 2
             fi
+        ;;
+        -cancel)
+            CancelWait "${system}" "${key}"
         ;;
         *)
             echo "Unknown usage"
