@@ -68,7 +68,6 @@ fi
 
 # Check the version of our scripts compared to the canonical host
 if ! RemoteCommand cat "${BASE}/VERSION" |
-	tr -d '\r' |
 	diff "${SCRIPT_PATH}/VERSION" -
 then
     echo "Local version of mq.sh appears to differ from version on ${HOST} at ${BASE}"
