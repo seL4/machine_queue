@@ -47,7 +47,7 @@ LockSystemPrintInfo() {
         echo "Lock for $system currently free"
         return;
     fi
-    printf "Lock for $system held by $owner since $since" | tr -d '\r'
+    printf "Lock for $system held by $owner since $since"
     if [ "${lockkey}" != "0" ]; then
         echo " with key '${lockkey}'"
     else
@@ -135,9 +135,7 @@ CancelWait() {
     system="$1"
     key="$2"
 
-    # Don't know why there is an \r at the end of REMOTEUSER, but there is. Maybe RemoteCommand produces them?
-    user=$(printf "${REMOTEUSER}" | tr -d '\r')
-    RemoteCommand "pkill -u ${user} -f \"lockfile.*'${key}' > '$(KeyName "${system}")'\""
+    RemoteCommand "pkill -u ${REMOTEUSER} -f \"lockfile.*'${key}' > '$(KeyName "${system}")'\""
 }
 
 UserLockUsage() {

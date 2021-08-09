@@ -9,7 +9,7 @@ RemoteCommandOn() {
     host="$1"
     shift
     cmd="$@"
-    ssh -tt -oLogLevel=quiet "${host}" "stty isig -echoctl -echo ; $cmd"
+    ssh -tt -oLogLevel=quiet "${host}" "stty isig -onlcr -echoctl -echo ; $cmd"
     return $?
 }
 
