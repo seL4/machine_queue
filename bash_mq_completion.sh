@@ -32,10 +32,9 @@ _mq_completion() {
             '-s')
               COMPREPLY=($(compgen -W "$(_mq_systems)" -- "${cur}"))
             ;;
-            '-k'|'-c'|'-e'|'-d'|'-k'|'-l'|'-w'|'-t')
-            ;;
-            '-f')
-              COMPREPLY=($(compgen -f -- "${cur}"))
+            '-k'|'-c'|'-e'|'-d'|'-k'|'-l'|'-w'|'-t'|'-f')
+              # will default to filename completion
+              COMPREPLY=()
             ;;
             *)
               COMPREPLY=($(compgen -W "${mq_run_flags}" -- "${cur}"))
@@ -50,4 +49,4 @@ _mq_completion() {
 
 }
 
-complete -F _mq_completion mq.sh
+complete -o default -F _mq_completion mq.sh
