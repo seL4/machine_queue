@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_zcu106() {
+    echo 1
+}
+
+SystemName_zcu106() {
+    echo "zcu106"
+}
+
+SystemPowerOff_zcu106() {
+    RebootShutdown zcu106
+}
+
+Arch_zcu106() {
+    echo "arm"
+}
+
+ISA_zcu106() {
+    echo "armv8-a"
+}
+
+SOC_zcu106() {
+    echo "zcu106"
+}
+
+CPU_zcu106() {
+    echo "cortex-a53"
+}
+
+Cores_zcu106() {
+    echo "4"
+}
+
+RAM_zcu106() {
+    echo "4GB"
+}
+
+MaxCLK_zcu106() {
+    echo "??"
+}
+
+Sel4Plat_zcu106() {
+    echo "zynqmp"
+}
