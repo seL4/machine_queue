@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_imx8mq2() {
+    echo 1
+}
+
+SystemName_imx8mq2() {
+    echo "imx8mq2"
+}
+
+SystemPowerOff_imx8mq2() {
+    RebootShutdown imx8mq2
+}
+
+Arch_imx8mq2() {
+    echo "arm"
+}
+
+ISA_imx8mq2() {
+    echo "armv8-a"
+}
+
+SOC_imx8mq2() {
+    echo "imx8m"
+}
+
+CPU_imx8mq2() {
+    echo "cortex-a53"
+}
+
+Cores_imx8mq2() {
+    echo "4"
+}
+
+RAM_imx8mq2() {
+    echo "3GB"
+}
+
+MaxCLK_imx8mq2() {
+    echo "1.4Ghz"
+}
+
+Sel4Plat_imx8mq2() {
+    echo "imx8mq-evk"
+}
