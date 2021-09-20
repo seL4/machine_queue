@@ -14,11 +14,11 @@ KeyName() {
 }
 
 LockOwner() {
-    RemoteCommand "/bin/sh -c \"stat --format='%U' $(LockName "$1") 2>/dev/null\""
+    RemoteCommand "/bin/sh -c 'stat --format=\"%U\" $(LockName \"$1\") 2>/dev/null'"
 }
 
 LockGetInfo() {
-    RemoteCommand "/bin/sh -c \"stat --format='%U,%y' $(LockName "$1") 2>/dev/null\""
+    RemoteCommand "/bin/sh -c 'stat --format=\"%U,%y\" $(LockName \"$1\") 2>/dev/null'"
 }
 
 LockGetKey() {
@@ -58,22 +58,31 @@ LockSystemPrintInfo() {
 # This prints the status of the lock in a more machine-readable format
 LockSystemDumpInfo() {
     system="$1"
-    info=$(LockGetInfo)
+    info=$(LockGetInfo "$1")
     owner=$(echo "$info" | cut -d ',' -f 1)
     since=$(echo "$info" | cut -d ',' -f 2)
     lockkey=$(LockGetKey "${system}")
+    echo -n $system
     if [ "${owner}" = "" ];
     then
-    echo "FREE"
+    echo -n " FREE"
     else
-    echo "LOCKED"
-    echo "$owner"
-    echo "$since"
+    echo -n " LOCKED"
+    echo -n " $owner"
+    echo -n " $since"
         if [ "${lockkey}" != "0" ];
     then
-            echo "${lockkey}"
+            echo -n " ${lockkey}"
     fi
     fi
+    echo
+}
+
+LockSystemDumpAll() {
+    for x in $(GetAllLockedSystems)
+    do
+	LockSystemDumpInfo "$x"
+    done
 }
 
 LockSystem() {
@@ -209,6 +218,10 @@ UserLock() {
                 shift
                 key="$1"
             ;;
+	    dumpall)
+		LockSystemDumpAll
+		exit $?
+	    ;;
             help)
                 UserLockUsage
                 exit -1

@@ -180,7 +180,7 @@ Enqueue() {
 
         # We can setup the trap early as we check if we actually own the
         # the lock before releasing it
-        trap 'UnlockSystem "${system}" 0 "${key}"; exit 1"' ${SIGNALS}
+        trap "UnlockSystem \"${system}\" 0 \"${key}\"; exit 1" ${SIGNALS}
 
         if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
             echo "Failed to acquire lock for system (${system})"
