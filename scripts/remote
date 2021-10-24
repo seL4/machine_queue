@@ -17,7 +17,7 @@ RemoteCommand() {
     if [ "$(hostname -f)" = "${HOST}" ]; then
 	( # execute in a subshell so things like RemoteCommand exit
 	  # don't teminate the shell.
-            "$@"
+            eval "$@"
 	)
        return $?
     fi
