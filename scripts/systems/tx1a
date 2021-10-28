@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_tx1a() {
+    echo 1
+}
+
+SystemName_tx1a() {
+    echo "tx1a"
+}
+
+SystemPowerOff_tx1a() {
+    RebootShutdown tx1a
+}
+
+Arch_tx1a() {
+    echo "arm"
+}
+
+ISA_tx1a() {
+    echo "armv8-a"
+}
+
+SOC_tx1a() {
+    echo "TegraTX1A"
+}
+
+CPU_tx1a() {
+    echo "cortex-a57"
+}
+
+Cores_tx1a() {
+    echo "4"
+}
+
+RAM_tx1a() {
+    echo "4GB"
+}
+
+MaxCLK_tx1a() {
+    echo "1.9Ghz"
+}
+
+Sel4Plat_tx1a() {
+    echo "tx1"
+}
