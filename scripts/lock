@@ -218,10 +218,10 @@ UserLock() {
                 shift
                 key="$1"
             ;;
-	    dumpall)
-		LockSystemDumpAll
-		exit $?
-	    ;;
+            dumpall)
+            LockSystemDumpAll
+            exit $?
+            ;;
             help)
                 UserLockUsage
                 exit -1
