@@ -1,50 +1,50 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
     exit -1
 fi
 
-function SystemNumFiles_tardec2() {
+SystemNumFiles_tardec2() {
     echo 2
 }
 
-function SystemName_tardec2() {
+SystemName_tardec2() {
     echo "tardec2"
 }
 
-function SystemPowerOff_tardec2() {
+SystemPowerOff_tardec2() {
     RebootShutdown tardec2
 }
 
-function Arch_tardec2() {
+Arch_tardec2() {
     echo "x86"
 }
 
-function ISA_tardec2() {
+ISA_tardec2() {
     echo "x86_64"
 }
 
-function SOC_tardec2() {
+SOC_tardec2() {
     echo "?"
 }
 
-function CPU_tardec2() {
+CPU_tardec2() {
     echo "i7-351UE"
 }
 
-function Cores_tardec2() {
+Cores_tardec2() {
     echo "2"
 }
 
-function RAM_tardec2() {
+RAM_tardec2() {
     echo "4GB"
 }
 
-function MaxCLK_tardec2() {
+MaxCLK_tardec2() {
     echo "1.7Ghz"
 }
 
-function Sel4Plat_tardec2() {
+Sel4Plat_tardec2() {
     echo "pc99"
 }
