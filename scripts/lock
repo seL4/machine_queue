@@ -2,7 +2,7 @@
 
 if [ ! "${SCRIPT_PATH}" ]; then
     echo "This script should not be called directly! Please use mq.sh"
-    exit -1
+    exit 1
 fi
 
 LockName() {
@@ -203,7 +203,6 @@ UserLock() {
                 action="-cancel"
             ;;
             -w)
-                shift
                 retry_period="$1"
             ;;
             -t)
@@ -211,7 +210,6 @@ UserLock() {
                 total_retries="$1"
             ;;
             -f)
-                shift
                 force=1
             ;;
             -k)
@@ -224,7 +222,7 @@ UserLock() {
             ;;
             help)
                 UserLockUsage
-                exit -1
+                exit 1
             ;;
             --)
                 break
@@ -232,10 +230,10 @@ UserLock() {
             *)
                 echo "Unknown option $1"
                 UserLockUsage
-                exit -1
+                exit 1
             ;;
         esac
-        shift
+	shift
     done
 
     IsSystemValid "${system}"
@@ -247,7 +245,7 @@ UserLock() {
             SystemList
             echo "Valid pools are"
             PoolList
-            exit -1
+            exit 1
     fi
         # Select a system from the pool
         pool=${system}
@@ -277,7 +275,7 @@ UserLock() {
         *)
             echo "Unknown usage"
             UserLockUsage
-            exit -1
+            exit 1
         ;;
     esac
     exit 0
