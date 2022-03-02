@@ -203,6 +203,7 @@ UserLock() {
                 action="-cancel"
             ;;
             -w)
+		shift
                 retry_period="$1"
             ;;
             -t)
