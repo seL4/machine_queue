@@ -32,7 +32,7 @@ LockIOwn() {
 
 GetAllLockedSystems() {
     RemoteCommand find ${BASE} -name '*.lock' -print0 |
-    xargs -0 -i basename {} .lock
+    xargs -0 -I {} basename {} .lock
     echo
 }
 
@@ -62,17 +62,17 @@ LockSystemDumpInfo() {
     owner=$(echo "$info" | cut -d ',' -f 1)
     since=$(echo "$info" | cut -d ',' -f 2)
     lockkey=$(LockGetKey "${system}")
-    echo -n $system
+    printf "$system"
     if [ "${owner}" = "" ];
     then
-    echo -n " FREE"
+    printf " FREE"
     else
-    echo -n " LOCKED"
-    echo -n " $owner"
-    echo -n " $since"
+    printf " LOCKED"
+    printf " $owner"
+    printf " $since"
         if [ "${lockkey}" != "0" ];
     then
-            echo -n " ${lockkey}"
+            printf " ${lockkey}"
     fi
     fi
     echo
