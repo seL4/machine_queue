@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_makatea() {
+    echo 2
+}
+
+SystemName_makatea() {
+    echo "makatea"
+}
+
+SystemPowerOff_makatea() {
+    RebootShutdown makatea
+}
+
+Arch_makatea() {
+    echo "x86"
+}
+
+ISA_makatea() {
+    echo "x86_64"
+}
+
+SOC_makatea() {
+    echo "skylake"
+}
+
+CPU_makatea() {
+    echo "D-2146NT"
+}
+
+Cores_makatea() {
+    echo "8(16)"
+}
+
+RAM_makatea() {
+    echo "32GB"
+}
+
+MaxCLK_makatea() {
+    echo "2.3Ghz"
+}
+
+Sel4Plat_makatea() {
+    echo "pc99:skylake"
+}
