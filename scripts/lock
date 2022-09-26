@@ -109,7 +109,7 @@ LockSystem() {
         fi
     fi
 
-    RemoteCommand "lockfile -'${retry_period}' -r '${total_retries}' '$(LockName "${system}")' && printf '${key}' > '$(KeyName "${system}")' && chmod a-w '$(KeyName "${system}")'"
+    RemoteCommand "lockfile -'${retry_period}' -r '${total_retries}' '$(LockName "${system}")' && printf '${key}' > '$(KeyName "${system}")' && chmod a-w,g+r '$(KeyName "${system}")'"
 
     [ "$?" -ne  0 ] && return 3
 
