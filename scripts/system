@@ -13,7 +13,7 @@ IsSystemValid() {
 SystemList() {
     (
 	cd "${SCRIPT_PATH}/scripts/systems/"
-	echo * | sed -e 's/ unavailable//' -e 's/  */\n/g'
+	echo * | sed -e 's/ unavailable//' -e 's/ [^ ]*~//g' -e 's/  */\n/g' 
     )
 }
 
