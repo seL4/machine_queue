@@ -75,10 +75,14 @@ OutputSystemTSV() {
 }
 
 SystemCorrectNumberOfFiles() {
+    [ "$1" = "-L" ] && {
+	linux="-L"
+	shift
+    }
     system=$1
     num=$2
     system_num=""
-    system_num="$("SystemNumFiles_${system}")"
+    system_num="$("SystemNumFiles_${system}" $linux)"
     [ "${num}" -eq "${system_num}" ]
 }
 
@@ -97,12 +101,17 @@ SystemRunImage() {
     kernel="$7"
     rootserver=""
 
+    [ $kernel = "-L" ] && {
+	linux="-L"
+	shift
+	kernel="$7"
+    }
     system_name="$("SystemName_${system}")"
 
-    if [ "$("SystemNumFiles_${system}")" -eq 2 ]; then
+    if [ "$("SystemNumFiles_${system}" $linux)" -eq 2 ]; then
         rootserver="$8"
-        RebootConsoleRunTwoFiles "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
+        RebootConsoleRunTwoFiles $linux "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
     else
-        RebootConsoleRunOneFile "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
+        RebootConsoleRunOneFile $linux "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
     fi
 }

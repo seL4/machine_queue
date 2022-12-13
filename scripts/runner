@@ -22,6 +22,10 @@ RebootShutdown() {
 }
 
 RebootConsoleRunTwoFiles() {
+    [ "$1" = '-L' ] && {
+	linux="-L"
+	shift
+    }
     completion="$1"
     completion_timeout="$2"
     errortxt="$3"
@@ -59,7 +63,7 @@ RebootConsoleRunTwoFiles() {
             RemoteCommandOn ${HOST} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' -u '${rootserverfile}' ${ka_flag}"
+        ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot $linux -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' -u '${rootserverfile}' ${ka_flag}"
         ret=$?
         if [ "${output}" != "" ]; then
             scp "${HOST}:${logfile}" "${output}"
@@ -70,13 +74,17 @@ RebootConsoleRunTwoFiles() {
         return $ret
     fi
     if [ "${output}" = "" ]; then
-        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
+        "/tftpboot/${machine}/reboot"  $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
     else
-        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
+        "/tftpboot/${machine}/reboot" $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
     fi
 }
 
 RebootConsoleRunOneFile() {
+    [ "$1" = '-L' ] && {
+	linux="-L"
+	shift
+    }
     completion=$1
     completion_timeout=$2
     errortxt=$3
@@ -103,7 +111,7 @@ RebootConsoleRunOneFile() {
             RemoteCommandOn ${HOST} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' ${ka_flag}"
+        ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot $linux -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' ${ka_flag}"
         ret=$?
         if [ "${output}" != "" ]; then
             scp "${HOST}:${logfile}" "${output}"
@@ -113,8 +121,8 @@ RebootConsoleRunOneFile() {
         return $ret
     fi
     if [ "${output}" = "" ]; then
-        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" ${ka_flag}
+        "/tftpboot/${machine}/reboot" $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" ${ka_flag}
     else
-        "/tftpboot/${machine}/reboot" -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" ${ka_flag}
+        "/tftpboot/${machine}/reboot" $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" ${ka_flag}
     fi
 }

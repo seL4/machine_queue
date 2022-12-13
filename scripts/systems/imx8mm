@@ -6,7 +6,12 @@ if [ "${SCRIPT_PATH}" = "" ]; then
 fi
 
 SystemNumFiles_imx8mm() {
-    echo 1
+    if [ "$1" = '-L' ]
+    then
+	echo 2
+    else
+	echo 1
+    fi
 }
 
 SystemName_imx8mm() {

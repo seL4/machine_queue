@@ -10,7 +10,7 @@ fi
 SIGNALS="INT TERM HUP QUIT KILL PIPE"
 
 EnqueueUsage() {
-    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] -f file1 -f file2 .. -f filen"
+    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] [-L] -f file1 -f file2 .. -f filen"
     echo
     echo "   Acquires a lock for a machine, and once locked runs the specified job"
     echo "   Jobs can include just a reservation"
@@ -33,6 +33,7 @@ EnqueueUsage() {
     echo " -d TIME     Timeout (in seconds) to wait for the completion text (default -1 AKA no timeout)"
     echo " -k KEY      Key for obtaining the lock"
     echo " -l FILE     Optional location to write all the console output to"
+    echo " -L          This is a Linux image not seL4"
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
     echo " -w TIME     Number of seconds to wait between each attempt to acquire the lock (default 8)"
@@ -54,9 +55,14 @@ Enqueue() {
     errortxt=""
     files=""
     system=""
+    linux=""
     key="0"
     while [ "$#" -ne 0 ]; do
         case "$1" in
+	    -L)
+		shift
+		linux="-L"
+	    ;;
             -l)
                 shift
                 logfile="$1"
@@ -136,6 +142,7 @@ Enqueue() {
         EnqueueUsage
         exit 1
     fi
+
     if [ ! "$interact" ]; then
         EnqueueUsage
         exit 1
@@ -159,7 +166,7 @@ Enqueue() {
 
     # Check that the number of files specified is correct
     if [ "$interact" != "-r" ] ; then
-        if ! SystemCorrectNumberOfFiles "${system}" "${file_count}"; then
+        if ! SystemCorrectNumberOfFiles ${linux} "${system}" "${file_count}"; then
             echo "Wrong number of files specified for system ${system}"
             exit 1
         fi
@@ -200,7 +207,7 @@ Enqueue() {
     else
         # Run the image. 'files' is deliberately no in quotes so the multiple
         # files expands to multiple arguments
-        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" $files
+        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} $files
         ret=$?
     fi
 
