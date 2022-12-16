@@ -41,7 +41,7 @@ RebootConsoleRunTwoFiles() {
 
     ka_flag=""
     if $keep_alive ; then
-        ka_flag="-a"
+        ka_flag="-a -i"
     fi
 
     if ! HaveRebootAndConsole; then
@@ -98,7 +98,7 @@ RebootConsoleRunOneFile() {
 
     ka_flag=""
     if $keep_alive ; then
-        ka_flag="-a"
+        ka_flag="-a -i"
     fi
 
     if ! HaveRebootAndConsole; then
