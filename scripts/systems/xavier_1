@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_xavier_1() {
+    echo 1
+}
+
+SystemName_xavier_1() {
+    echo "xavier_1"
+}
+
+SystemPowerOff_xavier_1() {
+    RebootShutdown xavier_1
+}
+
+Arch_xavier_1() {
+    echo "arm"
+}
+
+ISA_xavier_1() {
+    echo "armv8-a"
+}
+
+SOC_xavier_1() {
+    echo "Xavier NX"
+}
+
+CPU_xavier_1() {
+    echo "Nvidia Carmel"
+}
+
+Cores_xavier_1() {
+    echo "6"
+}
+
+RAM_xavier_1() {
+    echo "8GB"
+}
+
+MaxCLK_xavier_1() {
+    echo "2.26Ghz"
+}
+
+Sel4Plat_xavier_1() {
+    echo "xavier"
+}
