@@ -1,0 +1,55 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_odroidc4_1() {
+    if [ "$1" = '-L' ]
+    then
+	echo 2
+    else
+	echo 1
+    fi
+}
+
+SystemName_odroidc4_1() {
+    echo "odroidc4-1"
+}
+
+SystemPowerOff_odroidc4_1() {
+    RebootShutdown odroidc4_1
+}
+
+Arch_odroidc4_1() {
+    echo "arm"
+}
+
+ISA_odroidc4_1() {
+    echo "armv8-a"
+}
+
+SOC_odroidc4_1() {
+    echo "am-S905X3"
+}
+
+CPU_odroidc4_1() {
+    echo "cortex-a55"
+}
+
+Cores_odroidc4_1() {
+    echo "4"
+}
+
+RAM_odroidc4_1() {
+    echo "4GB"
+}
+
+MaxCLK_odroidc4_1() {
+    echo "2.0GHz"
+}
+
+Sel4Plat_odroidc4_1() {
+    echo "odroidc4"
+}
