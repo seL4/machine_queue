@@ -8,7 +8,7 @@ fi
 SystemNumFiles_odroidc2() {
     if [ "$1" = '-L' ]
     then
-        echo 1
+        echo 2
     else
         echo 1
     fi
