@@ -6,7 +6,12 @@ if [ "${SCRIPT_PATH}" = "" ]; then
 fi
 
 SystemNumFiles_odroidc2() {
-    echo 1
+    if [ "$1" = '-L' ]
+    then
+        echo 1
+    else
+        echo 1
+    fi
 }
 
 SystemName_odroidc2() {
