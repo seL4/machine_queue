@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+Systems_odroidc4_pool() {
+    # This function can be explicit or programatic
+    
+    # Explicit:
+    echo "odroidc4_1"
+    echo "odroidc4_2"
+}
+
+
+
+
+GselectOne(){
+    n=`echo "$1" | wc -l`
+    r=`random $n`
+    echo "$1" | sed -n ${r}p
+}
+
+
+GetRandomSystemFromPool_odroidc4_pool() {
+    # Get a random system from the pool, unlocked if possible
+    locked_systems="$(GetAllLockedSystems)"
+    odroidc4_systems="$(Systems_odroidc4_pool)"
+    free_odroidc4_systems="$(echo "$odroidc4_systems" | grep -F -v -x "$locked_systems")"
+    if [ "$free_odroidc4_systems" ]
+    then
+	selectOne "$free_odroidc4_systems"
+    else
+	selectOne "$odroidc4_systems"
+    fi 
+}
+
+
+
