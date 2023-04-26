@@ -1,0 +1,55 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_star64() {
+    if [ "$1" = '-L' ]
+    then
+        echo 2
+    else
+        echo 1
+    fi
+}
+
+SystemName_star64() {
+    echo "star64"
+}
+
+SystemPowerOff_star64() {
+    RebootShutdown star64
+}
+
+Arch_star64() {
+    echo "riscv"
+}
+
+ISA_star64() {
+    echo "riscv64"
+}
+
+SOC_star64() {
+    echo "StarFive JH7110"
+}
+
+CPU_star64() {
+    echo "SiFive U74-MC"
+}
+
+Cores_star64() {
+    echo "4"
+}
+
+RAM_star64() {
+    echo "4GB"
+}
+
+MaxCLK_star64() {
+    echo "1.5GHz"
+}
+
+Sel4Plat_star64() {
+    echo "star64"
+}
