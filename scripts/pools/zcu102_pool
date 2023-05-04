@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+Systems_zcu102_pool() {
+    # This function can be explicit or programatic
+    
+    # Explicit:
+    echo "zcu102"
+    echo "zcu102_2"
+}
+
+
+
+
+GselectOne(){
+    n=`echo "$1" | wc -l`
+    r=`random $n`
+    echo "$1" | sed -n ${r}p
+}
+
+
+GetRandomSystemFromPool_zcu102_pool() {
+    # Get a random system from the pool, unlocked if possible
+    locked_systems="$(GetAllLockedSystems)"
+    zcu102_systems="$(Systems_zcu102_pool)"
+    free_zcu102_systems="$(echo "$zcu102_systems" | grep -F -v -x "$locked_systems")"
+    if [ "$free_zcu102_systems" ]
+    then
+	selectOne "$free_zcu102_systems"
+    else
+	selectOne "$zcu102_systems"
+    fi 
+}
+
+
+

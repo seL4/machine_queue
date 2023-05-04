@@ -153,7 +153,7 @@ UserLockUsage() {
     echo "   Manually manipulate locks for machines. The lock for each system"
     echo "   can be acquired or released."
     echo
-    echo "   You can forcively release a lock for a system that you do not"
+    echo "   You can forcibly release a lock for a system that you do not"
     echo "   currently own by the -f flag"
     echo
     echo " Options:"
