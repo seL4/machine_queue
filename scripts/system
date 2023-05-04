@@ -42,7 +42,7 @@ OutputSystemList() {
     for system in $(SystemList)
     do
         printf "| %14s " "${system}"
-        printf "| %4s "  "$("Arch_${system}")"
+        printf "| %5s "  "$("Arch_${system}")"
         printf "| %7s "  "$("ISA_${system}")"
         printf "| %15s " "$("SOC_${system}")"
         printf "| %14s " "$("CPU_${system}")"
