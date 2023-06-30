@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_odroidxu4_2() {
+    echo 1
+}
+
+SystemName_odroidxu4_2() {
+    echo "odroidxu4_2"
+}
+
+SystemPowerOff_odroidxu4_2() {
+    RebootShutdown odroid-xu4_2
+}
+
+Arch_odroidxu4_2() {
+    echo "arm"
+}
+
+ISA_odroidxu4_2() {
+    echo "armv7-a"
+}
+
+SOC_odroidxu4_2() {
+    echo "Exynos5"
+}
+
+CPU_odroidxu4_2() {
+    echo "cortex-a15"
+}
+
+Cores_odroidxu4_2() {
+    echo "4 (8)"
+}
+
+RAM_odroidxu4_2() {
+    echo "2GB"
+}
+
+MaxCLK_odroidxu4_2() {
+    echo "2GHz"
+}
+
+Sel4Plat_odroidxu4_2() {
+    echo "exynos5:exynos5422"
+}
