@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_vb_105() {
+    echo 2
+}
+
+SystemName_vb_105() {
+    echo "vb-105"
+}
+
+SystemPowerOff_vb_105() {
+    RebootShutdown vb-105
+}
+
+Arch_vb_105() {
+    echo "x86"
+}
+
+ISA_vb_105() {
+    echo "x86_64"
+}
+
+SOC_vb_105() {
+    echo "Comet Lake"
+}
+
+CPU_vb_105() {
+    echo "XEON W-1250"
+}
+
+Cores_vb_105() {
+    echo "6(12)"
+}
+
+RAM_vb_105() {
+    echo "64GB"
+}
+
+MaxCLK_vb_105() {
+    echo "4.7Ghz"
+}
+
+Sel4Plat_vb_105() {
+    echo "pc99:skylake"
+}
