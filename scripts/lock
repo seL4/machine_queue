@@ -30,6 +30,10 @@ LockIOwn() {
     [ "${owner}" = "${REMOTEUSER}" ]
 }
 
+LockTimeout() {
+    RemoteCommand "cat $(LockName \"$1\")"
+}
+
 GetAllLockedSystems() {
     RemoteCommand find ${BASE} -name '*.lock' -print0 |
     xargs -0 -I {} basename {} .lock
@@ -43,11 +47,13 @@ LockSystemPrintInfo() {
     owner=$(echo "$info" | cut -d ',' -f 1)
     since=$(echo "$info" | cut -d ',' -f 2)
     lockkey=$(LockGetKey "${system}")
+
     if [ ! "${owner}" ]; then
         echo "Lock for $system currently free"
         return;
     fi
-    printf "Lock for $system held by $owner since $since"
+    timeout=$(LockTimeout "$system")
+    printf "Lock for $system held by $owner since $since, timeout $timeout"
     if [ "${lockkey}" != "0" ]; then
         echo " with key '${lockkey}'"
     else
@@ -90,6 +96,8 @@ LockSystem() {
     retry_period="$2"
     total_retries="$3"
     key="$4"
+    newtimeout="$5"
+    timeout=""
     owner=$(LockOwner "${system}")
 
     # Error checking - the same person can't relock the same lock
@@ -108,8 +116,13 @@ LockSystem() {
             return 2
         fi
     fi
-
-    RemoteCommand "umask 0111 && lockfile -'${retry_period}' -r '${total_retries}' '$(LockName "${system}")' && printf '${key}' > '$(KeyName "${system}")' && chmod a-w,g+r '$(KeyName "${system}")'"
+    if [ "${owner}" ] # race here!
+    then
+	timeout="-l $(LockTimeout $system)" || timeout=""
+    fi
+    lockname="$(LockName ${system})"
+    keyname="$(KeyName ${system})"
+    RemoteCommand "umask 0111 && lockfile -'${retry_period}'  $timeout -r '${total_retries}' '$lockname' && rm -f '$keyname' && printf '${key}' > '$keyname' && chmod a-w,g+r '$keyname' && chmod u+w $lockname && printf $newtimeout > $lockname && chmod a-w $lockname"
 
     [ "$?" -ne  0 ] && return 3
 
@@ -167,6 +180,7 @@ UserLockUsage() {
     echo " -t RETRIES       Number of retries to preform for acquiring the lock (default -1)"
     echo " -f               Forcefully releases a lock even if you are not the owner"
     echo " -k LOCK_KEY      Set a key inside the lock"
+    echo " -T timeout       Allow lock to be reclaimed after timeout seconds"
     echo
 }
 
@@ -175,6 +189,7 @@ UserLock() {
     total_retries=-1
     force=0
     key="0"
+    timeout=0
     while [ "$#" -ne 0 ]; do
         case "$1" in
             -info)
@@ -216,10 +231,14 @@ UserLock() {
             -k)
                 shift
                 key="$1"
-            ;;
+		;;
+	    -T)
+		shift
+		timeout="$1"
+		;;
             dumpall)
-            LockSystemDumpAll
-            exit $?
+		LockSystemDumpAll
+		exit $?
             ;;
             help)
                 UserLockUsage
@@ -265,7 +284,7 @@ UserLock() {
             UnlockSystem "${system}" "${force}" "${key}"
         ;;
         -wait)
-            if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
+            if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}" $timeout; then
                 echo "Failed to acquire lock for system (${system})"
                 exit 2
             fi
