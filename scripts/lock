@@ -122,7 +122,7 @@ LockSystem() {
     fi
     lockname="$(LockName ${system})"
     keyname="$(KeyName ${system})"
-    RemoteCommand "umask 0111 && lockfile -'${retry_period}'  $timeout -r '${total_retries}' '$lockname' && rm -f '$keyname' && printf '${key}' > '$keyname' && chmod a-w,g+r '$keyname' && chmod u+w $lockname && printf $newtimeout > $lockname && chmod a-w $lockname"
+    RemoteCommand "umask 0111 && lockfile -'${retry_period}'  $timeout -r '${total_retries}' '$lockname' && rm -f '$keyname' && printf '${key}' > '$keyname' && chmod a-w,g+r '$keyname' && chmod u+w $lockname && printf '$newtimeout' > $lockname && chmod a-w $lockname"
 
     [ "$?" -ne  0 ] && return 3
 
