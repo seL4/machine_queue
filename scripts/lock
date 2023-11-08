@@ -118,7 +118,19 @@ LockSystem() {
     fi
     if [ "${owner}" ] # race here!
     then
-	timeout="-l $(LockTimeout $system)" || timeout=""
+        # Ensure timeout is either an integer or ignored
+        # to avoid lockfile syntax errors
+        timeout="$(LockTimeout $system)" || timeout=""
+        case $timeout in
+            ''|*[!0-9]*)
+                # no valid timeout
+                timeout=""
+                ;;
+            *)
+                # valid timeout
+                timeout="-l ${timeout}"
+                ;;
+        esac
     fi
     lockname="$(LockName ${system})"
     keyname="$(KeyName ${system})"
