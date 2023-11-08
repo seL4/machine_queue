@@ -256,13 +256,13 @@ UserLock() {
 	shift
     done
 
-    # Check that timeout is a valid integer
+    # Check that timeout is a positive integer
     # If an empty string ends up in the lockfile, it can block
     # further interaction
 
-    case ${timeout#[-+]} in
+    case $timeout in
         ''|*[!0-9]*)
-            echo "-T <timeout> requires an integer"
+            echo "-T <timeout> requires a positive integer"
             exit 1
             ;;
         *);;
