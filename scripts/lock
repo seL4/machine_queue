@@ -256,6 +256,18 @@ UserLock() {
 	shift
     done
 
+    # Check that timeout is a valid integer
+    # If an empty string ends up in the lockfile, it can block
+    # further interaction
+
+    case ${timeout#[-+]} in
+        ''|*[!0-9]*)
+            echo "-T <timeout> requires an integer"
+            exit 1
+            ;;
+        *);;
+    esac
+
     IsSystemValid "${system}"
     if [ $? -ne 0 ]; then
         # If it's not a system, is it a pool?
