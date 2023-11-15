@@ -78,23 +78,22 @@ Usage
 
 Options:
 
- `-r`          Reserves the device. Will not reboot or run an image
- `-n`          No lock changes. Checks that you have the lock, and then runs an image. Will not unlock afterwards.
- `-a`          Keep the machine alive after completion or error text
+- `-r`          Reserves the device. Will not reboot or run an image
+- `-n`          No lock changes. Checks that you have the lock, and then runs an image. Will not unlock afterwards.
+- `-a`          Keep the machine alive after completion or error text
  detected. The console becomes read-write after the text has been found.
- `-c` _TEXT_     Image is run until the specified regular completion
+- `-c` _TEXT_     Image is run until the specified regular completion
  text.
- `-e` _TEXT_     Image is run until the specified error text is found.
-
- `-d` _TIME_     Timeout (in seconds) to wait for the completion text (default -1 AKA no timeout)
- `-k` _KEY_      Key for obtaining the lock
- `-l` _FILE_     Optional location to write all the console output to
- `-L`          This is a Linux image not seL4
- `-s` _TEXT_     Specifies which machine this job is for
- `-f` _FILE_ [+] Files to use as the job image.  Most systems need a
- single image file; x86 currently expects two, the kernel and the root task.
- `-w` _TIME_     Number of seconds to wait between each attempt to acquire the lock (default 8)
- `-t` _RETRIES_  Number of retries to perform for acquiring the lock (default -1)
+- `-e` _TEXT_     Image is run until the specified error text is found.
+- `-d` _TIME_     Timeout (in seconds) to wait for the completion text (default -1 AKA no timeout)
+- `-k` _KEY_      Key for obtaining the lock
+- `-l` _FILE_     Optional location to write all the console output to
+- `-L`          This is a Linux image not seL4
+- `-s` _TEXT_     Specifies which machine this job is for
+- `-f` _FILE_ [+] Files to use as the job image.  Most systems need a
+    single image file; x86 currently expects two, the kernel and the root task.
+- `-w` _TIME_     Number of seconds to wait between each attempt to acquire the lock (default 8)
+- `-t` _RETRIES_  Number of retries to perform for acquiring the lock (default -1)
 
 
 `mq sem -signal|-wait|-cancel|-info _<system<_ [-f] [-w _retry-time_ ]
@@ -108,17 +107,17 @@ Options:
 
  Options:
 
- `-info` _SYSTEM_     Display lock information for the specified SYSTEM
- `-mr-info` _SYSTEM_  Display lock information for the specified SYSTEM in machine-readable format
- `-signal` _SYSTEM_   Release the lock for the specified SYSTEM
- `-wait` _SYSTEM_     Acquire the lock for the specified SYSTEM
- `-cancel` _SYSTEM_   Cancel `-wait` processes on the server that are waiting for specified SYSTEM and key
- `-w` _TIME_          Number of seconds to wait between each attempt to acquire the lock (default 8)
- `-t` _RETRIES_       Number of retries to perform for acquiring the
+- `-info` _SYSTEM_     Display lock information for the specified SYSTEM
+- `-mr-info` _SYSTEM_  Display lock information for the specified SYSTEM in machine-readable format
+- `-signal` _SYSTEM_   Release the lock for the specified SYSTEM
+- `-wait` _SYSTEM_     Acquire the lock for the specified SYSTEM
+- `-cancel` _SYSTEM_   Cancel `-wait` processes on the server that are waiting for specified SYSTEM and key
+- `-w` _TIME_          Number of seconds to wait between each attempt to acquire the lock (default 8)
+- `-t` _RETRIES_       Number of retries to perform for acquiring the
  lock (default -1, which means infinity)
- `-f`               Forcefully releases a lock even if you are not the owner
- `-k` _LOCK\_KEY_      Set a key inside the lock
- `-T` _timeout_       Allow lock to be reclaimed after _timeout_ seconds
+- `-f`               Forcefully releases a lock even if you are not the owner
+- `-k` _LOCK\_KEY_      Set a key inside the lock
+- `-T` _timeout_       Allow lock to be reclaimed after _timeout_ seconds
 
 `mq systems [help|simple]`
 
