@@ -63,16 +63,16 @@ Usage
    
 `mq run`
 --------
-`mq.sh run -r|-c _<string>_ [-l _logfile_] -s _system_ [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] [-L] -f _file1_ [-f _file2_] .. [-f _filen_]
+`mq.sh run -r|-c` _<string>_ `[-l `_logfile_`]` -s `_system_` [-w `_retry-time_`] [-t `_retry-count_`] [-n] [-a] [-d `_timeout_`] [-e `_<string>_`] [-k `_<string>_`] [-L] -f `_file1_ `[-f `_file2_`] .. [-f `_filen_`]`
 
    Acquires a lock for the machine called _system_ (or a machine in
-   the pool called _system_), and, once locked, run the specified job.
+   the pool called _system_), and, once locked, runs the specified job.
 
-   Output from the machine is generally collected and passed back to the
+   Output from the machine is collected and passed back to the
    user both on stdout and into an optional logfile.
 
-   Jobs can be canceled at any time with ^C, which will notify the server
-   if the job is running and remove the job from the queue.
+   Jobs can be cancelled at any time with ^C, which will notify the server
+   (if the job is running) and remove the job from the queue.
 
    Returns 0 on success, nonzero if something went wrong
 
@@ -96,8 +96,7 @@ Options:
 - `-t` _RETRIES_  Number of retries to perform for acquiring the lock (default -1)
 
 
-`mq sem -signal|-wait|-cancel|-info _<system<_ [-f] [-w _retry-time_ ]
-[-t _retry-count_ ] [-k _LOCK\_KEY_] [-T _timeout_]`
+`mq sem -signal|-wait|-cancel|-info `_<system>_` [-f] [-w `_retry-time_` ] [-t `_retry-count_` ] [-k `_LOCK_\__KEY_` ] [-T` _timeout_`]`
 
    Manually manipulate locks for machines. The lock for each system
    can be acquired or released.
@@ -122,3 +121,8 @@ Options:
 `mq systems [help|simple]`
 
 Print list of available systems.  With `simple` just give their names
+
+Two other commands are more for use in scripts:
+`mq system-tsv` and `mq pool-tsv` take no arguments, and write to stdout
+all the systems, and all the pools (respectively).
+
