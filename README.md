@@ -63,7 +63,8 @@ Usage
    
 `mq run`
 --------
-`mq.sh run -r|-c` _<string>_ `[-l `_logfile_`]` -s `_system_` [-w `_retry-time_`] [-t `_retry-count_`] [-n] [-a] [-d `_timeout_`] [-e `_<string>_`] [-k `_<string>_`] [-L] -f `_file1_ `[-f `_file2_`] .. [-f `_filen_`]`
+`mq.sh run -r|-c` _<string>_ `[-l ` _logfile_ `] -s` _system_ `[-w` _retry-time_ `] [-t `_retry-count_` ] [-n] [-a] [-d` _timeout_ `] [-e` _<string>_`] [-k `_<string>_`] [-L] -f `_file1_ `[-f `_file2_`]
+.. [-f` _filen_ `]`
 
    Acquires a lock for the machine called _system_ (or a machine in
    the pool called _system_), and, once locked, runs the specified job.
