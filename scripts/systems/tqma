@@ -38,7 +38,7 @@ Cores_tqma() {
 }
 
 RAM_tqma() {
-    echo "2GB"
+    echo "1GB"
 }
 
 MaxCLK_tqma() {
