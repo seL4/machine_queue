@@ -1,0 +1,50 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_tqma() {
+    echo 1
+}
+
+SystemName_tqma() {
+    echo "tqma"
+}
+
+SystemPowerOff_tqma() {
+    RebootShutdown tqma
+}
+
+Arch_tqma() {
+    echo "arm"
+}
+
+ISA_tqma() {
+    echo "armv8-a"
+}
+
+SOC_tqma() {
+    echo "tqma8xx"
+}
+
+CPU_tqma() {
+    echo "cortex-a35"
+}
+
+Cores_tqma() {
+    echo "4"
+}
+
+RAM_tqma() {
+    echo "2GB"
+}
+
+MaxCLK_tqma() {
+    echo "1.2Ghz"
+}
+
+Sel4Plat_tqma() {
+    echo "tqma8xqp1gb"
+}
