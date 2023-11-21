@@ -1,0 +1,55 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_maaxboard1() {
+    if [ "$1" = '-L' ]
+    then
+	echo 2
+    else
+	echo 1
+    fi
+}
+
+SystemName_maaxboard1() {
+    echo "maaxboard1"
+}
+
+SystemPowerOff_maaxboard1() {
+    RebootShutdown maaxboard1
+}
+
+Arch_maaxboard1() {
+    echo "arm"
+}
+
+ISA_maaxboard1() {
+    echo "armv8-a"
+}
+
+SOC_maaxboard1() {
+    echo "imx8mq"
+}
+
+CPU_maaxboard1() {
+    echo "cortex-a53"
+}
+
+Cores_maaxboard1() {
+    echo "4"
+}
+
+RAM_maaxboard1() {
+    echo "2GB"
+}
+
+MaxCLK_maaxboard1() {
+    echo "1.5Ghz"
+}
+
+Sel4Plat_maaxboard1() {
+    echo "maaxboard"
+}
