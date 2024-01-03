@@ -48,3 +48,11 @@ MaxCLK_tx2b() {
 Sel4Plat_tx2b() {
     echo "tx2"
 }
+
+PXELinux_tx2b() {
+    echo "no"
+}
+
+DTB_tx2b() {
+    echo "no"
+}

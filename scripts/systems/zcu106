@@ -48,3 +48,11 @@ MaxCLK_zcu106() {
 Sel4Plat_zcu106() {
     echo "zynqmp"
 }
+
+PXELinux_zcu106() {
+    echo "no"
+}
+
+DTB_zcu106() {
+    echo "no"
+}

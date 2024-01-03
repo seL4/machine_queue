@@ -48,3 +48,11 @@ MaxCLK_jetson1() {
 Sel4Plat_jetson1() {
     echo "tk1"
 }
+
+PXELinux_jetson1() {
+    echo "no"
+}
+
+DTB_jetson1() {
+    echo "no"
+}

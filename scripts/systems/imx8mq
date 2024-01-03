@@ -48,3 +48,11 @@ MaxCLK_imx8mq() {
 Sel4Plat_imx8mq() {
     echo "imx8mq-evk"
 }
+
+PXELinux_imx8mq() {
+    echo "no"
+}
+
+DTB_imx8mq() {
+    echo "no"
+}

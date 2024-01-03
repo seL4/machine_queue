@@ -24,8 +24,9 @@ Usage () {
     echo
     echo "  run         Run a new job on a machine"
     echo "  systems     Query information on available machines"
-    echo "  system-tsv  List available machines as TSV"
+    echo "  system-tsv  List available machines as tab-separated values"
     echo "  pool-tsv    List available machine pools as tab-separated lists"
+    echo "  features    List which boards support non-standard features"
     echo
     echo "  sem         Directly interact with the machine locks"
     echo
@@ -51,6 +52,10 @@ case "$command" in
     ;;
     pool-tsv)
         OutputPoolTSV
+        exit 0
+    ;;
+    features)
+        OutputFeatureList
         exit 0
     ;;
     help)

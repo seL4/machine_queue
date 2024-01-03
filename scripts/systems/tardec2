@@ -48,3 +48,11 @@ MaxCLK_tardec2() {
 Sel4Plat_tardec2() {
     echo "pc99"
 }
+
+PXELinux_tardec2() {
+    echo "no"
+}
+
+DTB_tardec2() {
+    echo "no"
+}

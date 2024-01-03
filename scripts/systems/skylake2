@@ -48,3 +48,11 @@ MaxCLK_skylake2() {
 Sel4Plat_skylake2() {
     echo "pc99:skylake"
 }
+
+PXELinux_skylake2() {
+    echo "no"
+}
+
+DTB_skylake2() {
+    echo "no"
+}

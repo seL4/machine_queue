@@ -48,3 +48,11 @@ MaxCLK_rpi3() {
 Sel4Plat_rpi3() {
     echo "bcm2837:rpi3"
 }
+
+PXELinux_rpi3() {
+    echo "no"
+}
+
+DTB_rpi3() {
+    echo "no"
+}

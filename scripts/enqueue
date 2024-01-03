@@ -34,6 +34,7 @@ EnqueueUsage() {
     echo " -k KEY      Key for obtaining the lock"
     echo " -l FILE     Optional location to write all the console output to"
     echo " -L          This is a Linux image not seL4"
+    echo " -b FILE     Dtb to use instead of the default one with a Linux image"
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
     echo " -w TIME     Number of seconds to wait between each attempt to acquire the lock (default 8)"
@@ -62,6 +63,15 @@ Enqueue() {
 	    -L)
 		linux="-L"
 	    ;;
+            -b)
+                if ! [ -f "$2" ]; then
+                    echo "dtb file \"$2\" either does not exist, or is not considered a valid file"
+                    exit -1
+                fi
+
+                # We want the var to contain "-b my.dtb" so we can identify
+                # that it is a dtb later
+                dtbflag="$1 $2"
             -l)
                 shift
                 logfile="$1"
@@ -204,9 +214,13 @@ Enqueue() {
         echo "Attempting to power off machine now that you are done"
         SystemPowerOff "${system}"
     else
-        # Run the image. 'files' is deliberately no in quotes so the multiple
+        # Run the image. 'files' is deliberately not in quotes so the multiple
         # files expands to multiple arguments
-        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} $files
+        # 'dtbflag' is deliberately not in quotes so it expands to multiple
+        # parameters '-b' and 'my.dtb'
+        # 'linux' is deliberately not in quotes so it will not create an empty
+        # parameter if the flag is not set
+        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} $files
         ret=$?
     fi
 

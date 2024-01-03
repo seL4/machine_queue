@@ -48,3 +48,11 @@ MaxCLK_bboneblack() {
 Sel4Plat_bboneblack() {
     echo "am335x:am335x-boneblack"
 }
+
+PXELinux_bboneblack() {
+    echo "no"
+}
+
+DTB_bboneblack() {
+    echo "no"
+}

@@ -48,3 +48,11 @@ MaxCLK_haswell3() {
 Sel4Plat_haswell3() {
     echo "pc99:haswell"
 }
+
+PXELinux_haswell3() {
+    echo "yes"
+}
+
+DTB_haswell3() {
+    echo "no"
+}

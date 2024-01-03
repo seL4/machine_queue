@@ -55,6 +55,20 @@ OutputSystemList() {
     OutputPoolList
 }
 
+OutputFeatureList() {
+    printf "+----------------+----------------+------------+\n"
+    printf "| Name           | PXE boot Linux | Custom DTB |\n"
+    printf "+----------------+----------------+------------+\n"
+    for system in $(SystemList)
+    do
+        printf "| %14s " "${system}"
+        printf "| %14s " "$("PXELinux_${system}")"
+        printf "| %10s " "$("DTB_${system}")"
+        printf "|\n"
+    done
+    printf "+----------------+----------------+------------+\n"
+}
+
 OutputSystemTSV() {
     printf "name\tarch\tsel4_plat\tisa\tsoc\tcpu\tcores\tram\tmax_clk\tnum_files\n"
     for system in $(SystemList)
@@ -106,12 +120,19 @@ SystemRunImage() {
 	shift
 	kernel="$7"
     }
+
+    [ $kernel = "-b"] && {
+        dtbflag="$7 $8"
+        shift
+        shift
+        kernel="$7"
+    }
     system_name="$("SystemName_${system}")"
 
     if [ "$("SystemNumFiles_${system}" $linux)" -eq 2 ]; then
         rootserver="$8"
-        RebootConsoleRunTwoFiles $linux "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
+        RebootConsoleRunTwoFiles $linux $dtbflag "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
     else
-        RebootConsoleRunOneFile $linux "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
+        RebootConsoleRunOneFile $linux $dtbflag"${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
     fi
 }

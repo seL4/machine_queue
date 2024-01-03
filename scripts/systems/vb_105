@@ -48,3 +48,11 @@ MaxCLK_vb_105() {
 Sel4Plat_vb_105() {
     echo "pc99:skylake"
 }
+
+PXELinux_vb_105() {
+    echo "yes"
+}
+
+DTB_vb_105() {
+    echo "no"
+}

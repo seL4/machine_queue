@@ -48,3 +48,11 @@ MaxCLK_tqma() {
 Sel4Plat_tqma() {
     echo "tqma8xqp1gb"
 }
+
+PXELinux_tqma() {
+    echo "no"
+}
+
+DTB_tqma() {
+    echo "no"
+}

@@ -53,3 +53,11 @@ MaxCLK_star64() {
 Sel4Plat_star64() {
     echo "star64"
 }
+
+PXELinux_star64() {
+    echo "yes"
+}
+
+DTB_star64() {
+    echo "yes"
+}

@@ -26,6 +26,12 @@ RebootConsoleRunTwoFiles() {
 	linux="-L"
 	shift
     }
+    [ "$1" = '-b' ] && {
+        dtb="$2"
+        dtbflag="$1 $2"
+        shift
+        shift
+    }
     completion="$1"
     completion_timeout="$2"
     errortxt="$3"
@@ -49,6 +55,7 @@ RebootConsoleRunTwoFiles() {
         # need to copy remotely
         kernelfile=$(RemoteCommandOn ${HOST} "mktemp")
         rootserverfile=$(RemoteCommandOn ${HOST} "mktemp")
+        dtbfile=$(RemoteCommandOn ${HOST} "mktemp")
         if ! scp "${kernel}" "${HOST}:${kernelfile}"; then
             echo "Failed to copy kernel image"
             RemoteCommandOn ${HOST} rm "${kernelfile}"
@@ -63,6 +70,17 @@ RebootConsoleRunTwoFiles() {
             RemoteCommandOn ${HOST} rm "${logfile}"
             return 1
         fi
+        if [ ! -z "${dtb}" ]; then
+            if ! scp "${dtb}" "${HOST}:${dtbfile}"; then
+                echo "Failed to copy dtb file"
+                RemoteCommandOn ${HOST} rm "${kernelfile}"
+                RemoteCommandOn ${HOST} rm "${rootserverfile}"
+                RemoteCommandOn ${HOST} rm "${logfile}"
+                RemoteCommandOn ${HOST} rm "${dtbfile}"
+                return 1
+            fi
+        fi
+
         ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot $linux -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' -u '${rootserverfile}' ${ka_flag}"
         ret=$?
         if [ "${output}" != "" ]; then
@@ -71,12 +89,15 @@ RebootConsoleRunTwoFiles() {
         RemoteCommandOn ${HOST} rm "${kernelfile}"
         RemoteCommandOn ${HOST} rm "${rootserverfile}"
         RemoteCommandOn ${HOST} rm "${logfile}"
+        if [ ! -z "${dtb}" ]; then
+            RemoteCommandOn ${HOST} rm "${dtbfile}"
+        fi
         return $ret
     fi
     if [ "${output}" = "" ]; then
-        "/tftpboot/${machine}/reboot"  $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
+        "/tftpboot/${machine}/reboot"  $linux $dtbflag -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
     else
-        "/tftpboot/${machine}/reboot" $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
+        "/tftpboot/${machine}/reboot" $linux $dtbflag -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" -u "${rootserver}" ${ka_flag}
     fi
 }
 
@@ -84,6 +105,12 @@ RebootConsoleRunOneFile() {
     [ "$1" = '-L' ] && {
 	linux="-L"
 	shift
+    }
+    [ "$1" = '-b' ] && {
+    dtb="$2"
+    dtbflag="$1 $2"
+    shift
+    shift
     }
     completion=$1
     completion_timeout=$2
@@ -105,24 +132,37 @@ RebootConsoleRunOneFile() {
         logfile=$(RemoteCommandOn ${HOST} "mktemp")
         # need to copy remotely
         kernelfile=$(RemoteCommandOn ${HOST} "mktemp")
+        dtbfile=$(RemoteCommandOn ${HOST} "mktemp")
         if ! scp "${kernel}" "${HOST}:${kernelfile}"; then
             echo "Failed to copy kernel image"
             RemoteCommandOn ${HOST} rm "${kernelfile}"
             RemoteCommandOn ${HOST} rm "${logfile}"
             return 1
         fi
-        ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot $linux -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' ${ka_flag}"
+        if [ ! -z "${dtb}" ]; then
+            if ! scp "${dtb}" "${HOST}:${kernelfile}"; then
+                echo "Failed to copy dtb file"
+                RemoteCommandOn ${HOST} rm "${dtbfile}"
+                RemoteCommandOn ${HOST} rm "${kernelfile}"
+                RemoteCommandOn ${HOST} rm "${logfile}"
+            fi
+        fi
+
+        ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot $linux $dtbflag -l '${logfile}' -c '${completion}' -t '${completion_timeout}' -e '${errortxt}' -k '${kernelfile}' ${ka_flag}"
         ret=$?
         if [ "${output}" != "" ]; then
             scp "${HOST}:${logfile}" "${output}"
         fi
         RemoteCommandOn ${HOST} rm "${kernelfile}"
         RemoteCommandOn ${HOST} rm "${logfile}"
+        if [ ! -z "${dtb}" ]; then
+            RemoteCommandOn ${HOST} rm "${dtbfile}"
+        fi
         return $ret
     fi
     if [ "${output}" = "" ]; then
-        "/tftpboot/${machine}/reboot" $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" ${ka_flag}
+        "/tftpboot/${machine}/reboot" $linux $dtbflag -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -k "${kernel}" ${ka_flag}
     else
-        "/tftpboot/${machine}/reboot" $linux -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" ${ka_flag}
+        "/tftpboot/${machine}/reboot" $linux $dtbflag -t "${completion_timeout}" -c "${completion}" -e "${errortxt}" -l "${output}" -k "${kernel}" ${ka_flag}
     fi
 }
