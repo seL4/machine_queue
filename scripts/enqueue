@@ -10,7 +10,7 @@ fi
 SIGNALS="INT TERM HUP QUIT KILL PIPE"
 
 EnqueueUsage() {
-    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] [-L] -f file1 -f file2 .. -f filen"
+    echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] [-L] [-b <file>] -f file1 -f file2 .. -f filen"
     echo
     echo "   Acquires a lock for a machine, and once locked runs the specified job"
     echo "   Jobs can include just a reservation"
@@ -60,18 +60,20 @@ Enqueue() {
     key="0"
     while [ "$#" -ne 0 ]; do
         case "$1" in
-	    -L)
-		linux="-L"
-	    ;;
+            -L)
+                linux="-L"
+            ;;
             -b)
-                if ! [ -f "$2" ]; then
-                    echo "dtb file \"$2\" either does not exist, or is not considered a valid file"
+                shift
+                if ! [ -f "$1" ]; then
+                    echo "dtb file \"$1\" either does not exist, or is not considered a valid file"
                     exit -1
                 fi
 
                 # We want the var to contain "-b my.dtb" so we can identify
                 # that it is a dtb later
-                dtbflag="$1 $2"
+                dtbflag="-b $1"
+            ;;
             -l)
                 shift
                 logfile="$1"
@@ -145,6 +147,25 @@ Enqueue() {
         esac
         shift
     done
+
+    if [ ! -z "linux" ]; then
+        if ! SystemBootsLinuxPXE "${system}" ; then
+            echo "System cannot boot Linux over the network."
+            exit 1
+        fi
+    fi
+
+    if [ ! -z "$dtbflag" ]; then
+        if ! SystemAcceptsDtb "${system}" ; then
+            echo "System does not accept a dtb"
+            exit 1
+        fi
+    fi
+
+    if [ ! -z "$dtbflag" ] && [ -z $linux ]; then
+        echo "A dtb may only be supplied when booting a linux image over the network."
+        exit 1
+    fi
 
     # Check that we got enough parameters
     if [ ! "$system" ]; then

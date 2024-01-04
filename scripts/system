@@ -10,6 +10,16 @@ IsSystemValid() {
     [ -f "${SCRIPT_PATH}/scripts/systems/${system}" ]
 }
 
+SystemAcceptsDtb() {
+    system="$1"
+    [ "$("DTB_${system}")" = "yes" ]
+}
+
+SystemBootsLinuxPXE() {
+    system="$1"
+    [ "$("PXELinux_${system}")" = "yes" ]
+}
+
 SystemList() {
     (
 	cd "${SCRIPT_PATH}/scripts/systems/"
@@ -121,10 +131,9 @@ SystemRunImage() {
 	kernel="$7"
     }
 
-    [ $kernel = "-b"] && {
+    [ $kernel = "-b" ] && {
         dtbflag="$7 $8"
-        shift
-        shift
+        shift 2
         kernel="$7"
     }
     system_name="$("SystemName_${system}")"
@@ -133,6 +142,6 @@ SystemRunImage() {
         rootserver="$8"
         RebootConsoleRunTwoFiles $linux $dtbflag "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
     else
-        RebootConsoleRunOneFile $linux $dtbflag"${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
+        RebootConsoleRunOneFile $linux $dtbflag "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
     fi
 }
