@@ -48,3 +48,11 @@ MaxCLK_odroidxu4_2() {
 Sel4Plat_odroidxu4_2() {
     echo "exynos5:exynos5422"
 }
+
+PXELinux_odroidxu4_2() {
+    echo "no"
+}
+
+DTB_odroidxu4_2() {
+    echo "no"
+}

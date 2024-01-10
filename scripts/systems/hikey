@@ -48,3 +48,11 @@ MaxCLK_hikey() {
 Sel4Plat_hikey() {
     echo "hikey"
 }
+
+PXELinux_hikey() {
+    echo "no"
+}
+
+DTB_hikey() {
+    echo "no"
+}

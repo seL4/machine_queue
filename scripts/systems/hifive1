@@ -48,3 +48,11 @@ MaxCLK_hifive1() {
 Sel4Plat_hifive1() {
     echo "hifive"
 }
+
+PXELinux_hifive1() {
+    echo "no"
+}
+
+DTB_hifive1() {
+    echo "no"
+}

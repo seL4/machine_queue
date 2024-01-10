@@ -48,3 +48,11 @@ MaxCLK_makatea() {
 Sel4Plat_makatea() {
     echo "pc99:skylake"
 }
+
+PXELinux_makatea() {
+    echo "no"
+}
+
+DTB_makatea() {
+    echo "no"
+}

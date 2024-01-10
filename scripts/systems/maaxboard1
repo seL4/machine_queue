@@ -53,3 +53,11 @@ MaxCLK_maaxboard1() {
 Sel4Plat_maaxboard1() {
     echo "maaxboard"
 }
+
+PXELinux_maaxboard1() {
+    echo "yes"
+}
+
+DTB_maaxboard1() {
+    echo "yes"
+}

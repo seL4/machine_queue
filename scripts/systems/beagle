@@ -48,3 +48,12 @@ MaxCLK_beagle() {
 Sel4Plat_beagle() {
     echo "omap3"
 }
+
+PXELinux_beagle() {
+    echo "no"
+}
+
+DTB_beagle() {
+    echo "no"
+}
+

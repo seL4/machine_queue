@@ -48,3 +48,11 @@ MaxCLK_pi4B() {
 Sel4Plat_pi4B() {
     echo "rpi4"
 }
+
+PXELinux_pi4B() {
+    echo "no"
+}
+
+DTB_pi4B() {
+    echo "no"
+}

@@ -48,3 +48,11 @@ MaxCLK_rockpro64a() {
 Sel4Plat_rockpro64a() {
     echo "rockpro64"
 }
+
+PXELinux_rockpro64a() {
+    echo "no"
+}
+
+DTB_rockpro64a() {
+    echo "no"
+}

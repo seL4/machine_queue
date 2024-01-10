@@ -48,3 +48,11 @@ MaxCLK_sabre2() {
 Sel4Plat_sabre2() {
     echo "imx6:sabre"
 }
+
+PXELinux_sabre2() {
+    echo "no"
+}
+
+DTB_sabre2() {
+    echo "no"
+}

@@ -53,3 +53,11 @@ MaxCLK_imx8mm() {
 Sel4Plat_imx8mm() {
     echo "imx8mm-evk"
 }
+
+PXELinux_imx8mm() {
+    echo "yes"
+}
+
+DTB_imx8mm() {
+    echo "yes"
+}

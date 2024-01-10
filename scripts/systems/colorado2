@@ -48,3 +48,12 @@ MaxCLK_colorado2() {
 Sel4Plat_colorado2() {
     echo "tk1"
 }
+
+PXELinux_colorado2() {
+    echo "no"
+}
+
+DTB_colorado2() {
+    echo "no"
+}
+

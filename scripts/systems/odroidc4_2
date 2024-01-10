@@ -53,3 +53,11 @@ MaxCLK_odroidc4_2() {
 Sel4Plat_odroidc4_2() {
     echo "odroidc4"
 }
+
+PXELinux_odroidc4_2() {
+    echo "yes"
+}
+
+DTB_odroidc4_2() {
+    echo "yes"
+}

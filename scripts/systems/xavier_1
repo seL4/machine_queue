@@ -48,3 +48,11 @@ MaxCLK_xavier_1() {
 Sel4Plat_xavier_1() {
     echo "xavier"
 }
+
+PXELinux_xavier_1() {
+    echo "no"
+}
+
+DTB_xavier_1() {
+    echo "no"
+}
