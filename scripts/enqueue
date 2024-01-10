@@ -108,7 +108,7 @@ Enqueue() {
                 shift
                 if ! [ -f "$1" ]; then
                     echo "File \"$1\" either does not exist, or is not considered a valid file"
-                    exit -1
+                    exit 1
                 fi
                 if [ "$files" != "" ]; then
                     files="$files "
@@ -148,7 +148,7 @@ Enqueue() {
         shift
     done
 
-    if [ ! -z "linux" ]; then
+    if [ ! -z "${linux}" ]; then
         if ! SystemBootsLinuxPXE "${system}" ; then
             echo "System cannot boot Linux over the network."
             exit 1
@@ -162,7 +162,7 @@ Enqueue() {
         fi
     fi
 
-    if [ ! -z "$dtbflag" ] && [ -z $linux ]; then
+    if [ ! -z "$dtbflag" ] && [ -z "$linux" ]; then
         echo "A dtb may only be supplied when booting a linux image over the network."
         exit 1
     fi
