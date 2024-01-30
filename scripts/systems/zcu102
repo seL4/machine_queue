@@ -6,7 +6,12 @@ if [ "${SCRIPT_PATH}" = "" ]; then
 fi
 
 SystemNumFiles_zcu102() {
-    echo 1
+    if [ "$1" = '-L' ]
+    then
+        echo 2
+    else
+        echo 1
+    fi
 }
 
 SystemName_zcu102() {
@@ -50,9 +55,9 @@ Sel4Plat_zcu102() {
 }
 
 PXELinux_zcu102() {
-    echo "no"
+    echo "yes"
 }
 
 DTB_zcu102() {
-    echo "no"
+    echo "yes"
 }
