@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+Systems_maaxboard_pool() {
+    # This function can be explicit or programatic
+    # Explicit:
+    echo "maaxboard1"
+    echo "maaxboard2"
+}
+
+GselectOne(){
+    n=`echo "$1" | wc -l`
+    r=`random $n`
+    echo "$1" | sed -n ${r}p
+}
+
+GetRandomSystemFromPool_maaxboard_pool() {
+    # Get a random system from the pool, unlocked if possible
+    locked_systems="$(GetAllLockedSystems)"
+    maaxboard_systems="$(Systems_maaxboard_pool)"
+    free_maaxboard_systems="$(echo "$maaxboard_systems" | grep -F -v -x "$locked_systems")"
+    if [ "$free_maaxboard_systems" ]
+    then
+	selectOne "$free_maaxboard_systems"
+    else
+	selectOne "$maaxboard_systems"
+    fi
+}
