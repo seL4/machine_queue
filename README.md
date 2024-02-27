@@ -98,6 +98,7 @@ Options:
 
 
 `mq sem -signal|-wait|-cancel|-info `_<system>_` [-f] [-w `_retry-time_` ] [-t `_retry-count_` ] [-k `_LOCK_\__KEY_` ] [-T` _timeout_`]`
+`mq sem dumpall`
 
    Manually manipulate locks for machines. The lock for each system
    can be acquired or released.
@@ -118,6 +119,7 @@ Options:
 - `-f`               Forcefully releases a lock even if you are not the owner
 - `-k` _LOCK\_KEY_      Set a key inside the lock
 - `-T` _timeout_       Allow lock to be reclaimed after _timeout_ seconds
+- `dumpall             Prints all currently locked systems`
 
 `mq systems [help|simple]`
 
