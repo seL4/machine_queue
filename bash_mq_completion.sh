@@ -16,7 +16,7 @@ _mq_completion() {
     case "${COMP_WORDS[1]}" in
       sem)
         if [ "$COMP_CWORD" -eq "2" ]; then
-          COMPREPLY=($(compgen -W "-signal -wait -info -mr-info -cancel" -- "${cur}"))
+          COMPREPLY=($(compgen -W "-signal -wait -info -mr-info -cancel dumpall" -- "${cur}"))
         elif [ "$COMP_CWORD" -eq "3" ]; then
           COMPREPLY=($(compgen -W "$(_mq_systems)" -- "${cur}"))
         elif [ "$COMP_CWORD" -eq "4" ]; then
