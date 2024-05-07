@@ -1,0 +1,63 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_orin1() {
+    if [ "$1" = '-L' ]
+    then
+	echo 2
+    else
+	echo 1
+    fi
+}
+
+SystemName_orin1() {
+    echo "orin1"
+}
+
+SystemPowerOff_orin1() {
+    RebootShutdown orin1
+}
+
+Arch_orin1() {
+    echo "arm"
+}
+
+ISA_orin1() {
+    echo "armv8-a"
+}
+
+SOC_orin1() {
+    echo "orin"
+}
+
+CPU_orin1() {
+    echo "cortex-a78ae"
+}
+
+Cores_orin1() {
+    echo "12"
+}
+
+RAM_orin1() {
+    echo "64GB"
+}
+
+MaxCLK_orin1() {
+    echo "2.2Ghz"
+}
+
+Sel4Plat_orin1() {
+    echo "unknown"
+}
+
+PXELinux_orin1() {
+    echo "yes"
+}
+
+DTB_orin1() {
+    echo "yes"
+}
