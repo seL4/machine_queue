@@ -284,9 +284,7 @@ Enqueue() {
 
         lock_tries=0
 
-        # TODO obviously broken, sh doesn't do maths
-        while "${total_retries}" == -1 ||  "${lock_tries}" < "${total_retries}" ; do
-
+        while [ "${total_retries}" -eq -1 ] || [ "${lock_tries}" -lt "${total_retries}" ] ; do
 
             # Loop through and try all systems in the pool.
             for system in $(Systems_"${pool}"); do
@@ -303,7 +301,7 @@ Enqueue() {
                 fi
             done
 
-            lock_tries=$lock_tries+1
+            lock_tries=$(($lock_tries+1))
 
         done
 
