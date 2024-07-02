@@ -303,6 +303,8 @@ Enqueue() {
 
             lock_tries=$(($lock_tries+1))
 
+            sleep "${retry_period}"
+
         done
 
     else
