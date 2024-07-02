@@ -148,25 +148,6 @@ Enqueue() {
         shift
     done
 
-    if [ ! -z "${linux}" ]; then
-        if ! SystemBootsLinuxPXE "${system}" ; then
-            echo "System cannot boot Linux over the network."
-            exit 1
-        fi
-    fi
-
-    if [ ! -z "$dtbflag" ]; then
-        if ! SystemAcceptsDtb "${system}" ; then
-            echo "System does not accept a dtb"
-            exit 1
-        fi
-    fi
-
-    if [ ! -z "$dtbflag" ] && [ -z "$linux" ]; then
-        echo "A dtb may only be supplied when booting a linux image over the network."
-        exit 1
-    fi
-
     # Check that we got enough parameters
     if [ ! "$system" ]; then
         EnqueueUsage
@@ -192,6 +173,25 @@ Enqueue() {
         pool=${system}
         system=$(GetRandomSystemFromPool_"${pool}")
         echo "Selecting system '${system}' from pool '${pool}'"
+    fi
+
+    if [ ! -z "${linux}" ]; then
+        if ! SystemBootsLinuxPXE "${system}" ; then
+            echo "System cannot boot Linux over the network."
+            exit 1
+        fi
+    fi
+
+    if [ ! -z "$dtbflag" ]; then
+        if ! SystemAcceptsDtb "${system}" ; then
+            echo "System does not accept a dtb"
+            exit 1
+        fi
+    fi
+
+    if [ ! -z "$dtbflag" ] && [ -z "$linux" ]; then
+        echo "A dtb may only be supplied when booting a linux image over the network."
+        exit 1
     fi
 
     # Check that the number of files specified is correct
