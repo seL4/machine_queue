@@ -9,6 +9,108 @@ fi
 # 'if anything at all happens try and shut down our job cleanly' approach
 SIGNALS="INT TERM HUP QUIT KILL PIPE"
 
+
+# 1      2            3             4   5            6          7                  8        9
+# system retry_period total_retries key no_lock_mods completion completion_timeout errortxt logfile keep_alive linux dtbflag file_count files
+
+EnqueueOneSystem() {
+    
+    system="$1"
+    retry_period="$2"
+    total_retries="$3"
+    key="$4"
+    no_lock_mods="$5"
+    completion="$6"
+    completion_timeout="$7"
+    errortxt="$8"
+    logfile="$9"
+    shift 9
+    keep_alive="$1"
+    linux="$2"
+    dtbflag="$3"
+    file_count="$4"
+    files="$5"
+
+
+    if [ ! -z "${linux}" ]; then
+        if ! SystemBootsLinuxPXE "${system}" ; then
+            echo "System cannot boot Linux over the network."
+            exit 1
+        fi
+    fi
+
+    if [ ! -z "$dtbflag" ]; then
+        if ! SystemAcceptsDtb "${system}" ; then
+            echo "System does not accept a dtb"
+            exit 1
+        fi
+    fi
+
+    if [ ! -z "$dtbflag" ] && [ -z "$linux" ]; then
+        echo "A dtb may only be supplied when booting a linux image over the network."
+        exit 1
+    fi
+
+    # Check that the number of files specified is correct
+    if [ "$interact" != "-r" ] ; then
+        if ! SystemCorrectNumberOfFiles ${linux} "${system}" "${file_count}"; then
+            echo "Wrong number of files specified for system ${system}"
+            exit 1
+        fi
+    fi
+
+    if ${no_lock_mods} ; then
+        if ! LockIOwn "${system}"; then
+            echo "Failed to run because you said you own the lock (-n flag), but you don't!"
+            LockSystemPrintInfo "${system}"
+            exit 1
+        fi
+    else
+        echo "Acquiring lock for ${system}"
+
+        # Print out potentially useful information to the user about
+        # the current status of the lock
+        LockSystemPrintInfo "${system}"
+
+        # We can setup the trap early as we check if we actually own the
+        # the lock before releasing it
+        trap "UnlockSystem \"${system}\" 0 \"${key}\"; exit 1" ${SIGNALS}
+
+        if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
+            echo "Failed to acquire lock for system (${system})"
+            exit 2
+        fi
+    fi
+
+    echo "Lock acquired, we are allowed to run"
+    local ret=0
+
+    if [ "${interact}" = "-r" ]; then
+        echo "This is a reservation. You now own ${system} and"
+        echo "can do what you want. Press ctrl+d or enter here when done"
+        read line
+        echo "Attempting to power off machine now that you are done"
+        SystemPowerOff "${system}"
+    else
+        # Run the image. 'files' is deliberately not in quotes so the multiple
+        # files expands to multiple arguments
+        # 'dtbflag' is deliberately not in quotes so it expands to multiple
+        # parameters '-b' and 'my.dtb'
+        # 'linux' is deliberately not in quotes so it will not create an empty
+        # parameter if the flag is not set
+        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} $files
+        ret=$?
+    fi
+
+    if ! ${no_lock_mods} ; then
+        UnlockSystem "${system}" 0 "${key}"
+        trap "exit 1" ${SIGNALS}
+    fi
+
+    exit $ret
+
+}
+
 EnqueueUsage() {
     echo "$0 run -r|-c <string> -l logfile -s system [-w retry-time] [-t retry-count] [-n] [-a] [-d timeout] [-e <string>] [-k <string>] [-L] [-b <file>] -f file1 -f file2 .. -f filen"
     echo
@@ -159,97 +261,60 @@ Enqueue() {
         exit 1
     fi
 
+
+    local ret=0
+
     # Verify the requested system exists
-    if ! IsSystemValid "${system}" ; then
-        # If it's not a system, is it a pool?
-        if ! IsPoolValid "${system}" ; then
-            echo "System or pool '$system' does not exist. Valid systems are"
-            SystemList
-            echo "Valid pools are"
-            PoolList
-            exit 1
-        fi
-        # Select a system from the pool
+    if IsSystemValid "${system}" ; then
+
+        # Everything is quoted so we'll pass on the exact same number of parameters every time
+        EnqueueOneSystem "${system}" "${retry_period}" "${total_retries}" "${key}" "${no_lock_mods}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${linux}" "${dtbflag}" "${file_count}" "${files}"
+
+        ret=$?
+
+    # If it's not a system, is it a pool?
+    elif IsPoolValid "${system}" ; then
         pool=${system}
-        system=$(GetRandomSystemFromPool_"${pool}")
-        echo "Selecting system '${system}' from pool '${pool}'"
-    fi
 
-    if [ ! -z "${linux}" ]; then
-        if ! SystemBootsLinuxPXE "${system}" ; then
-            echo "System cannot boot Linux over the network."
-            exit 1
-        fi
-    fi
+        # When attempting to lock a pool, we use the retry time and retry count
+        # given by the user for how often we attempt locking on the whole pool,
+        # not for lock attempts on a specific system.
+        # Each time the user-configured period elapses, we try (but do not wait
+        # on) locking each system in the pool.
 
-    if [ ! -z "$dtbflag" ]; then
-        if ! SystemAcceptsDtb "${system}" ; then
-            echo "System does not accept a dtb"
-            exit 1
-        fi
-    fi
+        lock_tries=0
 
-    if [ ! -z "$dtbflag" ] && [ -z "$linux" ]; then
-        echo "A dtb may only be supplied when booting a linux image over the network."
+        # TODO obviously broken, sh doesn't do maths
+        while "${total_retries}" == -1 ||  "${lock_tries}" < "${total_retries}" ; do
+
+
+            # Loop through and try all systems in the pool.
+            for system in $(Systems_"${pool}"); do
+
+                # Note we do not retry and give a small retry period (which is unused)
+                # We only want to attempt locking, not wait on it
+                EnqueueOneSystem "${system}" "1" "0" "${key}" "${no_lock_mods}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${linux}" "${dtbflag}" "${file_count}" "${files}"
+
+                ret=$?
+
+                if [ "${ret}" == 0 ]; then
+                    # Running succeeded on a board
+                    exit "${ret}"
+                fi
+            done
+
+            lock_tries=$lock_tries+1
+
+        done
+
+    else
+
+        echo "System or pool '$system' does not exist. Valid systems are"
+        SystemList
+        echo "Valid pools are"
+        PoolList
         exit 1
     fi
 
-    # Check that the number of files specified is correct
-    if [ "$interact" != "-r" ] ; then
-        if ! SystemCorrectNumberOfFiles ${linux} "${system}" "${file_count}"; then
-            echo "Wrong number of files specified for system ${system}"
-            exit 1
-        fi
-    fi
-
-    if ${no_lock_mods} ; then
-        if ! LockIOwn "${system}"; then
-            echo "Failed to run because you said you own the lock (-n flag), but you don't!"
-            LockSystemPrintInfo "${system}"
-            exit 1
-        fi
-    else
-        echo "Acquiring lock for ${system}"
-
-        # Print out potentially useful information to the user about
-        # the current status of the lock
-        LockSystemPrintInfo "${system}"
-
-        # We can setup the trap early as we check if we actually own the
-        # the lock before releasing it
-        trap "UnlockSystem \"${system}\" 0 \"${key}\"; exit 1" ${SIGNALS}
-
-        if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
-            echo "Failed to acquire lock for system (${system})"
-            exit 2
-        fi
-    fi
-
-    echo "Lock acquired, we are allowed to run"
-    local ret=0
-
-    if [ "${interact}" = "-r" ]; then
-        echo "This is a reservation. You now own ${system} and"
-        echo "can do what you want. Press ctrl+d or enter here when done"
-        read line
-        echo "Attempting to power off machine now that you are done"
-        SystemPowerOff "${system}"
-    else
-        # Run the image. 'files' is deliberately not in quotes so the multiple
-        # files expands to multiple arguments
-        # 'dtbflag' is deliberately not in quotes so it expands to multiple
-        # parameters '-b' and 'my.dtb'
-        # 'linux' is deliberately not in quotes so it will not create an empty
-        # parameter if the flag is not set
-        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} $files
-        ret=$?
-    fi
-
-    if ! ${no_lock_mods} ; then
-        UnlockSystem "${system}" 0 "${key}"
-        trap "exit 1" ${SIGNALS}
-    fi
-
     exit $ret
-
 }
