@@ -357,6 +357,11 @@ UserLock() {
 
                     sleep "${retry_period}"
                 done
+
+                # If we reach this point, we've exhausted all retry attempts
+                echo "Failed to acquire lock for any system in pool (${pool})"
+                exit 2
+
             ;;
             -cancel)
                 CancelWait "${system}" "${key}"

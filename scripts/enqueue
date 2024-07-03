@@ -34,14 +34,14 @@ EnqueueOneSystem() {
 
     if [ ! -z "${linux}" ]; then
         if ! SystemBootsLinuxPXE "${system}" ; then
-            echo "System cannot boot Linux over the network."
+            echo "System ${system} cannot boot Linux over the network."
             exit 1
         fi
     fi
 
     if [ ! -z "$dtbflag" ]; then
         if ! SystemAcceptsDtb "${system}" ; then
-            echo "System does not accept a dtb"
+            echo "System ${system} does not accept a dtb"
             exit 1
         fi
     fi
@@ -76,39 +76,41 @@ EnqueueOneSystem() {
         # the lock before releasing it
         trap "UnlockSystem \"${system}\" 0 \"${key}\"; exit 1" ${SIGNALS}
 
-        if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
-            echo "Failed to acquire lock for system (${system})"
-            exit 2
+        if LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
+
+            echo "Lock acquired, we are allowed to run"
+            local ret=0
+
+            if [ "${interact}" = "-r" ]; then
+                echo "This is a reservation. You now own ${system} and"
+                echo "can do what you want. Press ctrl+d or enter here when done"
+                read line
+                echo "Attempting to power off machine now that you are done"
+                SystemPowerOff "${system}"
+            else
+                # Run the image. 'files' is deliberately not in quotes so the multiple
+                # files expands to multiple arguments
+                # 'dtbflag' is deliberately not in quotes so it expands to multiple
+                # parameters '-b' and 'my.dtb'
+                # 'linux' is deliberately not in quotes so it will not create an empty
+                # parameter if the flag is not set
+                SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} $files
+                ret=$?
+            fi
+
+            if ! ${no_lock_mods} ; then
+                UnlockSystem "${system}" 0 "${key}"
+                trap "exit 1" ${SIGNALS}
+            fi
+
+            exit $ret
+
+        else
+            # Locking failed; reset the trap
+            # The outer Enqueue function will handle reporting the lock failure
+            trap "exit 1" ${SIGNALS}
         fi
     fi
-
-    echo "Lock acquired, we are allowed to run"
-    local ret=0
-
-    if [ "${interact}" = "-r" ]; then
-        echo "This is a reservation. You now own ${system} and"
-        echo "can do what you want. Press ctrl+d or enter here when done"
-        read line
-        echo "Attempting to power off machine now that you are done"
-        SystemPowerOff "${system}"
-    else
-        # Run the image. 'files' is deliberately not in quotes so the multiple
-        # files expands to multiple arguments
-        # 'dtbflag' is deliberately not in quotes so it expands to multiple
-        # parameters '-b' and 'my.dtb'
-        # 'linux' is deliberately not in quotes so it will not create an empty
-        # parameter if the flag is not set
-        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} $files
-        ret=$?
-    fi
-
-    if ! ${no_lock_mods} ; then
-        UnlockSystem "${system}" 0 "${key}"
-        trap "exit 1" ${SIGNALS}
-    fi
-
-    exit $ret
-
 }
 
 EnqueueUsage() {
@@ -268,9 +270,14 @@ Enqueue() {
     if IsSystemValid "${system}" ; then
 
         # Everything is quoted so we'll pass on the exact same number of parameters every time
-        EnqueueOneSystem "${system}" "${retry_period}" "${total_retries}" "${key}" "${no_lock_mods}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${linux}" "${dtbflag}" "${file_count}" "${files}"
+        if EnqueueOneSystem "${system}" "${retry_period}" "${total_retries}" "${key}" "${no_lock_mods}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${linux}" "${dtbflag}" "${file_count}" "${files}" ; then
+            ret=$?
+            exit "${ret}"
+        fi
 
-        ret=$?
+        # If we get here, the enqueing failed
+        echo "Failed to acquire lock for system (${system})"
+        exit 2
 
     # If it's not a system, is it a pool?
     elif IsPoolValid "${system}" ; then
@@ -303,6 +310,10 @@ Enqueue() {
             sleep "${retry_period}"
 
         done
+
+        # If we get here, we've exhausted the specified number of retries
+        echo "Failed to acquire lock for any system in pool (${pool})"
+        exit 2
 
     else
 
