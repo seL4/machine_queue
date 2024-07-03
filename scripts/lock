@@ -282,47 +282,99 @@ UserLock() {
         *);;
     esac
 
-    IsSystemValid "${system}"
-    if [ $? -ne 0 ]; then
-        # If it's not a system, is it a pool?
-        IsPoolValid "${system}"
-        if [ $? -ne 0 ] ; then
-            echo "System or pool '$system' does not exist. Valid systems are"
-            SystemList
-            echo "Valid pools are"
-            PoolList
-            exit 1
-    fi
-        # Select a system from the pool
+    if IsSystemValid "${system}" ; then
+
+        case "${action}" in
+            -info)
+                LockSystemPrintInfo "${system}"
+            ;;
+            -mr-info)
+                LockSystemDumpInfo "${system}"
+            ;;
+            -signal)
+                UnlockSystem "${system}" "${force}" "${key}"
+            ;;
+            -wait)
+                if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}" $timeout; then
+                    echo "Failed to acquire lock for system (${system})"
+                    exit 2
+                fi
+            ;;
+            -cancel)
+                CancelWait "${system}" "${key}"
+            ;;
+            *)
+                echo "Unknown usage"
+                UserLockUsage
+                exit 1
+            ;;
+        esac
+
+    elif IsPoolValid "${system}" ; then
         pool=${system}
-        system=$(GetRandomSystemFromPool_"${pool}")
-        echo "${system}"
+
+        case "${action}" in
+            -info)
+                for system in $(Systems_"${pool}"); do
+                    LockSystemPrintInfo "${system}"
+                done
+            ;;
+            -mr-info)
+                for system in $(Systems_"${pool}"); do
+                    LockSystemDumpInfo "${system}"
+                done
+            ;;
+            -signal)
+                for system in $(Systems_"${pool}"); do
+                    UnlockSystem "${system}" "${force}" "${key}"
+                done
+            ;;
+            -wait)
+
+                # When attempting to lock a pool, we use the retry time and retry count
+                # given by the user for how often we attempt locking on the whole pool,
+                # not for lock attempts on a specific system.
+                # Each time the user-configured period elapses, we try (but do not wait
+                # on) locking each system in the pool.
+
+                lock_tries=0
+                local ret=0
+
+                while [ "${total_retries}" -eq -1 ] || [ "${lock_tries}" -lt "${total_retries}" ] ; do
+
+                    for system in $(Systems_"${pool}"); do
+
+                        # Note we do not retry and give a small retry period (which is unused)
+                        # We only want to attempt locking, not wait on it
+                        if LockSystem "${system}" "1" "0" "${key}" $timeout ; then
+                            # Locking succeeded on a board
+                            ret=$?
+                            exit "${ret}"
+                        fi
+                    done
+
+                    lock_tries=$(($lock_tries+1))
+
+                    sleep "${retry_period}"
+                done
+            ;;
+            -cancel)
+                CancelWait "${system}" "${key}"
+            ;;
+            *)
+                echo "Unknown usage"
+                UserLockUsage
+                exit 1
+            ;;
+        esac
+
+    else
+        echo "System or pool '$system' does not exist. Valid systems are"
+        SystemList
+        echo "Valid pools are"
+        PoolList
+        exit 1
     fi
 
-    case "${action}" in
-        -info)
-            LockSystemPrintInfo "${system}"
-        ;;
-        -mr-info)
-            LockSystemDumpInfo "${system}"
-        ;;
-        -signal)
-            UnlockSystem "${system}" "${force}" "${key}"
-        ;;
-        -wait)
-            if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}" $timeout; then
-                echo "Failed to acquire lock for system (${system})"
-                exit 2
-            fi
-        ;;
-        -cancel)
-            CancelWait "${system}" "${key}"
-        ;;
-        *)
-            echo "Unknown usage"
-            UserLockUsage
-            exit 1
-        ;;
-    esac
     exit 0
 }
