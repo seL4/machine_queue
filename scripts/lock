@@ -352,6 +352,8 @@ UserLock() {
                         # We only want to attempt locking, not wait on it
                         if LockSystem "${system}" "1" "0" "${key}" $timeout ; then
                             # Locking succeeded on a board
+                            # We need to tell the user which one
+                            echo "${system}"
                             ret=$?
                             exit "${ret}"
                         fi
