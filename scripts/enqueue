@@ -109,6 +109,7 @@ EnqueueOneSystem() {
             # Locking failed; reset the trap
             # The outer Enqueue function will handle reporting the lock failure
             trap "exit 1" ${SIGNALS}
+            return 1
         fi
     fi
 }
@@ -291,7 +292,9 @@ Enqueue() {
 
         lock_tries=0
 
-        while [ "${total_retries}" -eq -1 ] || [ "${lock_tries}" -lt "${total_retries}" ] ; do
+        # Loop until total_retries + 1 because we want to make the initial attempt,
+        # and then retry the correct number of times
+        while [ "${total_retries}" -eq -1 -o "${lock_tries}" -lt "$((${total_retries}+1))" ] ; do
 
             # Loop through and try all systems in the pool.
             for system in $(Systems_"${pool}"); do
@@ -323,6 +326,4 @@ Enqueue() {
         PoolList
         exit 1
     fi
-
-    exit $ret
 }
