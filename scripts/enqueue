@@ -292,9 +292,13 @@ Enqueue() {
 
         lock_tries=0
 
+        # Need to use a different name so as not to collide with other local variables
+        loop_retries="$total_retries"
+        loop_period="$retry_period"
+
         # Loop until total_retries + 1 because we want to make the initial attempt,
         # and then retry the correct number of times
-        while [ "${total_retries}" -eq -1 -o "${lock_tries}" -lt "$((${total_retries}+1))" ] ; do
+        while [ "${loop_retries}" -eq -1 -o "${lock_tries}" -lt "$((${loop_retries}+1))" ] ; do
 
             # Loop through and try all systems in the pool.
             for system in $(Systems_"${pool}"); do
@@ -310,7 +314,7 @@ Enqueue() {
 
             lock_tries=$(($lock_tries+1))
 
-            sleep "${retry_period}"
+            sleep "${loop_period}"
 
         done
 
