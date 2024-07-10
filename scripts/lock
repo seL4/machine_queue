@@ -351,6 +351,8 @@ UserLock() {
                     # Loop through and try all systems in the pool.
                     for system in $(Systems_"${pool}"); do
 
+                        echo "Attempting system ${system} in pool ${pool}"
+
                         # Note we do not retry the individual lock attempt,
                         # and give only a small retry period (which is unused)
                         # We only want to attempt locking, not wait on it
@@ -362,6 +364,8 @@ UserLock() {
                             exit "${ret}"
                         fi
                     done
+
+                    echo "Done attempting system ${system} in pool ${pool}"
 
                     lock_tries=$(($lock_tries+1))
 

@@ -301,6 +301,8 @@ Enqueue() {
             # Loop through and try all systems in the pool.
             for system in $(Systems_"${pool}"); do
 
+                echo "Attempting system ${system} in pool ${pool}"
+
                 # Note we do not retry and give a small retry period (which is unused)
                 # We only want to attempt locking, not wait on it
                 if EnqueueOneSystem "${system}" "1" "0" "${key}" "${no_lock_mods}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${linux}" "${dtbflag}" "${file_count}" "${files}" ; then
@@ -308,7 +310,10 @@ Enqueue() {
                     ret=$?
                     exit "${ret}"
                 fi
+
             done
+
+            echo "Done attempting system ${system} in pool ${pool}"
 
             lock_tries=$(($lock_tries+1))
 
