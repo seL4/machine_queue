@@ -190,7 +190,7 @@ UserLockUsage() {
     echo " -wait SYSTEM     Acquire the lock for the specified SYSTEM"
     echo " -cancel SYSTEM   Cancel '-wait' processes on the server that are waiting for specified SYSTEM and key"
     echo " -w TIME          Number of seconds to wait between each attempt to acquire the lock (default 8)"
-    echo " -t RETRIES       Number of retries to preform for acquiring the lock (default -1)"
+    echo " -t RETRIES       Number of retries to perform for acquiring the lock (default -1)"
     echo " -f               Forcefully releases a lock even if you are not the owner"
     echo " -k LOCK_KEY      Set a key inside the lock"
     echo " -T timeout       Allow lock to be reclaimed after timeout seconds"
