@@ -66,12 +66,6 @@ EnqueueOneSystem() {
             return 1
         fi
         lockkey=$(LockGetKey "${system}")
-        if [ "${lockkey}" = "0" -a  "${key}" = "0" ]
-        then
-            # No key on lock or user is fine
-            echo "Attempting to grab lock you already own. Please explicitly release"
-            return 1
-        fi
         if [ "${lockkey}" != "${key}" ]
         then
             echo "Failed to run because you said you own the lock (-n flag), but you gave the wrong key!"
