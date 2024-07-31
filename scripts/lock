@@ -97,7 +97,7 @@ LockSystem() {
     total_retries="$3"
     key="$4"
     newtimeout="$5"
-    timeout=""
+    oldtimeout=""
     owner=$(LockOwner "${system}")
 
     # Error checking - the same person can't relock the same lock
@@ -120,21 +120,21 @@ LockSystem() {
     then
         # Ensure timeout is either an integer or ignored
         # to avoid lockfile syntax errors
-        timeout="$(LockTimeout $system)" || timeout=""
-        case $timeout in
+        oldtimeout="$(LockTimeout $system)" || oldtimeout=""
+        case $oldtimeout in
             ''|*[!0-9]*)
                 # no valid timeout
-                timeout=""
+                oldtimeout=""
                 ;;
             *)
                 # valid timeout
-                timeout="-l ${timeout}"
+                oldtimeout="-l ${oldtimeout}"
                 ;;
         esac
     fi
     lockname="$(LockName ${system})"
     keyname="$(KeyName ${system})"
-    RemoteCommand "umask 0111 && lockfile -'${retry_period}'  $timeout -r '${total_retries}' '$lockname' && rm -f '$keyname' && printf '${key}' > '$keyname' && chmod a-w,g+r '$keyname' && chmod u+w $lockname && printf '$newtimeout' > $lockname && chmod a-w $lockname"
+    RemoteCommand "umask 0111 && lockfile -'${retry_period}'  $oldtimeout -r '${total_retries}' '$lockname' && rm -f '$keyname' && printf '${key}' > '$keyname' && chmod a-w,g+r '$keyname' && chmod u+w $lockname && printf '$newtimeout' > $lockname && chmod a-w $lockname"
 
     [ "$?" -ne  0 ] && return 3
 
