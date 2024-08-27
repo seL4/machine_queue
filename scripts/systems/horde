@@ -1,0 +1,58 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_horde() {
+    echo 2
+}
+
+SystemName_horde() {
+    echo "horde"
+}
+
+SystemPowerOff_horde() {
+    RebootShutdown horde
+}
+
+Arch_horde() {
+    echo "x86"
+}
+
+ISA_horde() {
+    echo "x86_64"
+}
+
+SOC_horde() {
+    echo "grantley"
+}
+
+CPU_horde() {
+    echo "XEON E5-2683"
+}
+
+Cores_horde() {
+    echo "56"
+}
+
+RAM_horde() {
+    echo "251GB"
+}
+
+MaxCLK_horde() {
+    echo "2Ghz"
+}
+
+Sel4Plat_horde() {
+    echo "pc99"
+}
+
+PXELinux_horde() {
+    echo "yes"
+}
+
+DTB_horde() {
+    echo "no"
+}
