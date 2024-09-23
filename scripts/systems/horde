@@ -26,11 +26,11 @@ ISA_horde() {
 }
 
 SOC_horde() {
-    echo "grantley"
+    echo "haswell"
 }
 
 CPU_horde() {
-    echo "XEON E5-2683"
+    echo "XEON E5-2683 v3"
 }
 
 Cores_horde() {
