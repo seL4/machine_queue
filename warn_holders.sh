@@ -1,9 +1,10 @@
 #!/bin/sh
+export PATH=/usr/local/lib/machine_queue:$PATH
 now=`date +'%s'`
-fourHrs=14400
+timeLimit=7200
 
 warn() {
-    mail -f 'LockBot@trustworthy.systems' $1@trustworthy.systems -s "Lock for $2 held for a long time" <<EOF
+    mail -a 'From: LockBot@trustworthy.systems' $1@trustworthy.systems -s "Lock for $2 held for a long time" <<EOF
     Hi $1,
     You have now held the machine queue lock for $2 for 
     over `expr $diff / 3600` hours.  That's OK if you're still using $2, 
@@ -19,7 +20,5 @@ mq.sh sem dumpall |
     do
 	secs=$(date -d "$day $time $zone" +'%s')
 	diff=$(expr $now - $secs)
-	[ $diff -gt $fourHrs ] && warn "$user" "$system" "$diff"
+	[ $diff -gt $timeLimit ] && warn "$user" "$system" "$diff"
     done
-
-	
