@@ -26,7 +26,7 @@ GselectOne(){
 GetRandomSystemFromPool_rockpro64_pool() {
     # Get a random system from the pool, unlocked if possible
     locked_systems="$(GetAllLockedSystems)"
-    rockpro64_systems="$(Systems_rockpro_pool)"
+    rockpro64_systems="$(Systems_rockpro64_pool)"
     free_rockpro64_systems="$(echo "$rockpro64_systems" | grep -F -v -x "$locked_systems")"
     if [ "$free_rockpro64_systems" ]
     then
