@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+Systems_rockpro64_pool() {
+    # This function can be explicit or programatic
+    
+    # Explicit:
+    #echo "rockpro64a"
+    echo "rockpro64b"
+}
+
+
+
+
+GselectOne(){
+    n=`echo "$1" | wc -l`
+    r=`random $n`
+    echo "$1" | sed -n ${r}p
+}
+
+
+GetRandomSystemFromPool_rockpro64_pool() {
+    # Get a random system from the pool, unlocked if possible
+    locked_systems="$(GetAllLockedSystems)"
+    rockpro64_systems="$(Systems_rockpro_pool)"
+    free_rockpro64_systems="$(echo "$rockpro64_systems" | grep -F -v -x "$locked_systems")"
+    if [ "$free_rockpro64_systems" ]
+    then
+	selectOne "$free_rockpro64_systems"
+    else
+        selectOne "$rockpro64__systems"
+    fi 
+}
+
+
+
