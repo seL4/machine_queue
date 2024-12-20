@@ -1,0 +1,63 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_iotgate1() {
+    if [ "$1" = '-L' ]
+    then
+	echo 2
+    else
+	echo 1
+    fi
+}
+
+SystemName_iotgate1() {
+    echo "iotgate1"
+}
+
+SystemPowerOff_iotgate1() {
+    RebootShutdown iotgate1
+}
+
+Arch_iotgate1() {
+    echo "arm"
+}
+
+ISA_iotgate1() {
+    echo "armv8-a"
+}
+
+SOC_iotgate1() {
+    echo "imx8mp"
+}
+
+CPU_iotgate1() {
+    echo "cortex-a53"
+}
+
+Cores_iotgate1() {
+    echo "4"
+}
+
+RAM_iotgate1() {
+    echo "4GB"
+}
+
+MaxCLK_iotgate1() {
+    echo "1.8Ghz"
+}
+
+Sel4Plat_iotgate1() {
+    echo "iotgate"
+}
+
+PXELinux_iotgate1() {
+    echo "yes"
+}
+
+DTB_iotgate1() {
+    echo "yes"
+}
