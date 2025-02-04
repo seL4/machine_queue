@@ -18,6 +18,7 @@ EOF
 mq.sh sem dumpall |
     while read system lockstate user day time zone key
     do
+	[ $lockstate = FREE ] && continue
 	secs=$(date -d "$day $time $zone" +'%s')
 	diff=$(expr $now - $secs)
 	[ $diff -gt $timeLimit ] && warn "$user" "$system" "$diff"
