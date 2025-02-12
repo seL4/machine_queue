@@ -1,0 +1,58 @@
+#!/bin/sh
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_p550a() {
+	echo 1
+}
+
+SystemName_p550a() {
+    echo "p550a"
+}
+
+SystemPowerOff_p550a() {
+    RebootShutdown p550a
+}
+
+Arch_p550a() {
+    echo "riscv"
+}
+
+ISA_p550a() {
+    echo "riscv64"
+}
+
+SOC_p550a() {
+    echo "ESWIN EIC7700X"
+}
+
+CPU_p550a() {
+    echo "SiFive P550"
+}
+
+Cores_p550a() {
+    echo "4"
+}
+
+RAM_p550a() {
+    echo "16GB"
+}
+
+MaxCLK_p550a() {
+    echo "1.4Ghz"
+}
+
+Sel4Plat_p550a() {
+    echo "p550"
+}
+
+PXELinux_p550a() {
+    echo "no"
+}
+
+DTB_p550a() {
+    echo "no"
+}
