@@ -26,7 +26,7 @@ ISA_tqma() {
 }
 
 SOC_tqma() {
-    echo "tqma8xx"
+    echo "imx8qxp"
 }
 
 CPU_tqma() {
