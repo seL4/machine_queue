@@ -56,15 +56,15 @@ RebootConsoleRunTwoFiles() {
         rootserverfile=$(RemoteCommandOn ${HOST} "mktemp")
         if ! scp "${kernel}" "${HOST}:${kernelfile}"; then
             echo "Failed to copy kernel image"
-            RemoteCommandOn ${HOST} rm "${kernelfile}"
-            RemoteCommandOn ${HOST} rm "${rootserverfile}"
+            RemoteCommandOn ${HOST} rm -f "${kernelfile}"
+            RemoteCommandOn ${HOST} rm -f "${rootserverfile}"
             RemoteCommandOn ${HOST} rm "${logfile}"
             return 1
         fi
         if ! scp "${rootserver}" "${HOST}:${rootserverfile}"; then
             echo "Failed to copy rootserver image"
-            RemoteCommandOn ${HOST} rm "${kernelfile}"
-            RemoteCommandOn ${HOST} rm "${rootserverfile}"
+            RemoteCommandOn ${HOST} rm -f "${kernelfile}"
+            RemoteCommandOn ${HOST} rm -f "${rootserverfile}"
             RemoteCommandOn ${HOST} rm "${logfile}"
             return 1
         fi
@@ -73,10 +73,10 @@ RebootConsoleRunTwoFiles() {
             dtbflag="-b $dtbfile"
             if ! scp "${dtb}" "${HOST}:${dtbfile}"; then
                 echo "Failed to copy dtb file"
-                RemoteCommandOn ${HOST} rm "${kernelfile}"
-                RemoteCommandOn ${HOST} rm "${rootserverfile}"
+                RemoteCommandOn ${HOST} rm -f "${kernelfile}"
+                RemoteCommandOn ${HOST} rm -f "${rootserverfile}"
                 RemoteCommandOn ${HOST} rm "${logfile}"
-                RemoteCommandOn ${HOST} rm "${dtbfile}"
+                RemoteCommandOn ${HOST} rm -f "${dtbfile}"
                 return 1
             fi
         fi
@@ -86,11 +86,11 @@ RebootConsoleRunTwoFiles() {
         if [ "${output}" != "" ]; then
             scp "${HOST}:${logfile}" "${output}"
         fi
-        RemoteCommandOn ${HOST} rm "${kernelfile}"
-        RemoteCommandOn ${HOST} rm "${rootserverfile}"
+        RemoteCommandOn ${HOST} rm -f "${kernelfile}"
+        RemoteCommandOn ${HOST} rm -f "${rootserverfile}"
         RemoteCommandOn ${HOST} rm "${logfile}"
         if [ ! -z "${dtb}" ]; then
-            RemoteCommandOn ${HOST} rm "${dtbfile}"
+            RemoteCommandOn ${HOST} rm -f "${dtbfile}"
         fi
         return $ret
     fi
@@ -133,7 +133,7 @@ RebootConsoleRunOneFile() {
         kernelfile=$(RemoteCommandOn ${HOST} "mktemp")
         if ! scp "${kernel}" "${HOST}:${kernelfile}"; then
             echo "Failed to copy kernel image"
-            RemoteCommandOn ${HOST} rm "${kernelfile}"
+            RemoteCommandOn ${HOST} rm -f "${kernelfile}"
             RemoteCommandOn ${HOST} rm "${logfile}"
             return 1
         fi
@@ -142,8 +142,8 @@ RebootConsoleRunOneFile() {
             dtbflag="-b $dtbfile"
             if ! scp "${dtb}" "${HOST}:${kernelfile}"; then
                 echo "Failed to copy dtb file"
-                RemoteCommandOn ${HOST} rm "${dtbfile}"
-                RemoteCommandOn ${HOST} rm "${kernelfile}"
+                RemoteCommandOn ${HOST} rm -f "${dtbfile}"
+                RemoteCommandOn ${HOST} rm -f "${kernelfile}"
                 RemoteCommandOn ${HOST} rm "${logfile}"
             fi
         fi
@@ -153,10 +153,10 @@ RebootConsoleRunOneFile() {
         if [ "${output}" != "" ]; then
             scp "${HOST}:${logfile}" "${output}"
         fi
-        RemoteCommandOn ${HOST} rm "${kernelfile}"
+        RemoteCommandOn ${HOST} rm -f "${kernelfile}"
         RemoteCommandOn ${HOST} rm "${logfile}"
         if [ ! -z "${dtb}" ]; then
-            RemoteCommandOn ${HOST} rm "${dtbfile}"
+            RemoteCommandOn ${HOST} rm -f "${dtbfile}"
         fi
         return $ret
     fi
