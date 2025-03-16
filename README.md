@@ -1,7 +1,7 @@
 <!--
      Copyright 2023 UNSW, Sydney
 
-     SPDX-License-Identifier: GPL-2.0-only
+     SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
 Machine Queue
@@ -60,7 +60,7 @@ Usage
  * `system-tsv` --- list available systems as tab-separated values
  * `pool-tsv` --- list available pools of systems as tab-separated
    values
-   
+
 `mq run`
 --------
 `mq.sh run -r|-c` _<string>_ `[-l ` _logfile_ `] -s` _system_ `[-w` _retry-time_ `] [-t `_retry-count_` ] [-n] [-a] [-d` _timeout_ `] [-e` _<string>_`] [-k `_<string>_`] [-L] -f `_file1_ `[-f `_file2_`]

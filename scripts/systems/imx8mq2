@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
 
 if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"

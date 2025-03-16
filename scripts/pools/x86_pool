@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
 
 if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
@@ -14,7 +18,7 @@ Systems_x86_pool() {
     #        echo ${system}
     #    fi
     #done
-    
+
     # Explicit:
     echo "haswell3"
     echo "haswell4"
@@ -43,7 +47,7 @@ GetRandomSystemFromPool_x86_pool() {
 	selectOne "$free_x86_systems"
     else
 	selectOne "$x86_systems"
-    fi 
+    fi
 }
 
 

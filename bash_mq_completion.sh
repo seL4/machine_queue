@@ -1,3 +1,7 @@
+# Copyright 2021 Proofcraft Pty Ltd
+#
+# SPDX-License-Identifier: GPL-2.0-only
+#
 # bash completion for mq.sh
 # source this file to use: . ./bash_mq_completion.sh
 
