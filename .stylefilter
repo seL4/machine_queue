@@ -1,0 +1,5 @@
+# Copyright 2025 Proofcraft Pty Ltd
+# SPDX-License-Identifier: BSD-2-Clause
+
+# uses bashisms, because it is for bash only:
+bash_mq_completion.sh
