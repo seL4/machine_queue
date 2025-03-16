@@ -1,0 +1,9 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: seL4
+Upstream-Contact: seL4 team <support@sel4.systems>
+Source: https://github.com/seL4/machine_queue
+
+Files:
+  VERSION
+Copyright: 2021 UNSW Sydney
+License: GPL-2.0-only

@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
 
 file_to_dir() {
     F="$1"

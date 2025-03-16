@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
 
 if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
@@ -23,7 +27,7 @@ SystemBootsLinuxPXE() {
 SystemList() {
     (
 	cd "${SCRIPT_PATH}/scripts/systems/"
-	echo * | sed -e 's/ unavailable//' -e 's/ [^ ]*~//g' -e 's/  */\n/g' 
+	echo * | sed -e 's/ unavailable//' -e 's/ [^ ]*~//g' -e 's/  */\n/g'
     )
 }
 
@@ -46,7 +50,7 @@ OutputSystemList() {
 	    return 0
 	    ;;
     esac
-    printf "+----------------+------+---------+-----------------+----------------+-------+-------+--------+\n" 
+    printf "+----------------+------+---------+-----------------+----------------+-------+-------+--------+\n"
     printf "| Name           | Arch | ISA     | SoC             | CPU            | Cores | RAM   | MaxCLK |\n"
     printf "+----------------+------+---------+-----------------+----------------+-------+-------+--------+\n"
     for system in $(SystemList)

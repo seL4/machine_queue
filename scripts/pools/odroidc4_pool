@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
 
 if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
@@ -7,7 +11,7 @@ fi
 
 Systems_odroidc4_pool() {
     # This function can be explicit or programatic
-    
+
     # Explicit:
     echo "odroidc4_1"
     echo "odroidc4_2"
@@ -33,7 +37,7 @@ GetRandomSystemFromPool_odroidc4_pool() {
 	selectOne "$free_odroidc4_systems"
     else
 	selectOne "$odroidc4_systems"
-    fi 
+    fi
 }
 
 

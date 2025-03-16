@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
 
 if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
@@ -18,7 +22,7 @@ RebootShutdown() {
         ssh -tt -oLogLevel=quiet ${HOST} "stty isig -echoctl -echo; /tftpboot/${machine}/reboot --shutdown"
     else
         "/tftpboot/${machine}/reboot" --shutdown
-    fi       
+    fi
 }
 
 RebootConsoleRunTwoFiles() {
@@ -109,7 +113,7 @@ RebootConsoleRunOneFile() {
     keep_alive=$5
     kernel=$6
     machine=$7
-    
+
     logfile=""
     kernelfile=""
 

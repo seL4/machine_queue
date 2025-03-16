@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
 
 if [ "${SCRIPT_PATH}" = "" ]; then
     echo "This script should not be called directly! Please use mq.sh"
@@ -7,7 +11,7 @@ fi
 
 Systems_rockpro64_pool() {
     # This function can be explicit or programatic
-    
+
     # Explicit:
     #echo "rockpro64a"
     echo "rockpro64b"
@@ -33,7 +37,7 @@ GetRandomSystemFromPool_rockpro64_pool() {
 	selectOne "$free_rockpro64_systems"
     else
         selectOne "$rockpro64__systems"
-    fi 
+    fi
 }
 
 
