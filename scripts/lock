@@ -101,7 +101,7 @@ LockSystem() {
     total_retries="$3"
     key="$4"
     newtimeout="$5"
-    timeout=""
+    oldtimeout=""
     owner=$(LockOwner "${system}")
 
     # Error checking - the same person can't relock the same lock
@@ -124,21 +124,21 @@ LockSystem() {
     then
         # Ensure timeout is either an integer or ignored
         # to avoid lockfile syntax errors
-        timeout="$(LockTimeout $system)" || timeout=""
-        case $timeout in
+        oldtimeout="$(LockTimeout $system)" || oldtimeout=""
+        case $oldtimeout in
             ''|*[!0-9]*)
                 # no valid timeout
-                timeout=""
+                oldtimeout=""
                 ;;
             *)
                 # valid timeout
-                timeout="-l ${timeout}"
+                oldtimeout="-l ${oldtimeout}"
                 ;;
         esac
     fi
     lockname="$(LockName ${system})"
     keyname="$(KeyName ${system})"
-    RemoteCommand "umask 0111 && lockfile -'${retry_period}'  $timeout -r '${total_retries}' '$lockname' && rm -f '$keyname' && printf '${key}' > '$keyname' && chmod a-w,g+r '$keyname' && chmod u+w $lockname && printf '$newtimeout' > $lockname && chmod a-w $lockname"
+    RemoteCommand "umask 0111 && lockfile -'${retry_period}'  $oldtimeout -r '${total_retries}' '$lockname' && rm -f '$keyname' && printf '${key}' > '$keyname' && chmod a-w,g+r '$keyname' && chmod u+w $lockname && printf '$newtimeout' > $lockname && chmod a-w $lockname"
 
     [ "$?" -ne  0 ] && return 3
 
@@ -194,7 +194,7 @@ UserLockUsage() {
     echo " -wait SYSTEM     Acquire the lock for the specified SYSTEM"
     echo " -cancel SYSTEM   Cancel '-wait' processes on the server that are waiting for specified SYSTEM and key"
     echo " -w TIME          Number of seconds to wait between each attempt to acquire the lock (default 8)"
-    echo " -t RETRIES       Number of retries to preform for acquiring the lock (default -1)"
+    echo " -t RETRIES       Number of retries to perform for acquiring the lock (default -1)"
     echo " -f               Forcefully releases a lock even if you are not the owner"
     echo " -k LOCK_KEY      Set a key inside the lock"
     echo " -T timeout       Allow lock to be reclaimed after timeout seconds"
@@ -286,47 +286,121 @@ UserLock() {
         *);;
     esac
 
-    IsSystemValid "${system}"
-    if [ $? -ne 0 ]; then
-        # If it's not a system, is it a pool?
-        IsPoolValid "${system}"
-        if [ $? -ne 0 ] ; then
-            echo "System or pool '$system' does not exist. Valid systems are"
-            SystemList
-            echo "Valid pools are"
-            PoolList
-            exit 1
-    fi
-        # Select a system from the pool
+    if IsSystemValid "${system}" ; then
+
+        case "${action}" in
+            -info)
+                LockSystemPrintInfo "${system}"
+            ;;
+            -mr-info)
+                LockSystemDumpInfo "${system}"
+            ;;
+            -signal)
+                UnlockSystem "${system}" "${force}" "${key}"
+            ;;
+            -wait)
+                if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}" $timeout; then
+                    echo "Failed to acquire lock for system (${system})"
+                    exit 2
+                fi
+            ;;
+            -cancel)
+                CancelWait "${system}" "${key}"
+            ;;
+            *)
+                echo "Unknown usage"
+                UserLockUsage
+                exit 1
+            ;;
+        esac
+
+    elif IsPoolValid "${system}" ; then
         pool=${system}
-        system=$(GetRandomSystemFromPool_"${pool}")
-        echo "${system}"
+
+        case "${action}" in
+            -info)
+                for system in $(Systems_"${pool}"); do
+                    LockSystemPrintInfo "${system}"
+                done
+            ;;
+            -mr-info)
+                for system in $(Systems_"${pool}"); do
+                    LockSystemDumpInfo "${system}"
+                done
+            ;;
+            -signal)
+                for system in $(Systems_"${pool}"); do
+                    UnlockSystem "${system}" "${force}" "${key}"
+                done
+            ;;
+            -wait)
+
+                # When attempting to lock a pool, we use the retry time and retry count
+                # given by the user for how often we attempt locking on the whole pool,
+                # not for lock attempts on a specific system.
+                # Each time the user-configured period elapses, we try (but do not wait
+                # on) locking each system in the pool.
+
+                lock_tries=0
+                local ret=0
+
+                # Need to use a different name so as not to collide with other local variables
+                loop_retries="$total_retries"
+                loop_period="$retry_period"
+
+                # Loop until total_retries + 1 because we want to make the initial attempt,
+                # and then retry the correct number of times
+                while [ "${loop_retries}" -eq -1 ] || [ "${lock_tries}" -lt "$((${loop_retries}+1))" ] ; do
+
+                    # Loop through and try all systems in the pool.
+                    for system in $(Systems_"${pool}"); do
+
+                        echo "Attempting system ${system} in pool ${pool}"
+
+                        # Note we do not retry the individual lock attempt,
+                        # and give only a small retry period (which is unused)
+                        # We only want to attempt locking, not wait on it
+                        if LockSystem "${system}" "1" "0" "${key}" $timeout ; then
+                            # Locking succeeded on a board
+                            # We need to tell the user which one
+                            echo "${system}"
+                            ret=$?
+                            exit "${ret}"
+                        fi
+                    done
+
+                    echo "Done attempting system ${system} in pool ${pool}"
+
+                    lock_tries=$(($lock_tries+1))
+
+                    sleep "${loop_period}"
+
+                done
+
+                # If we reach this point, we've exhausted all retry attempts
+                echo "Failed to acquire lock for any system in pool (${pool})"
+                exit 2
+
+            ;;
+            -cancel)
+                for system in $(Systems_"${pool}"); do
+                    CancelWait "${system}" "${key}"
+                done
+            ;;
+            *)
+                echo "Unknown usage"
+                UserLockUsage
+                exit 1
+            ;;
+        esac
+
+    else
+        echo "System or pool '$system' does not exist. Valid systems are"
+        SystemList
+        echo "Valid pools are"
+        PoolList
+        exit 1
     fi
 
-    case "${action}" in
-        -info)
-            LockSystemPrintInfo "${system}"
-        ;;
-        -mr-info)
-            LockSystemDumpInfo "${system}"
-        ;;
-        -signal)
-            UnlockSystem "${system}" "${force}" "${key}"
-        ;;
-        -wait)
-            if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}" $timeout; then
-                echo "Failed to acquire lock for system (${system})"
-                exit 2
-            fi
-        ;;
-        -cancel)
-            CancelWait "${system}" "${key}"
-        ;;
-        *)
-            echo "Unknown usage"
-            UserLockUsage
-            exit 1
-        ;;
-    esac
     exit 0
 }
