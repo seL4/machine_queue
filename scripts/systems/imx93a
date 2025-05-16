@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_imx93a() {
+    if [ "$1" = '-L' ]
+    then
+	echo 2
+    else
+	echo 1
+    fi
+}
+
+SystemName_imx93a() {
+    echo "imx93a"
+}
+
+SystemPowerOff_imx93a() {
+    RebootShutdown imx93a
+}
+
+Arch_imx93a() {
+    echo "arm"
+}
+
+ISA_imx93a() {
+    echo "armv8-a"
+}
+
+SOC_imx93a() {
+    echo "imx93a"
+}
+
+CPU_imx93a() {
+    echo "cortex-a55"
+}
+
+Cores_imx93a() {
+    echo "2"
+}
+
+RAM_imx93a() {
+    echo "2GB"
+}
+
+MaxCLK_imx93a() {
+    echo "1.7Ghz"
+}
+
+Sel4Plat_imx93a() {
+    echo "imx93a-evk"
+}
+
+PXELinux_imx93a() {
+    echo "yes"
+}
+
+DTB_imx93a() {
+    echo "yes"
+}
