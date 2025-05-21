@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_iotgate2() {
+    if [ "$1" = '-L' ]
+    then
+	echo 2
+    else
+	echo 1
+    fi
+}
+
+SystemName_iotgate2() {
+    echo "iotgate2"
+}
+
+SystemPowerOff_iotgate2() {
+    RebootShutdown iotgate2
+}
+
+Arch_iotgate2() {
+    echo "arm"
+}
+
+ISA_iotgate2() {
+    echo "armv8-a"
+}
+
+SOC_iotgate2() {
+    echo "imx8mp"
+}
+
+CPU_iotgate2() {
+    echo "cortex-a53"
+}
+
+Cores_iotgate2() {
+    echo "4"
+}
+
+RAM_iotgate2() {
+    echo "4GB"
+}
+
+MaxCLK_iotgate2() {
+    echo "1.8Ghz"
+}
+
+Sel4Plat_iotgate2() {
+    echo "iotgate"
+}
+
+PXELinux_iotgate2() {
+    echo "yes"
+}
+
+DTB_iotgate2() {
+    echo "yes"
+}
