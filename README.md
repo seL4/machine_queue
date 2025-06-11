@@ -29,7 +29,7 @@ For example, you can do:
   git clone git@github.com:seL4/machine_queue.git
   H=$(pwd)/mq.sh
   cd ~/bin
-  ln -s $H/mq.sh mq
+  ln -s $H mq
   ```
 
 The mq scripts assume a standard POSIX system, that `/bin/sh` is
