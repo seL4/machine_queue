@@ -42,7 +42,7 @@ EnqueueUsage() {
     echo " -s TEXT     Specifies which machine this job is for"
     echo " -f FILE [+] Files to use as the job image"
     echo " -w TIME     Number of seconds to wait between each attempt to acquire the lock (default 8)"
-    echo " -t RETRIES  Number of retries to preform for acquiring the lock (default -1)"
+    echo " --bitstream FILE  Optional bitstream to load to the FPGA"
     echo
 }
 
@@ -77,6 +77,15 @@ Enqueue() {
                 # We want the var to contain "-b my.dtb" so we can identify
                 # that it is a dtb later
                 dtbflag="-b $1"
+            ;;
+            --bitstream)
+                shift
+                if ! [ -f "$1" ]; then
+                    echo "bitstream file \"$1\" either does not exist, or is not considered a valid file"
+                    exit -1
+                fi
+
+                bitstreamflag="--bitstream $1"
             ;;
             -l)
                 shift
@@ -245,7 +254,8 @@ Enqueue() {
         # parameters '-b' and 'my.dtb'
         # 'linux' is deliberately not in quotes so it will not create an empty
         # parameter if the flag is not set
-        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} $files
+        # Ditto for 'bitstreamflag'
+        SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} ${bitstreamflag} $files
         ret=$?
     fi
 

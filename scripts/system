@@ -140,12 +140,19 @@ SystemRunImage() {
         shift 2
         kernel="$7"
     }
+
+    [ $kernel = "--bitstream" ] && {
+        bitstreamflag="$7 $8"
+        shift 2
+        kernel="$7"
+    }
+
     system_name="$("SystemName_${system}")"
 
     if [ "$("SystemNumFiles_${system}" $linux)" -eq 2 ]; then
         rootserver="$8"
-        RebootConsoleRunTwoFiles $linux $dtbflag "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
+        RebootConsoleRunTwoFiles $linux $dtbflag $bitstreamflag "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${rootserver}" "${system_name}"
     else
-        RebootConsoleRunOneFile $linux $dtbflag "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
+        RebootConsoleRunOneFile $linux $dtbflag $bitstreamflag "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" "${kernel}" "${system_name}"
     fi
 }
