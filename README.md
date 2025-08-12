@@ -95,6 +95,7 @@ Options:
     single image file; x86 currently expects two, the kernel and the root task.
 - `-w` _TIME_     Number of seconds to wait between each attempt to acquire the lock (default 8)
 - `-t` _RETRIES_  Number of retries to perform for acquiring the lock (default -1)
+- `--bitstream` _FILE_ Optional bitstream file to load to the FPGA.
 
 
 `mq sem dumpall|-signal|-wait|-cancel|-info `_<system>_` [-f] [-w `_retry-time_` ] [-t `_retry-count_` ] [-k `_LOCK_\__KEY_` ] [-T` _timeout_`]`
