@@ -26,7 +26,7 @@ LockGetInfo() {
 }
 
 LockGetKey() {
-    RemoteCommand cat "$(KeyName "$1")"
+    RemoteCommand cat "$(KeyName \"$1\") 2>/dev/null"
 }
 
 LockIOwn() {
@@ -40,7 +40,8 @@ LockTimeout() {
 
 GetAllLockedSystems() {
     RemoteCommand find ${BASE} -name '*.lock' -print0 |
-    xargs -0 -I {} basename {} .lock
+	xargs -0 -I {} basename {} .lock |
+	fgrep "`SystemList`"
     echo
 }
 
