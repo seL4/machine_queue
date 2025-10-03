@@ -41,7 +41,7 @@ LockTimeout() {
 GetAllLockedSystems() {
     RemoteCommand find ${BASE} -name '*.lock' -print0 |
 	xargs -0 -I {} basename {} .lock |
-	fgrep "`SystemList`"
+	grep -F "`SystemList`"
     echo
 }
 
