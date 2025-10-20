@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Copyright 2025 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_cheshire2() {
+    echo 1
+}
+
+SystemName_cheshire2() {
+    echo "cheshire2"
+}
+
+SystemPowerOff_cheshire2() {
+    RebootShutdown cheshire2
+}
+
+Arch_cheshire2() {
+    echo "riscv"
+}
+
+ISA_cheshire2() {
+    echo "rv64imafdcsuh"
+}
+
+SOC_cheshire2() {
+    echo "PULP Platform Cheshire"
+}
+
+CPU_cheshire2() {
+    echo "CVA6"
+}
+
+Cores_cheshire2() {
+    echo "1"
+}
+
+RAM_cheshire2() {
+    echo "1GB"
+}
+
+MaxCLK_cheshire2() {
+    echo "50MHz"
+}
+
+Sel4Plat_cheshire2() {
+    echo "cheshire"
+}
+
+PXELinux_cheshire2() {
+    echo "no"
+}
+
+DTB_cheshire2() {
+    echo "no"
+}
