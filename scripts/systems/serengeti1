@@ -9,54 +9,54 @@ if [ "${SCRIPT_PATH}" = "" ]; then
     exit -1
 fi
 
-SystemNumFiles_cheshire2() {
+SystemNumFiles_serengeti1() {
     echo 1
 }
 
-SystemName_cheshire2() {
-    echo "cheshire2"
+SystemName_serengeti1() {
+    echo "serengeti1"
 }
 
-SystemPowerOff_cheshire2() {
-    RebootShutdown cheshire2
+SystemPowerOff_serengeti1() {
+    RebootShutdown serengeti1
 }
 
-Arch_cheshire2() {
+Arch_serengeti1() {
     echo "riscv"
 }
 
-ISA_cheshire2() {
+ISA_serengeti1() {
     echo "rv64imafdcsuh"
 }
 
-SOC_cheshire2() {
+SOC_serengeti1() {
     echo "PULP Platform Cheshire"
 }
 
-CPU_cheshire2() {
+CPU_serengeti1() {
     echo "CVA6"
 }
 
-Cores_cheshire2() {
+Cores_serengeti1() {
     echo "1"
 }
 
-RAM_cheshire2() {
+RAM_serengeti1() {
     echo "1GB"
 }
 
-MaxCLK_cheshire2() {
+MaxCLK_serengeti1() {
     echo "50MHz"
 }
 
-Sel4Plat_cheshire2() {
-    echo "cheshire"
+Sel4Plat_serengeti1() {
+    echo "serengeti"
 }
 
-PXELinux_cheshire2() {
+PXELinux_serengeti1() {
     echo "no"
 }
 
-DTB_cheshire2() {
+DTB_serengeti1() {
     echo "no"
 }
