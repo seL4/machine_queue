@@ -230,7 +230,7 @@ Enqueue() {
 
         # We can setup the trap early as we check if we actually own the
         # the lock before releasing it
-        trap "UnlockSystem \"${system}\" 0 \"${key}\"; exit 1" ${SIGNALS}
+        trap "UnlockSystem \"${system}\" 0 \"${key}\"; TrapExitSigInt" ${SIGNALS}
 
         if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
             echo "Failed to acquire lock for system (${system})"
@@ -257,11 +257,21 @@ Enqueue() {
         # Ditto for 'bitstreamflag'
         SystemRunImage "${system}" "${completion}" "${completion_timeout}" "${errortxt}" "${logfile}" "${keep_alive}" ${linux} ${dtbflag} ${bitstreamflag} $files
         ret=$?
+
+        # Special case: SSH does not return indicating a SIGINT, so we special
+        # case instead that it returns 255 in this case.
+        # https://github.com/openssh/openssh-portable/blob/V_10_0_P1/mux.c#L2057-L2059
+        # (However, sometimes it will instead forward through status 130 from the process
+        # which received SIGINT on the other end of the SSH session. Sometimes...)
+        if [ "${ret}" == "255" ]; then
+            TrapExitSigInt
+        fi
     fi
 
     if ! ${no_lock_mods} ; then
         UnlockSystem "${system}" 0 "${key}"
-        trap "exit 1" ${SIGNALS}
+        # Reset trap behaviour to default.
+        trap - ${SIGNALS}
     fi
 
     exit $ret

@@ -16,6 +16,21 @@ HOST=tftp.keg.cse.unsw.edu.au
 # Config file location
 CONFIG=~/.mq
 
+# Bash implements the "Wait and Cooperative Exit" protocol
+# If, when we receive a trap like SIGINT, we do not then exit because of a SIGINT,
+# bash assumes that we have handled SIGINT and continues as if we did not try
+# to just stop the program execution, making it look like nothing happened.
+# Hence, we must emulate this behaviour for bash to believe that we have died
+# due to the SIGINT (i.e. that after the wait() syscall, WTERMSIG(status) is SIGINT).
+# Ref: https://www.cons.org/cracauer/sigint.html
+# Ref: https://mywiki.wooledge.org/SignalTrap#Special_Note_On_SIGINT_and_SIGQUIT
+TrapExitSigInt() {
+    # Restore default handling for SIGINT
+    trap - SIGINT
+    kill -s INT $$
+}
+
+
 # Add all the other bits and pieces
 
 . "${SCRIPT_PATH}/scripts/remote"
