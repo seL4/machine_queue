@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# Copyright 2021 UNSW, Sydney
+#
+# SPDX-License-Identifier: GPL-2.0-only
+
+if [ "${SCRIPT_PATH}" = "" ]; then
+    echo "This script should not be called directly! Please use mq.sh"
+    exit -1
+fi
+
+SystemNumFiles_stm32mp() {
+    echo 1
+}
+
+SystemName_stm32mp() {
+    echo "stm32mp"
+}
+
+SystemPowerOff_stm32mp() {
+    RebootShutdown stm32mp
+}
+
+Arch_stm32mp() {
+    echo "arm"
+}
+
+ISA_stm32mp() {
+    echo "armv8-a"
+}
+
+SOC_stm32mp() {
+    echo "stm32"
+}
+
+CPU_stm32mp() {
+    echo "cortex-a35"
+}
+
+Cores_stm32mp() {
+    echo "2"
+}
+
+RAM_stm32mp() {
+    echo "3GB"
+}
+
+MaxCLK_stm32mp() {
+    echo "1.5Ghz"
+}
+
+Sel4Plat_stm32mp() {
+    echo "stm32mp-evk"
+}
+
+PXELinux_stm32mp() {
+    echo "no"
+}
+
+DTB_stm32mp() {
+    echo "no"
+}
