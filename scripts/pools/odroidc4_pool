@@ -16,17 +16,3 @@ Systems_odroidc4_pool() {
     echo "odroidc4_1"
     echo "odroidc4_2"
 }
-
-GetRandomSystemFromPool_odroidc4_pool() {
-    # Get a random system from the pool, unlocked if possible
-    locked_systems="$(GetAllLockedSystems)"
-    odroidc4_systems="$(Systems_odroidc4_pool)"
-    free_odroidc4_systems="$(echo "$odroidc4_systems" | grep -F -v -x "$locked_systems")"
-    if [ "$free_odroidc4_systems" ]
-    then
-	selectOne "$free_odroidc4_systems"
-    else
-	selectOne "$odroidc4_systems"
-    fi
-}
-

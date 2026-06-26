@@ -27,6 +27,19 @@ selectOne(){
     echo "$1" | sed -n ${r}p
 }
 
+GetRandomSystemFromPool() {
+    # Get a random system from the pool, unlocked if possible
+    locked_systems="$(GetAllLockedSystems)"
+    systems="$(Systems_$1)"
+    free_systems="$(echo "$systems" | grep -F -v -x "$locked_systems")"
+    if [ "$free_systems" ]
+    then
+        selectOne "$free_systems"
+    else
+        selectOne "$systems"
+    fi
+}
+
 for pool in $(PoolList)
 do
     . "${SCRIPT_PATH}/scripts/pools/${pool}"

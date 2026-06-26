@@ -300,7 +300,7 @@ UserLock() {
     fi
         # Select a system from the pool
         pool=${system}
-        system=$(GetRandomSystemFromPool_"${pool}")
+        system=$(GetRandomSystemFromPool "${pool}")
         echo "${system}"
     fi
 

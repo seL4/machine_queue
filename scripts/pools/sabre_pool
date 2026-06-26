@@ -24,17 +24,3 @@ Systems_sabre_pool() {
     #echo "sabre2"
     #echo "sabre4"
 }
-
-GetRandomSystemFromPool_sabre_pool() {
-    # Get a random system from the pool, unlocked if possible
-    locked_systems="$(GetAllLockedSystems)"
-    sabre_systems="$(Systems_sabre_pool)"
-    free_sabre_systems="$(echo "$sabre_systems" | grep -F -v -x "$locked_systems")"
-    if [ "$free_sabre_systems" ]
-    then
-	selectOne "$free_sabre_systems"
-    else
-	selectOne "$sabre_systems"
-    fi
-}
-
