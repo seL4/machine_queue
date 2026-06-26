@@ -17,16 +17,6 @@ Systems_zcu102_pool() {
     echo "zcu102_2"
 }
 
-
-
-
-GselectOne(){
-    n=`echo "$1" | wc -l`
-    r=`random $n`
-    echo "$1" | sed -n ${r}p
-}
-
-
 GetRandomSystemFromPool_zcu102_pool() {
     # Get a random system from the pool, unlocked if possible
     locked_systems="$(GetAllLockedSystems)"
@@ -39,6 +29,4 @@ GetRandomSystemFromPool_zcu102_pool() {
 	selectOne "$zcu102_systems"
     fi
 }
-
-
 
