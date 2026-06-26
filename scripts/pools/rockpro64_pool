@@ -16,17 +16,3 @@ Systems_rockpro64_pool() {
     #echo "rockpro64a"
     echo "rockpro64b"
 }
-
-GetRandomSystemFromPool_rockpro64_pool() {
-    # Get a random system from the pool, unlocked if possible
-    locked_systems="$(GetAllLockedSystems)"
-    rockpro64_systems="$(Systems_rockpro64_pool)"
-    free_rockpro64_systems="$(echo "$rockpro64_systems" | grep -F -v -x "$locked_systems")"
-    if [ "$free_rockpro64_systems" ]
-    then
-	selectOne "$free_rockpro64_systems"
-    else
-        selectOne "$rockpro64__systems"
-    fi
-}
-

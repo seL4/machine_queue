@@ -26,17 +26,3 @@ Systems_x86_pool() {
     echo "skylake2"
 #    echo "sandy"
 }
-
-GetRandomSystemFromPool_x86_pool() {
-    # Get a random system from the pool, unlocked if possible
-    locked_systems="$(GetAllLockedSystems)"
-    x86_systems="$(Systems_x86_pool)"
-    free_x86_systems="$(echo "$x86_systems" | grep -F -v -x "$locked_systems")"
-    if [ "$free_x86_systems" ]
-    then
-	selectOne "$free_x86_systems"
-    else
-	selectOne "$x86_systems"
-    fi
-}
-

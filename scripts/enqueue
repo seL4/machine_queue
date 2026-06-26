@@ -184,7 +184,7 @@ Enqueue() {
         fi
         # Select a system from the pool
         pool=${system}
-        system=$(GetRandomSystemFromPool_"${pool}")
+        system=$(GetRandomSystemFromPool "${pool}")
         echo "Selecting system '${system}' from pool '${pool}'"
     fi
 

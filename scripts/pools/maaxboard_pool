@@ -15,16 +15,3 @@ Systems_maaxboard_pool() {
     echo "maaxboard1"
     echo "maaxboard2"
 }
-
-GetRandomSystemFromPool_maaxboard_pool() {
-    # Get a random system from the pool, unlocked if possible
-    locked_systems="$(GetAllLockedSystems)"
-    maaxboard_systems="$(Systems_maaxboard_pool)"
-    free_maaxboard_systems="$(echo "$maaxboard_systems" | grep -F -v -x "$locked_systems")"
-    if [ "$free_maaxboard_systems" ]
-    then
-	selectOne "$free_maaxboard_systems"
-    else
-	selectOne "$maaxboard_systems"
-    fi
-}
