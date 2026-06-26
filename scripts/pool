@@ -21,6 +21,12 @@ PoolList() {
     )
 }
 
+selectOne(){
+    n=`echo "$1" | wc -l`
+    r=`random $n`
+    echo "$1" | sed -n ${r}p
+}
+
 for pool in $(PoolList)
 do
     . "${SCRIPT_PATH}/scripts/pools/${pool}"

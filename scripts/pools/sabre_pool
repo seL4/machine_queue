@@ -25,13 +25,6 @@ Systems_sabre_pool() {
     #echo "sabre4"
 }
 
-selectOne(){
-    n=`echo "$1" | wc -l`
-    r=`random $n`
-    echo "$1" | sed -n ${r}p
-}
-
-
 GetRandomSystemFromPool_sabre_pool() {
     # Get a random system from the pool, unlocked if possible
     locked_systems="$(GetAllLockedSystems)"
