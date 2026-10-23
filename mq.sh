@@ -68,6 +68,14 @@ case "$command" in
     ;;
 esac
 
+# At this point all of the commands we might run need to SSH. Only the "run"
+# command passes files, so for the "sem" etc we can just ssh to tftp, and rerun
+# the full mq.sh script. This uses only 1 SSH connection.
+if [ "$(hostname -f)" != "${HOST}" ] && [ "$command" != "run" ]; then
+    RemoteExec mq.sh "$command" "$@"
+    exit $?
+fi
+
 
 # Check we can talk to the cannonical host
 if ! RemoteCommand exit; then

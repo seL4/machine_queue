@@ -27,3 +27,10 @@ RemoteCommand() {
     fi
     RemoteCommandOn "${HOST}" "$@"
 }
+
+# Like RemoteCommand, but doesn't run "stty" to change echo behaviour
+# Needs -tt for pseudo-tty so that Ctrl+C interrupts are forwarded to
+# bash on the remote end.
+RemoteExec() {
+    ssh -tt -oLogLevel=quiet "${HOST}" "$@"
+}
