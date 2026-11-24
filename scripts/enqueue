@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright 2021 UNSW, Sydney
+# Copyright 2026 UNSW, Sydney
 #
 # SPDX-License-Identifier: GPL-2.0-only
 
@@ -49,8 +49,7 @@ EnqueueUsage() {
 Enqueue() {
     # Parse the command line
     file_count=0
-    retry_period=8
-    total_retries=-1
+    total_retries=""
     logfile=""
     interact=""
     no_lock_mods=false
@@ -137,10 +136,6 @@ Enqueue() {
                 shift
                 key="$1"
             ;;
-            -w)
-                shift
-                retry_period="$1"
-            ;;
             -t)
                 shift
                 total_retries="$1"
@@ -216,9 +211,10 @@ Enqueue() {
     fi
 
     if ${no_lock_mods} ; then
+        # replace
         if ! LockIOwn "${system}"; then
             echo "Failed to run because you said you own the lock (-n flag), but you don't!"
-            LockSystemPrintInfo "${system}"
+            machine-locks-client sem info "${system}"
             exit 1
         fi
     else
@@ -226,13 +222,19 @@ Enqueue() {
 
         # Print out potentially useful information to the user about
         # the current status of the lock
-        LockSystemPrintInfo "${system}"
+        machine-locks-client sem info "${system}"
 
         # We can setup the trap early as we check if we actually own the
         # the lock before releasing it
-        trap "UnlockSystem \"${system}\" 0 \"${key}\"; exit 1" ${SIGNALS}
+        # replace
+        trap "machine-locks-client sem release --owner "$REMOTEUSER" "$system"; exit 1" ${SIGNALS}
 
-        if ! LockSystem "${system}" "${retry_period}" "${total_retries}" "${key}"; then
+        if ! machine-locks-client sem acquire \
+            --owner "$REMOTEUSER" \
+            ${total_retries:+--num-retries $total_retries} \
+            ${timeout:+--timeout $timeout} \
+            ${key:+--job-name "$key"} \
+            "$system"; then
             echo "Failed to acquire lock for system (${system})"
             exit 2
         fi
@@ -260,7 +262,7 @@ Enqueue() {
     fi
 
     if ! ${no_lock_mods} ; then
-        UnlockSystem "${system}" 0 "${key}"
+        machine-locks-client sem release --owner "$REMOTEUSER" "$system"
         trap "exit 1" ${SIGNALS}
     fi
 

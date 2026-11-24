@@ -93,9 +93,8 @@ case "$command" in
         exit 1
     ;;
     sem)
-        UserLock "$@"
-        # Should not get here
-        exit 1
+        machine-locks-client sem "$@"
+        exit
     ;;
     help|*)
         Usage
