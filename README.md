@@ -32,6 +32,11 @@ For example, you can do:
   ln -s $H mq
   ```
 
+The mq scripts are dependent on the [`jq`](https://jqlang.org/download/) and
+[`machine-locks-client`](https://github.com/au-ts/machine-locks/tree/main/machine_locks_client).
+Follow the instructions at each of those links to download or compile them, and
+add them to your `$PATH`.
+
 The mq scripts assume a standard POSIX system, that `/bin/sh` is
 POSIX compliant, and that you can use `ssh` to reach
 `tftp.keg.cse.unsw.edu.au` without password.  To set up the latter,
@@ -49,6 +54,16 @@ or clauses with similar effect.  The script makes many `ssh`
 connections in a row; without the control multiplexing this can get
 painfully slow.
 
+Usage with Nix
+================
+
+You will need to enable the Nix 'flakes' feature. Then spawn a shell with:
+```
+nix shell github:seL4/machine_queue
+```
+Then, all `mq` dependencies will be accessible to `mq` automatically, and `mq.sh`
+will be in your `$PATH`. You do not need to clone the repo or set up any symlinks.
+You will still need to setup an appropriate SSH config.
 
 Usage
 ======
